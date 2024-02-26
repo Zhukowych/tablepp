@@ -3,7 +3,7 @@ A set of classes for converting Columns to
 djnago classes
 """
 from abc import ABC, abstractmethod
-from django.db.models import Field, IntegerField
+from django.db.models import Field, IntegerField, CharField
 from django.utils.translation import gettext_lazy as _
 
 
@@ -35,5 +35,11 @@ class IntegerColumnHandler(ColumnHandler):
 
     def get_model_field(self) -> Field:
         kwargs = self.get_kwargs()
-        return IntegerField(_(self.name), **kwargs) 
+        return IntegerField(_(self.name), **kwargs)
 
+class TextColumnHandler(ColumnHandler):
+    """Handler for IntegerColumn"""
+
+    def get_model_field(self) -> Field:
+        kwargs = self.get_kwargs()
+        return CharField(_(self.name), **kwargs)

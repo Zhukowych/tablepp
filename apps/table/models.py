@@ -1,11 +1,14 @@
 """
 Models of table app
 """
+from __future__ import annotations
+
 import time
 import random
 import hashlib
 from typing import Type
 from django.db import models
+from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 from django.core.management import call_command
 
@@ -37,7 +40,18 @@ class Table(models.Model):
         """Add new column to table"""
         self.columns.add(Column(name=column_name, dtype=dtype))
 
-    def get_model(self) -> None:
+    def remove_column(self, column: str | Column) -> None:
+        """
+        Remove column from table. Column also removes from db
+        """
+        if isinstance(column, Column):
+            column.delete()
+        if isinstance(column, str):
+            column = self.columns.get(name=column)
+            column.delete()
+        raise ValueError("You must pass column object either column name to delete it.")
+
+    def get_model(self) -> models.Model:
         """Create tab"""
 
         class Meta:
@@ -61,9 +75,22 @@ class Table(models.Model):
 
         # Create the class, which automatically triggers ModelBase processing
         model = type(self.slug, (models.Model,), attrs)
-        print(model._meta.db_table)
         # Create an Admin class if admin options were provided
         return model
+
+    def get_model_form(self) -> ModelForm:
+        """
+        Create model form for table.
+        Form for adding and editing
+        """
+        class Meta:
+            """Meta for talbe's model form"""
+
+        setattr(Meta, "model", self.get_model())
+        setattr(Meta, "fields", "__all__")
+
+        model_form = type(f"{self.slug}ModelForm", (ModelForm,), {})
+        return model_form
 
 
 class Column(models.Model):
@@ -91,7 +118,7 @@ class Column(models.Model):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
         if not self.slug:
             code = time.time_ns() + random.randint(1, 10)
             self.slug = "column_" + hashlib.md5(str(code).encode())\

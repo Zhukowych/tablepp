@@ -13,5 +13,36 @@ class DasboardView(View):
         """
         Process get requests. Return general data about system
         """
-        migrate()
         return render(request, "dashboard.html", {})
+
+
+class TableListView(View):
+    """List all dynamic tables"""
+
+
+class TableEditView(View):
+    """Edit dynamic table"""
+
+
+class TableView(View):
+    """Edit dynamic table"""
+
+
+class TableObjectEditView(View):
+    """Table object edit view"""
+
+
+class TableObjectDeleteView(View):
+    """Table object edit view"""
+
+
+class TablePermissions(View):
+    """List table permissioins"""
+
+
+class ImportTableDataView(View):
+    """Import table data view"""
+
+
+class ExportTableDataView(View):
+    """Import table data view"""
