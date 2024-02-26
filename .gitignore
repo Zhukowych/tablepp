@@ -1,1 +1,3 @@
 tvenv/
+migrations/
+__pycache__/
