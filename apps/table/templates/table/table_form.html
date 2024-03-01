@@ -1,61 +1,130 @@
 {% extends "base.html" %}
 
 {% block head %}
-{% load static %}
-<script src="{% static 'js/jquery.formset.js' %}"></script> 
+<script src="{{ static('js/jquery.formset.js') }}"></script> 
 {% endblock %}
 
 {% block main %}
+
+<script type="text/javascript">
+    
+    dtypes_form_handlers = {}
+
+    function register_dtype(dtype, handlers) {
+        dtypes_form_handlers[dtype] = handlers;  
+    } 
+
+    function get_settings_input(column_row) {
+        return column_row.find("td input[id*=-settings]");
+    }
+
+</script>
+
 <div class="col-md-4">
-    <form action="" method="post">{% csrf_token %}
-        {{ form.as_p }}
+    <form action="" method="post">
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        {{ form.as_p() }}
 
         <table class="table">
             {{ columns_form.management_form }}
-
+            {% set cycling_list = cycler('row1', 'row2') %}
             {% for form in columns_form.forms %}
-                {% if forloop.first %}
-                    <thead>
+                {% if loop.first %}
+                    <thead class="columns_form">
                     <tr>
-                        {% for field in form.visible_fields %}
-                            <th>{{ field.label|capfirst }}</th>
+                        {% for field in form.visible_fields() %}
+                            <th>{{ field.label }}</th>
                         {% endfor %}
                     </tr>
                     </thead>
                 {% endif %}
-                <tr class="{% cycle "row1" "row2" %} formset_row">
-                    {% for field in form.visible_fields %}
+                <tr class="{{ cycling_list.next() }} formset_row">
+                    {% for field in form.visible_fields() %}
                         <td>
                             {# Include the hidden fields in the form #}
-                            {% if forloop.first %}
-                                {% for hidden in form.hidden_fields %}
+                            {% if loop.first %}
+                                {% for hidden in form.hidden_fields() %}
                                     {{ hidden }}
                                 {% endfor %}
                             {% endif %}
-                            {{ field.errors.as_ul }}
+                            {{ field.errors.as_ul() }}
                             {{ field }}
                         </td>
                     {% endfor %}
+                        
+                </tr>
+                <tr>
                 </tr>
             {% endfor %}
         </table>
-        <input type="submit" value="Save"/> <a href="{% url 'table-list' %}">back to the list</a>
+        <input type="submit" value="Save"/> <a href="{{ url('table-list') }}">back to the list</a>
     </form>
+
+    <div class="column-setting-forms" hidden>
+        {% for dtype, handler in dtypes.items() %}
+            {% from handler.get_settings_form().template_name import render_form, settings_script %}
+            <div class="{{dtype}}-setting-form">
+                {{ render_form(handler.get_settings_form()) }}
+            </div>
+            <div class="{{dtype}}-setting-script">
+                {{ settings_script(dtype) }}
+            </div>
+        {% endfor %}
+    </div>
+
+
 </div>
 <script type="text/javascript">
 
     function setUp() {
-        $("thead tr").append('<th>Edit</th>')
-        let rows = $("tbody tr");
+        $("thead.columns_form tr").append('<th>Edit</th>')
+        let rows = $("tbody tr.formset_row");
         for (var i=0; i<rows.length-1; i++){
-            rows[i].innerHTML += '<td><a class="edit-column" href="javascript:void(0);">edit</a></td>';
+            rows[i].innerHTML += '<td><a class="edit-column" href="javascript:void(0);">edit settings</a></td>';
         }
     }
 
+    function is_editing(event) {
+        if (event.target.text == "edit settings")
+            return true;
+        else
+            return false;
+    }
 
+    function toggle_edit_button(event) {
+        if (is_editing(event))
+            event.target.text = "save settings";
+        else
+            event.target.text = "edit settings";
+    }
+
+    function edit_column_settings(event) {
+        let formset_row = $(event.target.closest("tr"));
+        let setting_row = formset_row.next("tr");
+        let column_dtype = formset_row.find("select").val();
+        setting_row.html($('div.' + column_dtype + '-setting-form').html());
+
+        dtypes_form_handlers[column_dtype].create_function(formset_row, setting_row);
+
+        toggle_edit_button(event);
+    }
+
+    function save_column_settings(event) {
+        let formset_row = $(event.target.closest("tr"));
+        let setting_row = formset_row.next("tr");
+        let column_dtype = formset_row.find("select").val();
+        
+        dtypes_form_handlers[column_dtype].export_function(formset_row, setting_row);
+
+        setting_row.html("");
+        toggle_edit_button(event);
+    }
 
     $(document).on('click', '.edit-column', function(event){ 
-        console.log(event);
+        if (is_editing(event))
+            edit_column_settings(event);
+        else
+            save_column_settings(event);
     });
 
     $('.formset_row').formset({
