@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% load static %}
+<script src="{% static 'js/jquery.formset.js' %}"></script> 
+{% endblock %}
+
+{% block main %}
+<h1>Tables</h1>
+<ul>
+{% for table in object_list %}
+    <li><a href="{% url 'table-edit' table_id=table.id %}">{{table.name}}</a> </li>
+{% empty %}
+    <li>No tables yet.</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
