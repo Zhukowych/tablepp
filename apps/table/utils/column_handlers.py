@@ -42,4 +42,4 @@ class TextColumnHandler(ColumnHandler):
 
     def get_model_field(self) -> Field:
         kwargs = self.get_kwargs()
-        return CharField(_(self.name), **kwargs)
+        return CharField(_(self.name), max_length=64, **kwargs)

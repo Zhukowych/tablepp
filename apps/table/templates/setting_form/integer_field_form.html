@@ -1,0 +1,45 @@
+{% macro settings_form(column_setting_form) %}
+    <table>
+        <thead>
+            {% for field in params_settings_form %}
+                <tr><th>{{field.label_tag()}}</th><th>{{field}}</th></tr>
+            {% endfor %}
+        </thead>
+    </table>
+{% endmacro %}
+
+{% macro settings_script(param_type) %}
+
+    <script type="text/javascript">
+        function create_select_models_settings_form_for(table_row){
+            let editing_param = params[$("tbody tr").index(table_row)];
+            let settings_box = table_row.next().find('.param-settings-box'); 
+            $("#{{ param_type }}-settings-form script").remove(); // when copying chosen script works again
+            settings_box.html($("#{{ param_type }}-settings-form").html());
+            
+            settings_box.find("#id_model").val(editing_param.settings.select_model_content_type_pk || null);
+            settings_box.find("#id_max_select_models").val(editing_param.settings.max_select_models || 100);
+            settings_box.find("#id_model").chosen({width: "100%"});
+        }
+
+        function export_select_model_settings_form_for(table_row){
+            let editing_param = params[$("tbody tr").index(table_row)];
+            let settings_box = table_row.next().find('.param-settings-box'); 
+            
+            let select_model_content_type_pk = settings_box.find("#id_model").val();
+            let max_select_models = settings_box.find("#id_max_select_models").val();
+
+            editing_param.settings = {
+                select_model_content_type_pk: select_model_content_type_pk,
+                max_select_models: max_select_models
+            };
+
+        }
+        
+        register_param_type("{{ param_type }}", {create_function: create_select_models_settings_form_for, 
+                                                 export_function:  export_select_model_settings_form_for})
+    
+    </script>
+
+
+{% endmacro %}

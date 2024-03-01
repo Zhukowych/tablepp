@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% load static %}
+<script src="{% static 'js/jquery.formset.js' %}"></script> 
+{% endblock %}
+
+{% block main %}
+<div class="col-md-4">
+    <form action="" method="post">{% csrf_token %}
+        {{ form.as_p }}
+       <input type="submit" value="Save"/> <a href="{% url 'object-list' table_id=table.id %}">back to the list</a>
+    </form>
+</div>
+<script type="text/javascript">
+    $('.formset_row').formset({
+        addText: 'add column',
+        deleteText: 'remove',
+        prefix: 'column_set'
+    });
+</script>
+{% endblock %}
