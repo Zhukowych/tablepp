@@ -57,12 +57,20 @@ ROOT_URLCONF = 'tablepp.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
         'DIRS': [
             'apps/core/templates',
             'apps/table/templates',
             'apps/user/templates',
         ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+			"environment": "tablepp.jinja2.environment"
+        },
+    },
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
