@@ -2,9 +2,9 @@
 
 {% block main %}
 
-<h1>{{ userprofile.username }}</hi>
-<h1>{{ userprofile.email }}</hi>
-<h1>{{ userprofile.role }}</hi>
+<h1>{{ user.username }}</hi>
+<h1>{{ user.email }}</hi>
+<h1>{{ user.role }}</hi>
 
 
 <form method="post" action="{{ url('logout') }}">

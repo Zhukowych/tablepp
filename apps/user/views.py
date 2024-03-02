@@ -1,15 +1,16 @@
 from typing import Any
 from django.shortcuts import render
-from django.views.generic.detail import DetailView, ListView
+from django.views.generic.detail import DetailView
+from django.views.generic import ListView, CreateView
 from django.contrib.auth.views import LoginView
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
-from .models import UserProfile
+from .models import User, Role
 
 
 class UserProfileDetailView(DetailView):
-    model = UserProfile
+    model = User
     template_name = "user/user_details.html"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
@@ -28,5 +29,19 @@ class UserLoginView(LoginView):
         return reverse("user_detail", kwargs={"pk": user_pk})
 
 
-class UsersList(ListView):
-    pass
+class UsersListView(ListView):
+    model = User
+    paginate_by = 10
+
+
+class RoleListView(ListView):
+    model = Role
+    paginate_by = 10
+
+
+class AddUserView(CreateView):
+    model = User
+    fields = ["username", "password", "email", "role"]
+
+    def get_seccess_url(self):
+        return reverse("user_list")

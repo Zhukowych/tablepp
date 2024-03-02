@@ -10,7 +10,7 @@ class CheckAuthenticated:
 
     def __call__(self, request, *args: Any, **kwds: Any) -> Any:
 
-        if not request.user.is_authenticated and request.path != "/login/":
+        if not request.user.is_authenticated and request.path != "/user/login/":
             return redirect(reverse("login_page"))
 
         return self.get_response(request)

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock %}
+
+{% block main %}
+<h1>Roles</h1>
+<ul>
+{% for role in object_list %}
+    <li><p>{{role}}</p> </li>
+{% else %}
+    <li>No roles yet.</li>
+{% endfor %}
+<a href="add/">Add Role</a>
+</ul>
+
+
+{% endblock %}
