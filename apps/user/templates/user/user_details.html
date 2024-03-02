@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<h1>{{ userprofile.username }}</hi>
+<h1>{{ userprofile.email }}</hi>
+<h1>{{ userprofile.role }}</hi>
+
+
+<form method="post" action="{{ url('logout') }}">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <button type="submit">Logout</button>
+</form>
+
+{% endblock %}
