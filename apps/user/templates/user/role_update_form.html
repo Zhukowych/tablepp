@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block  head %}
+{% endblock %}
+
+{% block main %}
+
+<h1>Change role name</h1>
+<form method="post">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    {{ form.as_p }}
+    <input type="submit" value="Update">
+</form>
+
+<a href="{{ url('delete_role', args=[object.pk]) }}">Delete this role</a>
+<a href="{{ url('role_list') }}">Back to list</a>
+
+{% endblock %}

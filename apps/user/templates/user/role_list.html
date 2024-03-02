@@ -7,7 +7,7 @@
 <h1>Roles</h1>
 <ul>
 {% for role in object_list %}
-    <li><p>{{role}}</p> </li>
+    <li><a href="{{ role.pk }}/edit/">{{role}}</a></li>
 {% else %}
     <li>No roles yet.</li>
 {% endfor %}
