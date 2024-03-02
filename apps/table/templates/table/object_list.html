@@ -15,6 +15,11 @@ table, th, td {
 {% block main %}
 <h1>Tables</h1>
 
+<form method="get">
+    {{ filter.form.as_p() }}
+    <input type="submit" />
+</form>
+
 <table>
     <thead>
         <tr>

@@ -22,12 +22,15 @@
             let settings_input = get_settings_input(column_row);
             let settings = JSON.parse(settings_input.val());
             max_length_input(settings_row).val(settings.max_length);
+            check_selected_filters(settings_row, settings.filters || []);
         }
 
         function export_text_column_settings_form(column_row, settings_row){
             let settings_input = get_settings_input(column_row);
             let settings = {
-                max_length: parseInt(max_length_input(settings_row).val())
+                max_length: parseInt(max_length_input(settings_row).val()),
+                filters: get_selected_filters(settings_row)
+
             }; 
 
             settings_input.val(JSON.stringify(settings));

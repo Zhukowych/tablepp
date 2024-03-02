@@ -9,7 +9,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.db import transaction
 
 from table.models import Table, Column
-from table.forms import TableEditForm, ColumnEditForm, ColumnFormSet
+from table.forms import ColumnEditForm, ColumnFormSet
 from apps.table.utils.utils import migrate
 
 
@@ -81,17 +81,23 @@ class TableObjectListView(ListView):
     """List objects added to table"""
     template_name = "table/object_list.html"
     paginate_by = 10
+    table = None
+    formset = None
 
     def get(self, request, table_id: int=None):
         """List all objects in the table"""
         self.table = Table.objects.get(pk=table_id)
         self.model = self.table.get_model()
+        queryset = self.table.get_model().objects.all()
+        self.formset = self.table.get_filterset()(self.request.GET, queryset=queryset)
+        self.queryset = self.formset.qs
         return super().get(request, table_id=table_id)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Modify rendering context"""
         context = super().get_context_data(**kwargs)
         context['table'] = self.table
+        context['filter'] = self.formset
         return context
 
 

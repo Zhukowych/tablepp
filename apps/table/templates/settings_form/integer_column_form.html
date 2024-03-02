@@ -34,6 +34,7 @@
                 min_value: parseInt(min_value_input(settings_row).val()),
                 max_value: parseInt(max_value_input(settings_row).val())
             };
+            get_selected_filters(settings_row);
 
             settings_input.val(JSON.stringify(settings));
         }
