@@ -44,7 +44,7 @@ class SaveTableMixin:
             for column_form in columns_form.forms:
                 if column_form.is_valid():
                     column_form.save()
-
+        migrate()
         return super().form_valid(form)
 
 
