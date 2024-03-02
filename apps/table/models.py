@@ -42,6 +42,10 @@ class Table(models.Model):
         """Return url to Table edit page"""
         return reverse('table-edit', kwargs={'table_id': self.id})
 
+    def get_displayable_columns(self) -> list[Column]:
+        """Return list of columns that can be displayed in talbe"""
+        return self.columns.filter(is_displayble=True)
+
     def add_column(self, column_name: str, dtype: int) -> None:
         """Add new column to table"""
         self.columns.add(Column(name=column_name, dtype=dtype))
@@ -99,6 +103,7 @@ class Table(models.Model):
         model_form = type(f"{self.slug}ModelForm", (ModelForm,), {'Meta':Meta})
         return model_form
 
+    def get_filter_form(self):
 
 class Column(models.Model):
     """Field entity"""
@@ -120,6 +125,9 @@ class Column(models.Model):
     slug = models.CharField(_("Slug"), max_length=64, unique=True)
     dtype = models.IntegerField(_("Data type"), choices=DType, default=DType.INTEGER)
     settings = models.JSONField(_("Settings"), default=dict)
+
+    is_filterable = models.BooleanField(_("Filterable?"), default=True)
+    is_displayable = models.BooleanField(_("Displayable?"), default=True)
 
     table = models.ForeignKey(Table, on_delete=models.CASCADE,
                               related_name="columns")

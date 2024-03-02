@@ -40,10 +40,10 @@ class SaveTableMixin:
         columns_form = context['columns_form']
         with transaction.atomic():
             self.object = form.save()
-            print(columns_form.errors)
-            if columns_form.is_valid():
-                columns_form.instance = self.object
-                columns_form.save()
+            columns_form.instance = self.object
+            for column_form in columns_form.forms:
+                if column_form.is_valid():
+                    column_form.save()
 
         return super().form_valid(form)
 
@@ -58,6 +58,7 @@ class TableCreateView(CreateView, SaveTableMixin):
         """Return context of the view"""
         context = super().get_context_data(**kwargs)
         context['columns_form'] = ColumnFormSet(self.request.POST or None)
+        context['dtypes'] = Column.HANDLERS
         return context
 
 class TableUpdateView(SaveTableMixin, UpdateView):
@@ -72,20 +73,26 @@ class TableUpdateView(SaveTableMixin, UpdateView):
         """Return context of the view"""
         context = super().get_context_data(**kwargs)
         context['columns_form'] = ColumnFormSet(self.request.POST or None, instance=self.object)
-        form = context['columns_form']
-        print(form[0].fields)
+        context['dtypes'] = Column.HANDLERS
         return context
 
 
 class TableObjectListView(ListView):
     """List objects added to table"""
     template_name = "table/object_list.html"
+    paginate_by = 10
 
     def get(self, request, table_id: int=None):
         """List all objects in the table"""
-        table = Table.objects.get(pk=table_id)
-        self.model = table.get_model()
+        self.table = Table.objects.get(pk=table_id)
+        self.model = self.table.get_model()
         return super().get(request, table_id=table_id)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """Modify rendering context"""
+        context = super().get_context_data(**kwargs)
+        context['table'] = self.table
+        return context
 
 
 class DynamicModelViewMixin:

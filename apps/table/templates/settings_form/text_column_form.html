@@ -1,0 +1,42 @@
+{% macro render_form(column_setting_form) %}
+    <table>
+        <thead>
+            {% for field in column_setting_form %}
+                <tr><th>{{field.label_tag()}}</th><th>{{field}}</th></tr>
+            {% endfor %}
+        </thead>
+    </table>
+{% endmacro %}
+
+
+{% macro settings_script(dtype) %}
+
+    <script type="text/javascript">
+
+        function max_length_input(setting_row) {
+            return setting_row.find("input#id_max_length");
+        }
+
+
+        function create_text_column_settings_form(column_row, settings_row){
+            let settings_input = get_settings_input(column_row);
+            let settings = JSON.parse(settings_input.val());
+            max_length_input(settings_row).val(settings.max_length);
+        }
+
+        function export_text_column_settings_form(column_row, settings_row){
+            let settings_input = get_settings_input(column_row);
+            let settings = {
+                max_length: parseInt(max_length_input(settings_row).val())
+            }; 
+
+            settings_input.val(JSON.stringify(settings));
+        }
+        
+        register_dtype("{{ dtype }}", {create_function: create_text_column_settings_form, 
+                                       export_function:  export_text_column_settings_form})
+    
+    </script>
+
+
+{% endmacro %}
