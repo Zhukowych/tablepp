@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 
 {% block head %}
+<script src="/static/admin/js/vendor/jquery/jquery.min.js"></script>
+<script src="/static/admin/js/jquery.init.js"></script>
+
+{% for dtype, handler in dtypes.items() %}
+    {{ handler.get_settings_form().media }}
+{% endfor %}    
+
 <script src="{{ static('js/jquery.formset.js') }}"></script> 
 {% endblock %}
 
@@ -16,6 +23,25 @@
 
     function get_settings_input(column_row) {
         return column_row.find("td input[id*=-settings]");
+    }
+
+    function get_selected_filters(settings_row) {
+        let filter_checkboxes = settings_row.find("input[id*='id_filters']:checked");
+        let selected_filters = [];
+        for(let i=0; i<filter_checkboxes.length; i++) {
+            selected_filters.push($(filter_checkboxes[i]).val());
+        }    
+        return selected_filters;
+    }
+
+    function check_selected_filters(settings_row, selected_filters){
+        let filter_checkboxes = settings_row.find("input[id*='id_filters']");
+        for(let i=0; i<filter_checkboxes.length; i++) {
+            let filter_checkbox = $(filter_checkboxes[i]);
+            if (selected_filters.includes(filter_checkbox.val()))
+                filter_checkbox.prop("checked", true);
+        }    
+ 
     }
 
 </script>
@@ -126,16 +152,17 @@
         else
             save_column_settings(event);
     });
-
+    
     $('.formset_row').formset({
-        addText: 'add column',
-        deleteText: 'remove',
-        editText: "edit",
-        prefix: 'column_set'
-    });
+            addText: 'add column',
+            deleteText: 'remove',
+            editText: "edit",
+            prefix: 'column_set'
+        });
 
     $(document).ready(function(){
         setUp();
+        
     });
 
 </script>

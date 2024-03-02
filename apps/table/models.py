@@ -7,13 +7,16 @@ import time
 import random
 import hashlib
 from typing import Type
+
+import django_filters
 from django.db import models
+from django.db.models import QuerySet
 from django.urls import reverse
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 
 from table.utils.column_handlers import IntegerColumnHandler, TextColumnHandler
-from table.utils.dynamic_model import DynamicModelMixin
+from table.utils.dynamic_model import DynamicModelMixin, DynamicModelFormMixin, DynamicModelFilterSetMixin
 
 
 def column_settings_default():
@@ -41,6 +44,14 @@ class Table(models.Model):
     def get_absolute_url(self) -> str:
         """Return url to Table edit page"""
         return reverse('table-edit', kwargs={'table_id': self.id})
+
+    def get_displayable_columns(self) -> QuerySet[Column]:
+        """Return list of columns that can be displayed in talbe"""
+        return self.columns.filter(is_displayble=True)
+
+    def get_filterable_columns(self) -> QuerySet[Column]:
+        """Return list of columns that can be present in filters"""
+        return self.columns.filter(is_filterable=True)
 
     def add_column(self, column_name: str, dtype: int) -> None:
         """Add new column to table"""
@@ -96,8 +107,32 @@ class Table(models.Model):
         setattr(Meta, "model", self.get_model())
         setattr(Meta, "fields", "__all__")
 
-        model_form = type(f"{self.slug}ModelForm", (ModelForm,), {'Meta':Meta})
+        model_form = type(f"{self.slug}ModelForm", (ModelForm, DynamicModelFormMixin),
+                           {'Meta':Meta})
         return model_form
+
+    def get_filterset(self) -> django_filters.FilterSet:
+        """
+        Create FilterSet class for table
+        """
+
+        class Meta:
+            """FilterSet Meta"""
+
+        filterable_columns = self.get_filterable_columns()
+        fields_filters = {
+            column.slug: column.get_filters_names()
+            for column in filterable_columns
+        }
+
+        setattr(Meta, 'model', self.get_model())
+        setattr(Meta, 'fields', fields_filters)
+        print(fields_filters)
+        filterset = type(f"table_{self.slug}FilterSet",
+                         (django_filters.FilterSet, DynamicModelFilterSetMixin),
+                         {"Meta": Meta})
+
+        return filterset
 
 
 class Column(models.Model):
@@ -121,6 +156,9 @@ class Column(models.Model):
     dtype = models.IntegerField(_("Data type"), choices=DType, default=DType.INTEGER)
     settings = models.JSONField(_("Settings"), default=dict)
 
+    is_filterable = models.BooleanField(_("Filterable?"), default=True)
+    is_displayable = models.BooleanField(_("Displayable?"), default=True)
+
     table = models.ForeignKey(Table, on_delete=models.CASCADE,
                               related_name="columns")
 
@@ -139,3 +177,10 @@ class Column(models.Model):
         Return django field column depending on column type
         """
         return self.handler.get_model_field()
+
+    def get_filters_names(self) -> list[str]:
+        """
+        Return list of finters that can be applied to column
+        i.e lte, gte, etc
+        """
+        return self.handler.get_filters()
