@@ -13,37 +13,41 @@ table, th, td {
 {% endblock %}
 
 {% block main %}
-<h1>Tables</h1>
 
-<form method="get">
-    {{ filter.form.as_p() }}
-    <input type="submit" />
-</form>
+<div>
+    <h1>Tables</h1>
 
-<table>
-    <thead>
-        <tr>
-            <th>Id</th>
-            {% for column in table.columns.all() %}
-                <th>{{column.name}}</th> 
-            {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for object in object_list %}
+    <form method="get">
+        {{ filter.form.as_p() }}
+        <input type="submit" />
+    </form>
+
+    <table>
+        <thead>
             <tr>
-                <td>{{object.id}}</td>
+                <th>Id</th>
                 {% for column in table.columns.all() %}
-                    {% if loop.first %}
-                        <td><a href="{{ url('object-edit', args=[object.table.id, object.id]) }}">{{ object.get_value_of(column) }}</a></td>
-                    {% else %}
-                        <td>{{ object.get_value_of(column) }}</td>
-                    {% endif %}
+                    <th>{{column.name}}</th> 
                 {% endfor %}
             </tr>
-        {% endfor %}
-    </tbody>
+        </thead>
+        <tbody>
+            {% for object in object_list %}
+                <tr>
+                    <td>{{object.id}}</td>
+                    {% for column in table.columns.all() %}
+                        {% if loop.first %}
+                            <td><a href="{{ url('object-edit', args=[object.table.id, object.id]) }}">{{ object.get_value_of(column) }}</a></td>
+                        {% else %}
+                            <td>{{ object.get_value_of(column) }}</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
 
-</table>
+    </table>
+
+</div>
 
 {% endblock %}
