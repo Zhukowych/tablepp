@@ -1,9 +1,10 @@
 from typing import Any
 from django.shortcuts import render
 from django.views.generic.detail import DetailView
+from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.views import LoginView
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from .models import User, Role
@@ -20,6 +21,8 @@ from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from .models import User, Role, UserGroups
 from .forms.form import UpdateUserGroupForm, TablePermission
+from .models import User, Role, UserGroups
+from .forms.form import UpdateUserGroupForm
 
 
 class UserProfileDetailView(DetailView):
@@ -57,6 +60,17 @@ class AddUserView(CreateView):
     fields = ["username", "password", "email", "role"]
 
 
+class UpdateUserView(UpdateView):
+    model = User
+    fields = ["username", "password", "email", "role"]
+    template_name_suffix = "_update_form"
+
+
+class UserDeleteView(DeleteView):
+    model = User
+    success_url = reverse_lazy("user_list")
+
+
 class AddRoleView(CreateView):
     model = Role
     fields = ["role"]
@@ -72,6 +86,7 @@ class RoleDeleterView(DeleteView):
     model = Role
     success_url = reverse_lazy("role_list")
 
+
 class GroupListView(ListView):
     model = UserGroups
     template_name = "user/group_list.html"
@@ -79,6 +94,7 @@ class GroupListView(ListView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
 
         context = super().get_context_data(**kwargs)
+        print(context)
         return context
 
 
@@ -106,6 +122,7 @@ class EditUserGroupView(View):
     def get(self, request, *args, **kwargs):
 
         print(request.user.get_groups())
+        # print(UserGroups.objects.get(id=2))
 
         return render(
             request,

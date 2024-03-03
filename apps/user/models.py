@@ -17,13 +17,14 @@ class Role(models.Model):
 
 
 class User(AbstractUser):
-    role = models.OneToOneField(Role, on_delete=models.DO_NOTHING, null=True)
+    role = models.ForeignKey(Role, on_delete=models.DO_NOTHING, null=True)
 
     def __str__(self):
         return self.username
 
     def get_absolute_url(self):
         return reverse("user_list")
+
     def get_groups(self):
         return UserGroups.objects.all().filter(users=self)
 
@@ -43,7 +44,6 @@ class UserGroups(models.Model):
 
     def get_absolute_url(self):
         return reverse("group_list")
-
 
 class TablePermission(models.Model):
     """Permission model"""
