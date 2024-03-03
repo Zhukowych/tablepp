@@ -1,10 +1,10 @@
 from typing import Any
 from django.shortcuts import render
 from django.views.generic.detail import DetailView
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.views import LoginView
 from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from .models import User, Role
 
@@ -43,5 +43,18 @@ class AddUserView(CreateView):
     model = User
     fields = ["username", "password", "email", "role"]
 
-    def get_seccess_url(self):
-        return reverse("user_list")
+
+class AddRoleView(CreateView):
+    model = Role
+    fields = ["role"]
+
+
+class UpdateRoleView(UpdateView):
+    model = Role
+    fields = ["role"]
+    template_name_suffix = "_update_form"
+
+
+class RoleDeleterView(DeleteView):
+    model = Role
+    success_url = reverse_lazy("role_list")
