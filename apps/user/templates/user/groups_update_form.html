@@ -5,16 +5,14 @@
 
 {% block main %}
 
-<h1>Change role name</h1>
+<h1>Change group name</h1>
 <form method="post">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     {{ form.as_p() }}
     <input type="submit" value="Update">
 </form>
 
-<ul>
-<li><a href="{{ url('delete_role', args=[object.pk]) }}">Delete this role</a></li>
-<li><a href="{{ url('role_list') }}">Back to list</a></li>
-</ul>
+<a href="{{ url('delete_group', args=[object.pk]) }}">Delete this group</a>
+<a href="{{ url('group_list') }}">Back to list</a>
 
 {% endblock %}
