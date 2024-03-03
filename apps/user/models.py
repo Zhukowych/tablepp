@@ -25,12 +25,15 @@ class User(AbstractUser):
     def get_absolute_url(self):
         return reverse("user_list")
 
+<<<<<<< HEAD
     def get_groups(self):
         return UserGroups.objects.all().filter(users=self)
 
     def get_absolute_url(self):
         return reverse("user_list")
 
+=======
+>>>>>>> 38d950d (own UserGroups model)
 
 class UserGroups(models.Model):
     name = models.CharField(max_length=150, unique=True)

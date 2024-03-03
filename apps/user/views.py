@@ -121,7 +121,10 @@ class EditUserGroupView(View):
 
     def get(self, request, *args, **kwargs):
 
+<<<<<<< HEAD
         print(request.user.get_groups())
+=======
+>>>>>>> 38d950d (own UserGroups model)
         # print(UserGroups.objects.get(id=2))
 
         return render(
