@@ -1,13 +1,17 @@
 from typing import Any
+from django.forms import BaseModelForm
 from django.db.models.query import QuerySet
 from django.shortcuts import render
 from django.views.generic.detail import DetailView
+from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.views import LoginView
-from django.http import HttpResponseRedirect
+from django.contrib.auth.hashers import make_password
+from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from .models import User, Role, TablePermission
+from .models import User, Role, UserGroups
+from .forms.form import UpdateUserGroupForm, TablePermission
 
 
 class UserProfileDetailView(DetailView):
@@ -44,6 +48,27 @@ class AddUserView(CreateView):
     model = User
     fields = ["username", "password", "email", "role"]
 
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        user = form.save(commit=False)
+        print("debug")
+        print(form.cleaned_data)
+        print("debug")
+        user.password = make_password(form.cleaned_data["password"])
+        user.save()
+
+        return super().form_valid(form)
+
+
+class UpdateUserView(UpdateView):
+    model = User
+    fields = ["username", "password", "email", "role"]
+    template_name_suffix = "_update_form"
+
+
+class UserDeleteView(DeleteView):
+    model = User
+    success_url = reverse_lazy("user_list")
+
 
 class AddRoleView(CreateView):
     model = Role
@@ -59,12 +84,3 @@ class UpdateRoleView(UpdateView):
 class RoleDeleterView(DeleteView):
     model = Role
     success_url = reverse_lazy("role_list")
-
-
-
-class UserPermissionListView(ListView):
-    """List all user's permissions"""
-
-    def get_queryset(self) -> QuerySet[Any]:
-        self.queryset = TablePermission.object.filter()
-        return super().get_queryset()

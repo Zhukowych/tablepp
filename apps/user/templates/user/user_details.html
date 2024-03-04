@@ -6,6 +6,7 @@
 <h1>{{ user.email }}</hi>
 <h1>{{ user.role }}</hi>
 
+<a href="{{ url('update_user', args=[object.pk]) }}">Change user info</a>
 
 <form method="post" action="{{ url('logout') }}">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">

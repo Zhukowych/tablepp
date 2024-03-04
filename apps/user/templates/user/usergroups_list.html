@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock %}
+
+{% block main %}
+<h1>Group</h1>
+<ul>
+{% for group in object_list %}
+    <li><a href="{{ url('edit_group', args=[group.pk]) }}">{{group.name}}</a></li>
+{% else %}
+    <li>No groups yet.</li>
+{% endfor %}
+<a href="{{ url('add_group') }}">Add Group</a>
+</ul>
+
+
+{% endblock %}
