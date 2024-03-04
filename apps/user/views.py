@@ -50,7 +50,7 @@ class AddUserView(CreateView):
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         user = form.save(commit=False)
         print("debug")
-        print(user)
+        print(form.cleaned_data)
         print("debug")
         user.password = make_password(form.cleaned_data["password"])
         user.save()
@@ -118,7 +118,7 @@ class EditUserGroupView(View):
 
     def get(self, request, *args, **kwargs):
 
-        # print(UserGroups.objects.get(id=2))
+        print(request.user.get_groups())
 
         return render(
             request,
