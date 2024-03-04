@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block main %}
+
+<h1>Register</h1>
+<h1>Register</h1>
+    <form method="post">
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        {{ form }}  # Render the form using the default template
+        <button type="submit">Register</button>
+    </form>
+    
+<a href="../">Back to list</a>
+    
+{% endblock %}
