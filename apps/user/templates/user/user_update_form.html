@@ -17,7 +17,8 @@
 <li><a href="{{ url('edit_user_group', args=[object.pk]) }}">Change User groups</a></li>
 <li><a href="{{ url('delete_user', args=[object.pk]) }}">Delete this user</a></li>
 <li><a href="{{ url('user_list') }}">Back to list</a></li>
-<li><a href="{{ url('role_list') }}">Back to list</a></li>
 </ul>
+<a href="{{ url('delete_user', args=[object.pk]) }}">Delete this role</a>
+<a href="{{ url('role_list') }}">Back to list</a></li>
 
 {% endblock %}

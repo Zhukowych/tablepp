@@ -1,9 +1,11 @@
 from typing import Any
+from django.forms import BaseModelForm
 from django.shortcuts import render
 from django.views.generic.detail import DetailView
 from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
@@ -59,6 +61,16 @@ class AddUserView(CreateView):
     model = User
     fields = ["username", "password", "email", "role"]
 
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        user = form.save(commit=False)
+        print("debug")
+        print(user)
+        print("debug")
+        user.password = make_password(form.cleaned_data["password"])
+        user.save()
+
+        return super().form_valid(form)
+
 
 class UpdateUserView(UpdateView):
     model = User
@@ -94,7 +106,6 @@ class GroupListView(ListView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
 
         context = super().get_context_data(**kwargs)
-        print(context)
         return context
 
 
