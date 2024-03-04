@@ -21,3 +21,22 @@ class User(AbstractUser):
 
     def get_absolute_url(self):
         return reverse("user_list")
+    def get_groups(self):
+        return UserGroups.objects.all().filter(users=self)
+
+    def get_absolute_url(self):
+        return reverse("user_list")
+
+
+class UserGroups(models.Model):
+    name = models.CharField(max_length=150, unique=True)
+    users = models.ManyToManyField(User, related_name="user_groups")
+
+    class META:
+        db_name = "user_groups"
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("group_list")
