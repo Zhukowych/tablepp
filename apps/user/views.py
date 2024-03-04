@@ -1,4 +1,5 @@
 from typing import Any
+from django.db.models.query import QuerySet
 from django.shortcuts import render
 from django.views.generic.detail import DetailView
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
@@ -6,7 +7,7 @@ from django.contrib.auth.views import LoginView
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from .models import User, Role
+from .models import User, Role, TablePermission
 
 
 class UserProfileDetailView(DetailView):
@@ -58,3 +59,12 @@ class UpdateRoleView(UpdateView):
 class RoleDeleterView(DeleteView):
     model = Role
     success_url = reverse_lazy("role_list")
+
+
+
+class UserPermissionListView(ListView):
+    """List all user's permissions"""
+
+    def get_queryset(self) -> QuerySet[Any]:
+        self.queryset = TablePermission.object.filter()
+        return super().get_queryset()

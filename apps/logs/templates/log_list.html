@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block head %}
+
+<style>
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+} 
+</style>
+
+{% endblock %}
+
+{% block main %}
+
+<div>
+    <h1>Tables</h1>
+
+    <form method="get">
+        {{ filter.form.as_p() }}
+        <input type="submit" />
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>User</th>
+                <th>ContentType</th>
+                <th>Object</th>
+                <th>Message</th>
+           </tr>
+        </thead>
+        <tbody>
+            {% for object in object_list %}
+                <tr>
+                    <td>{{object.id}}</td>
+                    <td>{{object.user.id}}</td>
+                    <td>{{object.content_type.name}}</td>
+                    <td>{{object.object_id}}</td>
+                    <td>{{object.message}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

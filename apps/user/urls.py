@@ -21,4 +21,7 @@ urlpatterns = [
     path("role/add/", AddRoleView.as_view(), name="add_role"),
     path("role/<int:pk>/edit/", UpdateRoleView.as_view(), name="update_role"),
     path("role/<int:pk>/delete/", RoleDeleterView.as_view(), name="delete_role"),
+    
+    
+    path("<int:pk>/permissions/", UserProfileDetailView.as_view(), name="user_permissions"),
 ]
