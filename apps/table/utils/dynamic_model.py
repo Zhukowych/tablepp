@@ -22,6 +22,5 @@ class DynamicModelFormMixin:
     """Mixin class for ModelForm that uses dynamic model"""
 
 
-
 class DynamicModelFilterSetMixin:
     """Mixin class for FilterSet that works with dynamic model"""

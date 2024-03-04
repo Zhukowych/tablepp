@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.user",
     "apps.table",
+    'apps.logs'
 ]
 
 MIDDLEWARE = [
@@ -67,6 +68,7 @@ TEMPLATES = [
             "apps/core/templates",
             "apps/table/templates",
             "apps/user/templates",
+            "apps/logs/templates"
         ],
         "APP_DIRS": True,
         "OPTIONS": {"environment": "tablepp.jinja2.environment"},
@@ -94,8 +96,13 @@ WSGI_APPLICATION = "tablepp.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "tablepp",
+        "USER": 'root',
+        "PASSWORD": "123",
+        "HOST": "localhost",
+        "PORT": "",
+        "OPTIONS": {}
     }
 }
 
@@ -152,3 +159,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "user.User"
 
 sys.path.append(os.path.join(BASE_DIR, "apps"))
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass

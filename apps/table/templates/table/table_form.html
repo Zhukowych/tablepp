@@ -105,7 +105,7 @@
     function setUp() {
         $("thead.columns_form tr").append('<th>Edit</th>')
         let rows = $("tbody tr.formset_row");
-        for (var i=0; i<rows.length-1; i++){
+        for (var i=0; i<rows.length ; i++){
             rows[i].innerHTML += '<td><a class="edit-column" href="javascript:void(0);">edit settings</a></td>';
         }
     }

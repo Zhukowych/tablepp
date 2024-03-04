@@ -8,6 +8,7 @@ from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from .models import User, Role
 from django.forms import BaseModelForm
+from django.db.models.query import QuerySet
 from django.shortcuts import render
 from django.views.generic.detail import DetailView
 from django.views import View
@@ -18,7 +19,7 @@ from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from .models import User, Role, UserGroups
-from .forms.form import UpdateUserGroupForm
+from .forms.form import UpdateUserGroupForm, TablePermission
 
 
 class UserProfileDetailView(DetailView):
