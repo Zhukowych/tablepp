@@ -22,7 +22,7 @@ from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from .models import User, Role, UserGroups
-from .forms.form import UpdateUserGroupForm, TablePermission
+from .forms.form import UpdateUserGroupForm 
 from .models import User, Role, UserGroups
 from .forms.form import UpdateUserGroupForm
 
