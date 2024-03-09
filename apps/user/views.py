@@ -22,8 +22,8 @@ from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from .models import User, Role, UserGroups
-from .forms.form import UpdateUserGroupForm 
-from .models import User, Role, UserGroups
+from .forms.form import UpdateUserGroupForm, TablePermissionsFilter
+from .models import User, Role, UserGroups, TablePermission
 from .forms.form import UpdateUserGroupForm
 
 
@@ -144,3 +144,31 @@ class EditUserGroupView(View):
 
     def post(self, request, *args, **kwargs):
         return HttpResponse("POST request received!")
+
+
+class UserPermissionListView(ListView):
+    """List all user's TablePermissions"""
+
+    model = TablePermission
+    template_name = "permissions/list.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['filter'] = TablePermissionsFilter(self.request.GET)
+        return context
+
+    def get_queryset(self) -> QuerySet[Any]:
+        self.queryset = TablePermission.objects.filter(user=self.request.user)
+        return super().get_queryset()
+
+
+class UserPermissionCreateView(CreateView):
+    """Create new TablePermission"""
+
+
+class UserPermissionCreateView(CreateView):
+    """Create new TablePermission"""
+
+
+class UserPermissionUpdateView(UpdateView):
+    pass

@@ -18,6 +18,7 @@ class Role(models.Model):
 
 class User(AbstractUser):
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
+    permissions = models.ManyToManyField("TablePermission")
 
     def __str__(self):
         return self.username
@@ -37,6 +38,7 @@ class User(AbstractUser):
 class UserGroups(models.Model):
     name = models.CharField(max_length=150, unique=True)
     users = models.ManyToManyField(User, related_name="user_groups")
+    permissions = models.ManyToManyField("TablePermission")
 
     class META:
         db_name = "user_groups"
@@ -61,9 +63,17 @@ class TablePermission(models.Model):
         WRITE = 1, _("Write")
         DELETE = 2, _("Delete")
 
-    response = models.IntegerField(choices=Type)
+    type = models.IntegerField(choices=Type, null=True)
     operation = models.IntegerField(choices=Operation)
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT, null=True)
     object_id = models.PositiveIntegerField()
     object = GenericForeignKey("content_type", "object_id")
 
+    @property
+    def target_name(self) -> str:
+        """Return name of target object (Table or Column)"""
+        if self.content_type.model == "table":
+            return _("Table")
+        elif self.content_type.model == "column":
+            return _("Column")
+        raise ValueError("Permission cannot be applied to other models")

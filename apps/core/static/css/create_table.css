@@ -1,0 +1,51 @@
+button {
+    font-size: 14px;
+    height: 40px;
+    border-radius: 7px;
+  }
+  
+  .transparent {
+    background-color: transparent;
+    border: #3330a2;
+    color: #3330a2;
+    border-width: 2px;
+    border-style: solid;
+    margin-left: 5px;
+  }
+  
+  .transparent:hover {
+    color: #ffffff;
+  }
+  
+  .transparent-small {
+    background-color: #d5daff;
+    height: 22px;
+    border: #3330a2;
+    border-radius: 3px;
+    border-width: 1px;
+    border-style: solid;
+    color: #3330a2;
+    font-size: 10px;
+    font-weight: medium;
+  }
+  
+  .transparent-small:hover {
+    color: #ffffff;
+  }
+  
+  .img-button {
+    background-color: transparent;
+  }
+  
+  .img-button:hover {
+    background-color: transparent;
+    color: transparent;
+  }
+  
+  .add-column {
+    margin-top: 20px;
+  }
+  
+  .columns {
+    margin-top: 20px;
+  }

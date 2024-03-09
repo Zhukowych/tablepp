@@ -9,6 +9,8 @@
 {% endfor %}    
 
 <script src="{{ static('js/jquery.formset.js') }}"></script> 
+<link href="{{ static('create_table.css') }}" rel="stylesheet">
+
 {% endblock %}
 
 {% block main %}
@@ -49,9 +51,9 @@
 <div class="col-md-4">
     <form action="" method="post">
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        <h1>Create a table</h1>
         {{ form.as_p() }}
-
-        <table class="table">
+        <table>
             {{ columns_form.management_form }}
             {% set cycling_list = cycler('row1', 'row2') %}
             {% for form in columns_form.forms %}
@@ -83,7 +85,11 @@
                 </tr>
             {% endfor %}
         </table>
-        <input type="submit" value="Save"/> <a href="{{ url('table-list') }}">back to the list</a>
+
+        <button type="submit">Save</button>
+        <a href="{{ url('table-list') }}">
+            <button>Back to the list</button>
+        </a>
     </form>
 
     <div class="column-setting-forms" hidden>
@@ -162,7 +168,6 @@
 
     $(document).ready(function(){
         setUp();
-        
     });
 
 </script>
