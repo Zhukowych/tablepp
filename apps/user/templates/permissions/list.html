@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block head %}
+<script src="{{ static('js/jquery.formset.js') }}"></script> 
+<style>
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+} 
+</style>
+
+{% endblock %}
+
+{% block main %}
+
+<div>
+    <h1>Tables</h1>
+
+    <form method="get">
+        {{ filter.form.as_p() }}
+        <input type="submit" />
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Target</th>
+                <th>Object</th>
+                <th>Type</th>
+                <th>Operation</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for object in object_list %}
+                <tr>
+                    <td>{{object.id}}</td>
+                    <td>{{object.target_name}}</td>
+                    <td>{{object.object}}</td>
+                    <td>{{object.type}}</td>
+                    <td>{{object.operation}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

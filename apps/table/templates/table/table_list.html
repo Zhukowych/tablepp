@@ -6,6 +6,7 @@
 {% block main %}
 <h1>Tables</h1>
 <ul>
+
 {% for table in object_list %}
     <li><a href="{{ url('table-edit', args=[table.id]) }}">{{table.name}}</a> </li>
 {% else %}
