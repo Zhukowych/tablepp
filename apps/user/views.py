@@ -6,6 +6,7 @@ from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.hashers import make_password
+from django.db import transaction
 from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
@@ -172,18 +173,49 @@ class PermissionUpdateView(UpdateView):
     pk_url_kwarg = "permission_id"
 
 
-class UserPermissionsEditView(UpdateView):
-    """Edit user's permissions"""
+class PermissionSaveMixin:
+    """Permission save mixin"""
 
+    def form_valid(self, form):
+        """Save permissions"""
+        context = self.get_context_data()
+        permission_form = context['permissions_form']
+        with transaction.atomic():
+            self.object = form.save()
+            permissions = []
+            for permission_form in permission_form.forms:
+                if permission_form.is_valid():
+                    permissions.append(permission_form.save())
+            self.object.permissions.set(permissions)
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['permissions_form'] = TablePermissionFormSet(self.request.POST or None,
+                                                             queryset=self.object.permissions.all())
+        return context
+
+
+class UserPermissionsEditView(PermissionSaveMixin, UpdateView):
+    """Edit user's permissions"""
     model = User
     fields = []
     template_name = "permissions/user_form.html"
     pk_url_kwarg = "user_id"
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context['permissions_form'] = TablePermissionFormSet(self.request.POST or None)
-        return context
+    def get_success_url(self) -> str:
+        return reverse("permission_user_grant", args=[self.object.id])
+
+
+class UserGroupPermissionEditView(PermissionSaveMixin, UpdateView):
+    """Edit group's permissions"""
+    model = UserGroups
+    fields = []
+    template_name = "permissions/user_form.html"
+    pk_url_kwarg = "user_group_id"
+
+    def get_success_url(self) -> str:
+        return reverse("permission_group_grant", args=[self.object.id])
 
 class UserPermissionDeleteView(DeleteView):
     """Delete TablePermission view"""

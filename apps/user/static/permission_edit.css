@@ -1,0 +1,17 @@
+td select {
+    height: 40px;
+    width: 150px;
+    vertical-align: top;
+    line-height: 40px;
+}
+
+td span input[type=text] {
+    height: 40px;
+    width: 250px; 
+    vertical-align: top;
+}
+
+p.help {
+    display: none;
+}
+

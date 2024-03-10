@@ -1,37 +1,89 @@
-{% extends "base.html" %}
 
-{% block head %}
-    {{form.media}}
-{% endblock %}
-
-{% block main %}
-
-
+<div class="col-md-4">
     <form action="" method="post">
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-        <h1>Add permission</h1>
-        {{form.errors}}
-        {{ form }}
+
+        <table>
+            {% set cycling_list = cycler('row1', 'row2') %}
+            {% for form in permissions_form.forms %}
+                {% if loop.first %}
+                    <thead class="permission_form">
+                        <tr>
+                            <th>Response</th>
+                            <th>Operation</th>
+                            <th>Content Type</th>
+                            <th>Object</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                {% endif %}
+
+                <tr class="{{ cycling_list.next() }} formset_row">
+                    <td>
+                        {# Include the hidden fields in the form #}
+                        {% for hidden in form.hidden_fields() %}
+                            {{ hidden }}
+                        {% endfor %}
+                        
+                        {{ form.type }}
+                    </td>
+                    <td>
+                        {{ form.operation }}
+                    </td>
+                    <td class="content_type">
+                        {{ form.content_type }}
+                    </td>
+                    <td>
+                        <div class="table-search">
+                            {{ form.table }}
+                        </div>
+                        <div class="column-search">
+                            {{ form.column }}
+                        </div>
+                    </td>
+                    <td></td>
+                 </tr>
+            {% endfor %}
+
+            {{ permissions_form.management_form }}
+        </table>
+
         <button type="submit">Save</button>
+        <a href="{{ url('permission_list') }}">
+            <button>Back to the list</button>
+        </a>
     </form>
+    
+</div>
+<script type="text/javascript">
+    
+    $('.formset_row').formset({
+        addText: 'add permission',
+        deleteText: 'remove',
+        editText: "edit",
+        prefix: "form"
+    });
 
-    <script type="text/javascript">
+    function toggle_object_selection(tr) {
+        let content_type_select = tr.find("td.content_type select");
+        console.log(content_type_select.val());
+        if (content_type_select.val() == "10") {
+            tr.find("div.column-search").show();     
+            tr.find("div.table-search").hide();
+        } else {
+            tr.find("div.column-search").hide();     
+            tr.find("div.table-search").show();
+        }
+    }
+    
+    $(document).ready(function(){
+        $("tr.formset_row").each(function(){
+            toggle_object_selection($(this));
+        });
+    })
         
-        $(document).ready(function(){
-            $("span#id_column_wrapper").parent().hide();
-        });
 
-        $('select#id_content_type').on('change', function() {
-            console.log(this.value);
-            if (this.value == "10") {
-                $('span#id_column_wrapper').parent().show();     
-                $('span#id_table_wrapper').parent().hide();     
-            } else {
-                $('span#id_column_wrapper').parent().hide();     
-                $('span#id_table_wrapper').parent().show();     
-            }
-        });
-
-    </script>
-
-{% endblock %}
+    $('select#id_content_type').on('change', function() {
+        toggle_object_selection($(this).closest('tr'));
+    });
+</script>
