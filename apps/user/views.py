@@ -22,7 +22,7 @@ from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from .models import User, Role, UserGroups
-from .forms.form import UpdateUserGroupForm, TablePermissionsFilter
+from .forms.form import UpdateUserGroupForm, TablePermissionsFilter, TablePermissionForm, TablePermissionFormSet
 from .models import User, Role, UserGroups, TablePermission
 from .forms.form import UpdateUserGroupForm
 
@@ -146,7 +146,7 @@ class EditUserGroupView(View):
         return HttpResponse("POST request received!")
 
 
-class UserPermissionListView(ListView):
+class PermissionListView(ListView):
     """List all user's TablePermissions"""
 
     model = TablePermission
@@ -157,18 +157,34 @@ class UserPermissionListView(ListView):
         context['filter'] = TablePermissionsFilter(self.request.GET)
         return context
 
-    def get_queryset(self) -> QuerySet[Any]:
-        self.queryset = TablePermission.objects.filter(user=self.request.user)
-        return super().get_queryset()
 
-
-class UserPermissionCreateView(CreateView):
+class PermissionCreateView(CreateView):
     """Create new TablePermission"""
+    model = TablePermission
+    form_class = TablePermissionForm
+    template_name = "permissions/form.html"
 
-
-class UserPermissionCreateView(CreateView):
+class PermissionUpdateView(UpdateView):
     """Create new TablePermission"""
+    model = TablePermission
+    form_class = TablePermissionForm
+    template_name = "permissions/form.html"
+    pk_url_kwarg = "permission_id"
 
 
-class UserPermissionUpdateView(UpdateView):
+class UserPermissionsEditView(UpdateView):
+    """Edit user's permissions"""
+
+    model = User
+    fields = []
+    template_name = "permissions/user_form.html"
+    pk_url_kwarg = "user_id"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['permissions_form'] = TablePermissionFormSet(self.request.POST or None)
+        return context
+
+class UserPermissionDeleteView(DeleteView):
+    """Delete TablePermission view"""
     pass

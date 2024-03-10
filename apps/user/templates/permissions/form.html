@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {{form.media}}
+{% endblock %}
+
+{% block main %}
+
+
+    <form action="" method="post">
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        <h1>Add permission</h1>
+        {{form.errors}}
+        {{ form }}
+        <button type="submit">Save</button>
+    </form>
+
+    <script type="text/javascript">
+        
+        $(document).ready(function(){
+            $("span#id_column_wrapper").parent().hide();
+        });
+
+        $('select#id_content_type').on('change', function() {
+            console.log(this.value);
+            if (this.value == "10") {
+                $('span#id_column_wrapper').parent().show();     
+                $('span#id_table_wrapper').parent().hide();     
+            } else {
+                $('span#id_column_wrapper').parent().hide();     
+                $('span#id_table_wrapper').parent().show();     
+            }
+        });
+
+    </script>
+
+{% endblock %}

@@ -41,6 +41,14 @@ class Table(models.Model):
             self.slug = "talbe_" + hashlib.md5(str(code).encode())\
                         .hexdigest()
 
+    def __str__(self) -> str:
+        """Return a string representation of Table"""
+        return repr(self)
+
+    def __repr__(self) -> str:
+        """Return a string representation of Table"""
+        return f"Table(name={self.name})"
+
     def get_absolute_url(self) -> str:
         """Return url to Table edit page"""
         return reverse('table-edit', kwargs={'table_id': self.id})
@@ -171,6 +179,10 @@ class Column(models.Model):
                         .hexdigest()
 
         self.handler = self.HANDLERS[self.dtype](self.name, self.slug, self.settings)
+
+    def __repr__(self) -> str:
+        """Return a string representation of Column"""
+        return f"Column(name={self.name})"
 
     def get_django_model_field(self) -> Type[models.Field]:
         """

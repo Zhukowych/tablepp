@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.user",
     "apps.table",
-    'apps.logs'
+    'apps.logs',
+    'ajax_select'
 ]
 
 MIDDLEWARE = [
@@ -124,6 +125,7 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
 
 
 # Internationalization

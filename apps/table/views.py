@@ -38,10 +38,8 @@ class SaveTableMixin:
         """Do action when create form is valid"""
         context = self.get_context_data()
         columns_form = context['columns_form']
-        print(form.errors)
         with transaction.atomic():
             self.object = form.save()
-            print(columns_form.errors)
             columns_form.instance = self.object
             for column_form in columns_form.forms:
                 if column_form.is_valid():
@@ -51,7 +49,6 @@ class SaveTableMixin:
 
 
     def form_invalid(self, form):
-        print(form.errors)
         return super().form_invalid(form)
 
 

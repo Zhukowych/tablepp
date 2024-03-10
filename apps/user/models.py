@@ -35,6 +35,7 @@ class User(AbstractUser):
     def get_absolute_url(self):
         return reverse("user_list")
 
+
 class UserGroups(models.Model):
     name = models.CharField(max_length=150, unique=True)
     users = models.ManyToManyField(User, related_name="user_groups")
@@ -48,6 +49,7 @@ class UserGroups(models.Model):
 
     def get_absolute_url(self):
         return reverse("group_list")
+
 
 class TablePermission(models.Model):
     """Permission model"""
@@ -77,3 +79,7 @@ class TablePermission(models.Model):
         elif self.content_type.model == "column":
             return _("Column")
         raise ValueError("Permission cannot be applied to other models")
+
+    def get_absolute_url(self) -> str:
+        """Return url to object's page"""
+        return reverse("permission_edit", args=[self.id])
