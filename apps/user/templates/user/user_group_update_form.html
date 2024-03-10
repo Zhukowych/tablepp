@@ -12,7 +12,7 @@
             <tr >
                 <td style = "border: 1px solid black;">{{ group.pk }}</td>
                 <td style = "border: 1px solid black;">{{ group.name }}</td>
-                <td><a href="">Delete from this group</a></td>
+                <td><a href="{{ url('delete_user_from_group', args=[object.pk, group.pk]) }}">Delete from this group</a></td>
             </tr>
         {% endfor %}
     </table>

@@ -149,6 +149,18 @@ class EditUserGroupView(UpdateView):
         return super().form_valid(form)
 
 
+class DeleteUserFromGroupView(DeleteView):
+    model = User
+    success_url = reverse_lazy("group_list")
+
+    def post(self, request, *args, **kwargs):
+        user = User.objects.get(pk=kwargs["pk"])
+        group_to_remove_from = UserGroups.objects.get(pk=kwargs["group_pk"])
+        group_to_remove_from.users.remove(user)
+
+        return super().post(request, *args, **kwargs)
+
+
 class PermissionListView(ListView):
     """List all user's TablePermissions"""
 
