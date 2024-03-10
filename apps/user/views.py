@@ -136,8 +136,8 @@ class EditUserGroupView(UpdateView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["groups"] = self.request.user.get_groups_to_add()
-        return super().get_context_data(**kwargs)
+        context["groups"] = self.object.get_groups()
+        return context
 
     def form_valid(self, form):
         group_id = self.request.POST.get("group")
