@@ -1,11 +1,37 @@
 {% extends "base.html" %}
 
-{% block  head %}
+{% block head %}
+    {{form.media}}
 {% endblock %}
 
 {% block main %}
 
-<h1>{{ request.user.groups }}</h1>
 
+    <form action="" method="post">
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        <h1>Add group</h1>
+        {{form.errors}}
+        {{ form }}
+        <button type="submit" value="update">Save</button>
+    </form>
+
+    <script type="text/javascript">
+        
+        $(document).ready(function(){
+            $("span#id_column_wrapper").parent().hide();
+        });
+
+        $('select#id_content_type').on('change', function() {
+            console.log(this.value);
+            if (this.value == "10") {
+                $('span#id_column_wrapper').parent().show();     
+                $('span#id_table_wrapper').parent().hide();     
+            } else {
+                $('span#id_column_wrapper').parent().hide();     
+                $('span#id_table_wrapper').parent().show();     
+            }
+        });
+
+    </script>
 
 {% endblock %}

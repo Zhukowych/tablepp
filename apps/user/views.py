@@ -22,7 +22,12 @@ from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from .models import User, Role, UserGroups
-from .forms.form import UpdateUserGroupForm, TablePermissionsFilter, TablePermissionForm, TablePermissionFormSet
+from .forms.form import (
+    UpdateUserGroupForm,
+    TablePermissionsFilter,
+    TablePermissionForm,
+    TablePermissionFormSet,
+)
 from .models import User, Role, UserGroups, TablePermission
 from .forms.form import UpdateUserGroupForm
 
@@ -63,9 +68,6 @@ class AddUserView(CreateView):
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         user = form.save(commit=False)
-        print("debug")
-        print(form.cleaned_data)
-        print("debug")
         user.password = make_password(form.cleaned_data["password"])
         user.save()
 
@@ -125,25 +127,26 @@ class DeleteGroupView(DeleteView):
     success_url = reverse_lazy("group_list")
 
 
-class EditUserGroupView(View):
+class EditUserGroupView(UpdateView):
 
+    model = User
     form_class = UpdateUserGroupForm
     template_name = "user/user_group_update_form.html"
+    pk_url_kwarg = "pk"
 
-    def get(self, request, *args, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["groups"] = self.request.user.get_groups_to_add()
+        return super().get_context_data(**kwargs)
 
-        print(request.user.get_groups())
-        # print(UserGroups.objects.get(id=2))
-        print(request.user.get_groups())
+    def form_valid(self, form):
+        group_id = self.request.POST.get("group")
+        group_to_add = UserGroups.objects.get(id=int(group_id))
+        edited_user = self.object
 
-        return render(
-            request,
-            self.template_name,
-            context={"message": "Fuck you, bitch", "object": User},
-        )
+        group_to_add.users.add(edited_user)
 
-    def post(self, request, *args, **kwargs):
-        return HttpResponse("POST request received!")
+        return super().form_valid(form)
 
 
 class PermissionListView(ListView):
@@ -154,18 +157,21 @@ class PermissionListView(ListView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context['filter'] = TablePermissionsFilter(self.request.GET)
+        context["filter"] = TablePermissionsFilter(self.request.GET)
         return context
 
 
 class PermissionCreateView(CreateView):
     """Create new TablePermission"""
+
     model = TablePermission
     form_class = TablePermissionForm
     template_name = "permissions/form.html"
 
+
 class PermissionUpdateView(UpdateView):
     """Create new TablePermission"""
+
     model = TablePermission
     form_class = TablePermissionForm
     template_name = "permissions/form.html"
@@ -182,9 +188,11 @@ class UserPermissionsEditView(UpdateView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context['permissions_form'] = TablePermissionFormSet(self.request.POST or None)
+        context["permissions_form"] = TablePermissionFormSet(self.request.POST or None)
         return context
+
 
 class UserPermissionDeleteView(DeleteView):
     """Delete TablePermission view"""
+
     pass
