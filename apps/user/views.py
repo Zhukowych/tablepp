@@ -1,18 +1,18 @@
 from typing import Any
 from django.forms import BaseModelForm
-from django.shortcuts import render
 from django.views.generic.detail import DetailView
-from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.hashers import make_password
-from django.http import HttpResponse
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from .models import User, Role
+from core.utils import IsUserAdminMixin
 from django.forms import BaseModelForm
 from django.db.models.query import QuerySet
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic.detail import DetailView
 from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
@@ -80,7 +80,7 @@ class UpdateUserView(UpdateView):
     template_name_suffix = "_update_form"
 
 
-class UserDeleteView(DeleteView):
+class UserDeleteView(IsUserAdminMixin, DeleteView):
     model = User
     success_url = reverse_lazy("user_list")
 
@@ -96,7 +96,7 @@ class UpdateRoleView(UpdateView):
     template_name_suffix = "_update_form"
 
 
-class RoleDeleterView(DeleteView):
+class RoleDeleterView(IsUserAdminMixin, DeleteView):
     model = Role
     success_url = reverse_lazy("role_list")
 
@@ -122,7 +122,7 @@ class UpdateGroupView(UpdateView):
     template_name_suffix = "_update_form"
 
 
-class DeleteGroupView(DeleteView):
+class DeleteGroupView(IsUserAdminMixin, DeleteView):
     model = UserGroups
     success_url = reverse_lazy("group_list")
 
@@ -139,6 +139,9 @@ class EditUserGroupView(UpdateView):
         context["groups"] = self.object.get_groups()
         return context
 
+    def get_success_url(self) -> str:
+        return reverse("edit_user_group", kwargs={"pk": self.object.pk})
+
     def form_valid(self, form):
         group_id = self.request.POST.get("group")
         group_to_add = UserGroups.objects.get(id=int(group_id))
@@ -149,9 +152,9 @@ class EditUserGroupView(UpdateView):
         return super().form_valid(form)
 
 
-class DeleteUserFromGroupView(DeleteView):
+class DeleteUserFromGroupView(IsUserAdminMixin, DeleteView):
     model = User
-    success_url = reverse_lazy("group_list")
+    success_url = reverse_lazy("edit_user_group")
 
     def post(self, request, *args, **kwargs):
         user = User.objects.get(pk=kwargs["pk"])
@@ -159,6 +162,13 @@ class DeleteUserFromGroupView(DeleteView):
         group_to_remove_from.users.remove(user)
 
         return super().post(request, *args, **kwargs)
+
+    def get_success_url(self) -> str:
+        return reverse("edit_user_group", kwargs={"pk": self.object.pk})
+
+    def form_valid(self, form):
+        success_url = self.get_success_url()
+        return HttpResponseRedirect(success_url)
 
 
 class PermissionListView(ListView):
@@ -202,6 +212,9 @@ class UserPermissionsEditView(UpdateView):
         context = super().get_context_data(**kwargs)
         context["permissions_form"] = TablePermissionFormSet(self.request.POST or None)
         return context
+
+    def get_success_url(self) -> str:
+        return reverse("edit_user_group")
 
 
 class UserPermissionDeleteView(DeleteView):

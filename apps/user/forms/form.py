@@ -81,3 +81,13 @@ class TablePermissionForm(forms.ModelForm):
 TablePermissionFormSet = modelformset_factory(
     model=TablePermission, form=TablePermissionForm
 )
+
+
+
+
+
+
+
+
+
+
