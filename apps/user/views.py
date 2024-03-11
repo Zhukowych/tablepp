@@ -23,7 +23,7 @@ from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from .models import User, Role, UserGroups
-from .forms.form import UpdateUserGroupForm, TablePermissionsFilter, TablePermissionForm, TablePermissionFormSet
+from .forms.form import UpdateUserGroupForm, TablePermissionsFilter, TablePermissionForm, TablePermissionFormSet, UserForm
 from .models import User, Role, UserGroups, TablePermission
 from .forms.form import UpdateUserGroupForm
 
@@ -60,7 +60,7 @@ class RoleListView(ListView):
 
 class AddUserView(CreateView):
     model = User
-    fields = ["username", "password", "email", "role"]
+    form_class = UserForm
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         user = form.save(commit=False)
@@ -75,7 +75,7 @@ class AddUserView(CreateView):
 
 class UpdateUserView(UpdateView):
     model = User
-    fields = ["username", "password", "email", "role"]
+    form_class = UserForm
     template_name_suffix = "_update_form"
 
 

@@ -28,6 +28,7 @@ class TableListView(ListView):
     model = Table
     paginate_by = 10
 
+
 class SaveTableMixin:
     """
     Mixin for saving Table object in 
@@ -38,21 +39,26 @@ class SaveTableMixin:
         """Do action when create form is valid"""
         context = self.get_context_data()
         columns_form = context['columns_form']
+
+        if any( error for error in columns_form.errors[:-1]):
+            return self.form_invalid(form)
         with transaction.atomic():
-            self.object = form.save()
+            self.object = form.save(commit=True)
             columns_form.instance = self.object
             for column_form in columns_form.forms:
                 if column_form.is_valid():
-                    column_form.save()
+                    column = column_form.save(commit=False)
+                    column.table = self.object
+                    column.save()
         migrate()
         return super().form_valid(form)
 
-
     def form_invalid(self, form):
+        """If form is not valid"""
         return super().form_invalid(form)
 
 
-class TableCreateView(CreateView, SaveTableMixin):
+class TableCreateView(SaveTableMixin, CreateView):
     """Edit dynamic table"""
     model = Table
     fields = ['name', 'description']
@@ -80,6 +86,14 @@ class TableUpdateView(SaveTableMixin, UpdateView):
         context['dtypes'] = Column.HANDLERS
         return context
 
+
+class HasPermissionMixin:
+    """Check if user has permissions to do action"""
+
+    operation = None
+
+    def dispatch(self, request, *args, **kwargs):
+        super().dispatch(request, *args, **kwargs)
 
 class TableObjectListView(ListView):
     """List objects added to table"""

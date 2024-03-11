@@ -7,12 +7,29 @@ from django import forms
 from django.forms import modelformset_factory
 from django.contrib.contenttypes.models import ContentType
 from ajax_select.fields import AutoCompleteSelectWidget, AutoCompleteSelectField
+from apps.core.forms import BaseModelForm
 from user.models import TablePermission, User
 
 
 class UpdateUserGroupForm(forms.Form):
     name = forms.CharField()
     group_select = forms.ModelChoiceField(queryset=None)
+
+
+class UserForm(BaseModelForm):
+    """UserForm"""
+
+    class Meta:
+        model = User
+        fields = ["username",
+                "password",
+                "email", 
+                "first_name", 
+                "last_name", 
+                "email",
+                "role"]
+
+    password = forms.CharField(widget=forms.PasswordInput())
 
 
 PERMITTABLE_CONTENT_TYPES = ContentType.objects.filter(model__in=['table', 'column']).order_by('model')

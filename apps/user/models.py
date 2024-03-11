@@ -1,3 +1,4 @@
+from __future__ import annotations
 from django.db import models
 from django.urls import reverse
 from django.contrib.contenttypes.models import ContentType
@@ -35,6 +36,19 @@ class User(AbstractUser):
     def get_absolute_url(self):
         return reverse("user_list")
 
+    def has_permission(self, operation: TablePermission.Type, object) -> bool:
+        """Return has permission of that operation with accept status"""
+        permissions = self.permissions.filter(object=object, operation=operation)
+        if permissions.exists():
+            return permissions.first().accept
+
+        group_permissions = [ group.permissions for group in self.user_groups ]
+
+        for group_permission in group_permissions:
+            if group_permission.exists():
+                return group_permission.first().accept
+
+        return False
 
 class UserGroups(models.Model):
     name = models.CharField(max_length=150, unique=True)
@@ -79,6 +93,11 @@ class TablePermission(models.Model):
         elif self.content_type.model == "column":
             return _("Column")
         raise ValueError("Permission cannot be applied to other models")
+
+    @property
+    def accept(self) -> bool:
+        """Return True if permission is of accept type"""
+        return True if self.type == TablePermission.Type.ACCEPT else False
 
     def get_absolute_url(self) -> str:
         """Return url to object's page"""

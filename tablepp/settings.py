@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "apps.user",
     "apps.table",
     'apps.logs',
-    'ajax_select'
+    'ajax_select',
 ]
 
 MIDDLEWARE = [
@@ -60,7 +60,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "tablepp.urls"
 
-AUTH_USER_MODEL = "user.User" 
+AUTH_USER_MODEL = "user.User"
 
 TEMPLATES = [
     {
@@ -72,7 +72,16 @@ TEMPLATES = [
             "apps/logs/templates"
         ],
         "APP_DIRS": True,
-        "OPTIONS": {"environment": "tablepp.jinja2.environment"},
+        "OPTIONS": {
+            "environment": "tablepp.jinja2.environment",
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                'apps.core.context_processors.variables'
+            ],  
+        },
     },
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -84,6 +93,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'apps.core.context_processors.variables'
             ],
         },
     },

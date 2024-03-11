@@ -7,8 +7,23 @@
     {{ handler.get_settings_form().media }}
 {% endfor %}    
 
-<script src="{{ static('js/jquery.formset.js') }}"></script> 
 <link href="{{ static('create_table.css') }}" rel="stylesheet">
+
+<script src="{{ static('js/jquery.formset.js') }}"></script> 
+
+<style type="text/css">
+
+table {
+    border: 2px solid #512FD9;
+}
+
+table, tr {  
+    border: 1px solid #512FD9;
+    border-left: none; border-right: none;
+    border-collapse: collapse; 
+}
+
+</style>
 
 {% endblock %}
 
@@ -48,21 +63,27 @@
 </script>
 
 <div class="col-md-4">
+    <h1>Create a table</h1>
     <form action="" method="post">
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-        <h1>Create a table</h1>
-        {{ form.as_p() }}
+        <div class="input-container">
+            <input name="{{ form.name.name }}" type="text" class="input-field" placeholder="Table title">    
+        </div>
+        <textarea name="{{form.description.name}}"
+                  type="text" class="input-field"
+                  placeholder="Description">
+        </textarea>
         <table>
             {{ columns_form.management_form }}
             {% set cycling_list = cycler('row1', 'row2') %}
             {% for form in columns_form.forms %}
                 {% if loop.first %}
                     <thead class="columns_form">
-                    <tr>
-                        {% for field in form.visible_fields() %}
-                            <th>{{ field.label }}</th>
-                        {% endfor %}
-                    </tr>
+                        <tr>
+                            {% for field in form.visible_fields() %}
+                                <th>{{ field.label }}</th>
+                            {% endfor %}
+                        </tr>
                     </thead>
                 {% endif %}
                 <tr class="{{ cycling_list.next() }} formset_row">
@@ -84,10 +105,10 @@
                 </tr>
             {% endfor %}
         </table>
+        <button class="create-table-btn" type="submit">Save</button>
 
-        <button type="submit">Save</button>
         <a href="{{ url('table-list') }}">
-            <button>Back to the list</button>
+            <button class="cancel-btn" type="button">Back to the list</button>
         </a>
     </form>
 
@@ -102,12 +123,12 @@
             </div>
         {% endfor %}
     </div>
-
-
 </div>
+
 <script type="text/javascript">
 
     function setUp() {
+        $("input").addClass("input-field");
         $("thead.columns_form tr").append('<th>Edit</th>')
         let rows = $("tbody tr.formset_row");
         for (var i=0; i<rows.length ; i++){
@@ -158,16 +179,23 @@
             save_column_settings(event);
     });
     
+    function added_new_form(row) {
+        row.find("td input[id*=-settings]").val("{}");
+    }
+
+
     $('.formset_row').formset({
             addText: 'add column',
             deleteText: 'remove',
             editText: "edit",
-            prefix: 'column_set'
+            prefix: 'columns',
+            added: added_new_form 
         });
 
-    $(document).ready(function(){
+    $(document).ready(function(){        
         setUp();
     });
 
 </script>
+
 {% endblock %}
