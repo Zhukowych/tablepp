@@ -27,11 +27,8 @@ class User(AbstractUser):
     def get_groups(self):
         return UserGroups.objects.all().filter(users=self)
 
-    def get_absolute_url(self):
-        return reverse("user_list")
-
-    def get_groups(self):
-        return UserGroups.objects.all().filter(users=self)
+    def get_groups_to_add(self):
+        return UserGroups.objects.all().exclude(users=self)
 
     def get_absolute_url(self):
         return reverse("user_list")
@@ -70,11 +67,13 @@ class TablePermission(models.Model):
 
     class Type(models.IntegerChoices):
         """Response of permissions"""
+
         ACCEPT = 0, _("Accept")
         REJECT = 1, _("Reject")
 
     class Operation(models.IntegerChoices):
-        """Type of permission"""      
+        """Type of permission"""
+
         READ = 0, _("Read")
         WRITE = 1, _("Write")
         DELETE = 2, _("Delete")

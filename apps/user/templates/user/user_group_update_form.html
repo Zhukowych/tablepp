@@ -1,11 +1,30 @@
 {% extends "base.html" %}
 
-{% block  head %}
+{% block head %}
+    {{form.media}}
 {% endblock %}
 
 {% block main %}
 
-<h1>{{ request.user.groups }}</h1>
+    <table>
 
+        {% for group in groups %}
+            <tr >
+                <td style = "border: 1px solid black;">{{ group.pk }}</td>
+                <td style = "border: 1px solid black;">{{ group.name }}</td>
+                <td><a href="{{ url('delete_user_from_group', args=[object.pk, group.pk]) }}">Delete from this group</a></td>
+            </tr>
+        {% endfor %}
+    </table>
 
+    <form action="" method="post">
+
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        <h1>Add group</h1>
+        {{form.errors}}
+        {{ form }}
+        <button type="submit" value="update">Save</button>
+    </form>
+
+    
 {% endblock %}

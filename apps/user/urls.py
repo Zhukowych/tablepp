@@ -15,7 +15,7 @@ from .views import (
     UpdateGroupView,
     DeleteGroupView,
     EditUserGroupView,
-
+    DeleteUserFromGroupView,
     PermissionListView,
     UserPermissionsEditView,
     UserGroupPermissionEditView
@@ -45,7 +45,11 @@ urlpatterns = [
     path("groups/<int:pk>/edit/", UpdateGroupView.as_view(), name="edit_group"),
     path("groups/<int:pk>/delete/", DeleteGroupView.as_view(), name="delete_group"),
     path("<int:pk>/edit/groups/", EditUserGroupView.as_view(), name="edit_user_group"),
-
+    path(
+        "<int:pk>/edit/groups/<int:group_pk>/delete/",
+        DeleteUserFromGroupView.as_view(),
+        name="delete_user_from_group",
+    ),
     path("permissions/", PermissionListView.as_view(), name="permission_list"),
     path("<int:user_id>/permissions/", UserPermissionsEditView.as_view(),
                                              name="permission_user_grant"),
