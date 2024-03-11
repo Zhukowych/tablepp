@@ -7,12 +7,8 @@ from django import forms
 from django.forms import modelformset_factory
 from django.contrib.contenttypes.models import ContentType
 from ajax_select.fields import AutoCompleteSelectWidget, AutoCompleteSelectField
-<<<<<<< HEAD
 from apps.core.forms import BaseModelForm
-from user.models import TablePermission, User
-=======
 from user.models import TablePermission, User, UserGroups
->>>>>>> origin/user
 
 
 class UpdateUserGroupForm(forms.ModelForm):
