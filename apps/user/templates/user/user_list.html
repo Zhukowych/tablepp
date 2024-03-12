@@ -7,7 +7,7 @@
 <h1>Users</h1>
 <ul>
 {% for user in object_list %}
-    <li><a href="{{ url('user_detail', args=[user.pk]) }}">{{user.username}}</a> </li>
+    <li><a href="{{ url('update_user', args=[user.pk]) }}">{{user.username}}</a> </li>
 {% else %}
     <li>No users yet.</li>
 {% endfor %}

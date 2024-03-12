@@ -33,23 +33,10 @@ from .forms.form import (
     TablePermissionFormSet,
     UserForm,
     GroupForm,
-    RoleForm
+    RoleForm,
 )
 from .models import User, Role, UserGroups, TablePermission
 from .forms.form import UpdateUserGroupForm
-
-
-class UserProfileDetailView(DetailView):
-    """view for user's info"""
-
-    model = User
-    template_name = "user/user_details.html"
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        """get context data"""
-
-        context = super().get_context_data(**kwargs)
-        return context
 
 
 class UserLoginView(LoginView):
@@ -84,6 +71,7 @@ class AddUserView(CreateView):
 
     model = User
     form_class = UserForm
+    template_name_suffix = "_update_form"
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         """hashes new user's password on validation of form"""
@@ -100,6 +88,14 @@ class UpdateUserView(UpdateView):
     model = User
     form_class = UserForm
     template_name_suffix = "_update_form"
+
+    def form_valid(self, form):
+        """hashes password on save"""
+        user = form.save(commit=False)
+        user.password = make_password(form.cleaned_data["password"])
+        user.save()
+
+        return super().form_valid(form)
 
 
 class UserDeleteView(IsUserAdminMixin, DeleteView):
@@ -254,7 +250,7 @@ class PermissionSaveMixin:
     def form_valid(self, form):
         """Save permissions"""
         context = self.get_context_data()
-        permission_form = context['permissions_form']
+        permission_form = context["permissions_form"]
         with transaction.atomic():
             self.object = form.save()
             permissions = []
@@ -266,13 +262,15 @@ class PermissionSaveMixin:
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context['permissions_form'] = TablePermissionFormSet(self.request.POST or None,
-                                                             queryset=self.object.permissions.all())
+        context["permissions_form"] = TablePermissionFormSet(
+            self.request.POST or None, queryset=self.object.permissions.all()
+        )
         return context
 
 
 class UserPermissionsEditView(PermissionSaveMixin, UpdateView):
     """Edit user's permissions"""
+
     model = User
     fields = []
     template_name = "permissions/user_form.html"
@@ -284,6 +282,7 @@ class UserPermissionsEditView(PermissionSaveMixin, UpdateView):
 
 class UserGroupPermissionEditView(PermissionSaveMixin, UpdateView):
     """Edit group's permissions"""
+
     model = UserGroups
     fields = []
     template_name = "permissions/group_form.html"
@@ -291,6 +290,7 @@ class UserGroupPermissionEditView(PermissionSaveMixin, UpdateView):
 
     def get_success_url(self) -> str:
         return reverse("permission_group_grant", args=[self.object.id])
+
 
 class UserPermissionDeleteView(DeleteView):
     """Delete TablePermission view"""

@@ -2,7 +2,6 @@
 
 from django.urls import path, include
 from .views import (
-    UserProfileDetailView,
     UserLoginView,
     UsersListView,
     AddUserView,
@@ -20,12 +19,11 @@ from .views import (
     DeleteUserFromGroupView,
     PermissionListView,
     UserPermissionsEditView,
-    UserGroupPermissionEditView
+    UserGroupPermissionEditView,
 )
 from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
-    path("<int:pk>/", UserProfileDetailView.as_view(), name="user_detail"),
     path("<int:pk>/edit/", UpdateUserView.as_view(), name="update_user"),
     path("<int:pk>/delete/", UserDeleteView.as_view(), name="delete_user"),
     path("login/", UserLoginView.as_view(), name="login_page"),
@@ -53,8 +51,14 @@ urlpatterns = [
         name="delete_user_from_group",
     ),
     path("permissions/", PermissionListView.as_view(), name="permission_list"),
-    path("<int:user_id>/permissions/", UserPermissionsEditView.as_view(),
-                                             name="permission_user_grant"),
-    path("groups/<int:user_group_id>/permissions/", UserGroupPermissionEditView.as_view(),
-                                        name="permission_group_grant"),
+    path(
+        "<int:user_id>/permissions/",
+        UserPermissionsEditView.as_view(),
+        name="permission_user_grant",
+    ),
+    path(
+        "groups/<int:user_group_id>/permissions/",
+        UserGroupPermissionEditView.as_view(),
+        name="permission_group_grant",
+    ),
 ]
