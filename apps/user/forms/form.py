@@ -1,3 +1,5 @@
+"""Forms"""
+
 import django_filters
 from django import forms
 from django.forms import modelformset_factory
@@ -7,6 +9,8 @@ from user.models import TablePermission, User, UserGroups
 
 
 class UpdateUserGroupForm(forms.ModelForm):
+    """Form for updating user's info"""
+
     class Meta:
         """Meta for ModelForm"""
 
@@ -14,8 +18,6 @@ class UpdateUserGroupForm(forms.ModelForm):
         fields = []
 
     group = AutoCompleteSelectField("group_name", required=True)
-
-    # ------------------------------------------------------------
 
 
 PERMITTABLE_CONTENT_TYPES = ContentType.objects.filter(
@@ -81,13 +83,3 @@ class TablePermissionForm(forms.ModelForm):
 TablePermissionFormSet = modelformset_factory(
     model=TablePermission, form=TablePermissionForm
 )
-
-
-
-
-
-
-
-
-
-
