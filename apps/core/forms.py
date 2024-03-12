@@ -10,5 +10,7 @@ class BaseModelForm(ModelForm):
         for visible in self.visible_fields():
             if isinstance(visible.field, forms.ChoiceField):
                 visible.field.widget.attrs['class'] = 'select-input input-field'
-            else: 
+            elif isinstance(visible.field, forms.BooleanField):
+                visible.field.widget.attrs['class'] = 'checkbox-input'
+            else:
                 visible.field.widget.attrs['class'] = 'input-field'

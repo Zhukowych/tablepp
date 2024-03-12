@@ -309,3 +309,21 @@ cursor: pointer;
 /* margin-left: auto; */
 font-weight: 700;
 }
+
+.delete-btn {
+	padding: 10px 20px;
+	background-color: transparent;
+	color: #e44343;
+	border: 1px solid #e44343;
+	border-radius: 5px;
+	cursor: pointer;
+	margin-left: 10px;
+}
+
+.checkbox-input {
+	-ms-transform: scale(1.2); /* IE */
+    -moz-transform: scale(1.2); /* FF */
+    -webkit-transform: scale(1.2); /* Safari and Chrome */
+    -o-transform: scale(1.2); /* Opera */
+    transform: scale(1.2);
+}

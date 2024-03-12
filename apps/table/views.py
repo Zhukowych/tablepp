@@ -9,7 +9,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.db import transaction
 
 from table.models import Table, Column
-from table.forms import ColumnEditForm, ColumnFormSet
+from table.forms import  TableForm, ColumnFormSet
 from apps.table.utils.utils import migrate
 
 
@@ -61,7 +61,7 @@ class SaveTableMixin:
 class TableCreateView(SaveTableMixin, CreateView):
     """Edit dynamic table"""
     model = Table
-    fields = ['name', 'description']
+    form_class = TableForm
     success_url = reverse_lazy('table-list')
 
     def get_context_data(self, **kwargs) -> dict:
@@ -75,7 +75,7 @@ class TableUpdateView(SaveTableMixin, UpdateView):
     """Update Table view"""
 
     model = Table
-    fields = ['name', 'description']
+    form_class = TableForm
     pk_url_kwarg = "table_id"
     template_name_suffix = "_form"
 
