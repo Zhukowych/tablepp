@@ -26,7 +26,9 @@ class UserGroupLookup(LookupChannel):
     model = UserGroups
 
     def get_query(self, q, request):
+        """get's query"""
         return self.model.objects.filter(name__icontains=q).order_by("name")[:50]
 
     def format_item_display(self, item):
+        """formats groups name"""
         return "<span class='tag'>%s</span>" % item.name
