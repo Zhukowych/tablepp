@@ -2,6 +2,7 @@
 from django import forms
 from django.forms import ModelForm
 
+
 class BaseModelForm(ModelForm):
     """Base Model Form"""
 

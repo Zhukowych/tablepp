@@ -12,11 +12,11 @@ import django_filters
 from django.db import models
 from django.db.models import QuerySet
 from django.urls import reverse
-from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 
 from table.utils.column_handlers import IntegerColumnHandler, TextColumnHandler
 from table.utils.dynamic_model import DynamicModelMixin, DynamicModelFormMixin, DynamicModelFilterSetMixin
+from core.forms import BaseModelForm
 
 
 def column_settings_default():
@@ -115,7 +115,7 @@ class Table(models.Model):
         setattr(Meta, "model", self.get_model())
         setattr(Meta, "fields", "__all__")
 
-        model_form = type(f"{self.slug}ModelForm", (ModelForm, DynamicModelFormMixin),
+        model_form = type(f"{self.slug}ModelForm", (BaseModelForm, DynamicModelFormMixin),
                            {'Meta':Meta})
         return model_form
 
@@ -137,7 +137,7 @@ class Table(models.Model):
         setattr(Meta, 'fields', fields_filters)
         print(fields_filters)
         filterset = type(f"table_{self.slug}FilterSet",
-                         (django_filters.FilterSet, DynamicModelFilterSetMixin),
+                         (DynamicModelFilterSetMixin, django_filters.FilterSet),
                          {"Meta": Meta})
 
         return filterset
@@ -196,3 +196,9 @@ class Column(models.Model):
         i.e lte, gte, etc
         """
         return self.handler.get_filters()
+
+    def get_table_formating_class(self) -> str:
+        """
+        Return css class to format this field
+        """
+        return self.handler.get_css_formating_class()

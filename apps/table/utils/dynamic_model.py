@@ -1,6 +1,7 @@
 """Dynamic model"""
 from typing import Any
 from django.urls import reverse
+from django import forms
 
 
 class DynamicModelMixin:
@@ -24,3 +25,13 @@ class DynamicModelFormMixin:
 
 class DynamicModelFilterSetMixin:
     """Mixin class for FilterSet that works with dynamic model"""
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        for visible in self.form.visible_fields():
+            if isinstance(visible.field, forms.ChoiceField):
+                visible.field.widget.attrs['class'] = 'select-input input-field'
+            elif isinstance(visible.field, forms.BooleanField):
+                visible.field.widget.attrs['class'] = 'checkbox-input'
+            else:
+                visible.field.widget.attrs['class'] = 'input-field'

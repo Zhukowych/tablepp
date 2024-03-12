@@ -69,6 +69,7 @@ class TableCreateView(SaveTableMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['columns_form'] = ColumnFormSet(self.request.POST or None)
         context['dtypes'] = Column.HANDLERS
+        context['table'] = self.object 
         return context
 
 class TableUpdateView(SaveTableMixin, UpdateView):
@@ -84,6 +85,7 @@ class TableUpdateView(SaveTableMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context['columns_form'] = ColumnFormSet(self.request.POST or None, instance=self.object)
         context['dtypes'] = Column.HANDLERS
+        context['table'] = self.object
         return context
 
 

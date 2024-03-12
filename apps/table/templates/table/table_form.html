@@ -91,7 +91,14 @@ select {
 </script>
 
 <div class="col-md-4">
-    <h1>Create a table</h1>
+    
+    {% if view_name == "table-add" %}
+        <h1>Create a table</h1>
+    {% else %}
+        {% include "table/table_tabs.html" %}
+        <h1>Edit a table</h1>
+    {% endif %}
+
     <form action="" method="post">
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
         {{ form.name.label_tag() }}<br>
