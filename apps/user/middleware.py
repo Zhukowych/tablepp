@@ -1,3 +1,5 @@
+"""Middleware """
+
 from typing import Any
 
 from django.shortcuts import redirect
@@ -5,6 +7,8 @@ from django.urls import reverse
 
 
 class CheckAuthenticated:
+    """doesn't let unautenticated user's to visit pages"""
+
     def __init__(self, get_response) -> None:
         self.get_response = get_response
 

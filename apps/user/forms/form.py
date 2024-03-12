@@ -1,3 +1,5 @@
+"""Forms"""
+
 from typing import Any, Mapping
 from django.core.files.base import File
 from django.db.models.base import Model
@@ -12,6 +14,8 @@ from user.models import TablePermission, User, UserGroups, Role
 
 
 class UpdateUserGroupForm(BaseModelForm):
+    """Form for updating user's info"""
+
     class Meta:
         """Meta for ModelForm"""
 
@@ -20,21 +24,21 @@ class UpdateUserGroupForm(BaseModelForm):
 
     group = AutoCompleteSelectField("group_name", required=True)
 
-    # ------------------------------------------------------------
-
 
 class UserForm(BaseModelForm):
     """UserForm"""
 
     class Meta:
         model = User
-        fields = ["username",
-                "password",
-                "email", 
-                "first_name", 
-                "last_name", 
-                "email",
-                "role"]
+        fields = [
+            "username",
+            "password",
+            "email",
+            "first_name",
+            "last_name",
+            "email",
+            "role",
+        ]
 
     password = forms.CharField(widget=forms.PasswordInput())
 
@@ -44,8 +48,9 @@ class GroupForm(BaseModelForm):
 
     class Meta:
         """Meta for GroupForm"""
+
         model = UserGroups
-        fields = ['name']
+        fields = ["name"]
 
 
 class RoleForm(BaseModelForm):
@@ -53,11 +58,14 @@ class RoleForm(BaseModelForm):
 
     class Meta:
         """Meta for RoleForm"""
+
         model = Role
-        fields = ['role']
+        fields = ["role"]
 
 
-PERMITTABLE_CONTENT_TYPES = ContentType.objects.filter(model__in=['table', 'column']).order_by('model')
+PERMITTABLE_CONTENT_TYPES = ContentType.objects.filter(
+    model__in=["table", "column"]
+).order_by("model")
 
 
 class TablePermissionsFilter(django_filters.FilterSet):
@@ -93,22 +101,23 @@ class TablePermissionForm(BaseModelForm):
     column = AutoCompleteSelectField("column", required=False)
 
     def __init__(self, *args, instance=None, **kwargs):
-        """Initialize form""" 
+        """Initialize form"""
         super().__init__(*args, instance=instance, **kwargs)
 
         if not self.instance.object:
             return
 
         if self.instance.content_type.model == "table":
-            self.fields['table'].initial = self.instance.object_id
+            self.fields["table"].initial = self.instance.object_id
         else:
-            self.fields['column'].initial = self.instance.object_id
+            self.fields["column"].initial = self.instance.object_id
 
     def clean(self):
         """Check overall form correctness"""
-        if not self.cleaned_data.get('table') and not self.cleaned_data.get('column'):
-            raise forms.ValidationError("You must specify table or column to" + \
-                                        " which to add this permission")
+        if not self.cleaned_data.get("table") and not self.cleaned_data.get("column"):
+            raise forms.ValidationError(
+                "You must specify table or column to" + " which to add this permission"
+            )
 
     def save(self, commit=True):
         """Save created instance"""
