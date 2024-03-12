@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 
 {% block head %}
+
 {% endblock %}
 
 {% block main %}
 <h1>Roles</h1>
 <ul>
 {% for role in object_list %}
-    <li><a href="{{ role.pk }}/edit/">{{role}}</a></li>
+    <li><a href="{{ url('update_role', args=[role.id]) }}">{{role}}</a></li>
 {% else %}
     <li>No roles yet.</li>
 {% endfor %}

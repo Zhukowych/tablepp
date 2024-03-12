@@ -23,6 +23,14 @@ table, tr {
     border-collapse: collapse; 
 }
 
+td .input-field {
+    width: 100%;
+}
+
+select {
+    margin-left: 20px;
+}
+
 </style>
 
 {% endblock %}
@@ -80,26 +88,42 @@ table, tr {
                 {% if loop.first %}
                     <thead class="columns_form">
                         <tr>
-                            {% for field in form.visible_fields() %}
-                                <th>{{ field.label }}</th>
-                            {% endfor %}
+                            <th>{{form.name.label}}</th>
+                            <th>{{form.dtype.label}}</th>
+                            <th>{{form.is_filterable.label}}</th>
+                            <th>{{form.is_displayable.label}}</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
                         </tr>
                     </thead>
                 {% endif %}
                 <tr class="{{ cycling_list.next() }} formset_row">
-                    {% for field in form.visible_fields() %}
-                        <td>
-                            {# Include the hidden fields in the form #}
-                            {% if loop.first %}
-                                {% for hidden in form.hidden_fields() %}
-                                    {{ hidden }}
-                                {% endfor %}
-                            {% endif %}
-                            {{ field.errors.as_ul() }}
-                            {{ field }}
-                        </td>
-                    {% endfor %}
-                        
+
+                    <td>
+                        {% for hidden in form.hidden_fields() %}
+                            {{ hidden }}
+                        {% endfor %}
+                        {{ form.name.errors.as_ul() }}
+                        {{ form.name }}
+                    </td>
+                    <td>
+                        {{ form.dtype.errors.as_ul() }}
+                        {{ form.dtype }}
+                    </td>
+                    <td>
+                        {{ form.is_filterable.errors.as_ul() }}
+                        {{ form.is_filterable }}
+                    </td>
+                    <td>
+                        {{ form.is_displayable.errors.as_ul() }}
+                        {{ form.is_displayable }}
+                    </td>
+                    <td class="button-container">
+                        <a class="edit-column cancel-btn" href="javascript:void(0);">
+                            <i data-feather="edit"></i>
+                        </a>
+                    </td>
+                    <td class="delete-col"></td>
                 </tr>
                 <tr>
                 </tr>
@@ -126,15 +150,6 @@ table, tr {
 </div>
 
 <script type="text/javascript">
-
-    function setUp() {
-        $("input").addClass("input-field");
-        $("thead.columns_form tr").append('<th>Edit</th>')
-        let rows = $("tbody tr.formset_row");
-        for (var i=0; i<rows.length ; i++){
-            rows[i].innerHTML += '<td><a class="edit-column" href="javascript:void(0);">edit settings</a></td>';
-        }
-    }
 
     function is_editing(event) {
         if (event.target.text == "edit settings")
@@ -172,28 +187,36 @@ table, tr {
         toggle_edit_button(event);
     }
 
-    $(document).on('click', '.edit-column', function(event){ 
-        if (is_editing(event))
-            edit_column_settings(event);
-        else
-            save_column_settings(event);
+    $(function(){
+        $(".edit-column").click(function(){
+            if (is_editing(event))
+                edit_column_settings(event);
+            else
+                save_column_settings(event);
+        })
     });
+
+    $(document).on('click', 'svg', function(event){ 
+        console.log(123);
+   });
     
     function added_new_form(row) {
         row.find("td input[id*=-settings]").val("{}");
+        feather.replace();
     }
 
 
     $('.formset_row').formset({
-            addText: 'add column',
-            deleteText: 'remove',
+            addText: '+ Add column',
+            addCssClass: "formset-add-btn",
+            deleteText: '<i data-feather="trash-2"></i>',
+            deleteCssClass: "delete-btn",
             editText: "edit",
             prefix: 'columns',
             added: added_new_form 
         });
 
     $(document).ready(function(){        
-        setUp();
     });
 
 </script>

@@ -8,10 +8,10 @@ from django.forms import modelformset_factory
 from django.contrib.contenttypes.models import ContentType
 from ajax_select.fields import AutoCompleteSelectWidget, AutoCompleteSelectField
 from apps.core.forms import BaseModelForm
-from user.models import TablePermission, User, UserGroups
+from user.models import TablePermission, User, UserGroups, Role
 
 
-class UpdateUserGroupForm(forms.ModelForm):
+class UpdateUserGroupForm(BaseModelForm):
     class Meta:
         """Meta for ModelForm"""
 
@@ -39,6 +39,24 @@ class UserForm(BaseModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
 
 
+class GroupForm(BaseModelForm):
+    """Group model form"""
+
+    class Meta:
+        """Meta for GroupForm"""
+        model = UserGroups
+        fields = ['name']
+
+
+class RoleForm(BaseModelForm):
+    """Role form"""
+
+    class Meta:
+        """Meta for RoleForm"""
+        model = Role
+        fields = ['role']
+
+
 PERMITTABLE_CONTENT_TYPES = ContentType.objects.filter(model__in=['table', 'column']).order_by('model')
 
 
@@ -59,7 +77,7 @@ class TablePermissionsFilter(django_filters.FilterSet):
     )
 
 
-class TablePermissionForm(forms.ModelForm):
+class TablePermissionForm(BaseModelForm):
     """TablePermission form"""
 
     class Meta:
@@ -88,16 +106,9 @@ class TablePermissionForm(forms.ModelForm):
 
     def clean(self):
         """Check overall form correctness"""
-<<<<<<< HEAD
         if not self.cleaned_data.get('table') and not self.cleaned_data.get('column'):
             raise forms.ValidationError("You must specify table or column to" + \
                                         " which to add this permission")
-=======
-        if not self.cleaned_data["table"] and not self.cleaned_data["column"]:
-            raise forms.ValidationError(
-                "You must specify table or column to" + " which to add this permission"
-            )
->>>>>>> origin/user
 
     def save(self, commit=True):
         """Save created instance"""
@@ -120,13 +131,3 @@ class TablePermissionForm(forms.ModelForm):
 TablePermissionFormSet = modelformset_factory(
     model=TablePermission, form=TablePermissionForm
 )
-
-
-
-
-
-
-
-
-
-

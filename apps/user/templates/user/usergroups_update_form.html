@@ -1,18 +1,32 @@
 {% extends "base.html" %}
 
-{% block  head %}
+{% block head %}
+
+    <style>
+        .input-field {
+            width:30%;
+        }
+    </style>
+
 {% endblock %}
 
 {% block main %}
 
-<h1>Change group name</h1>
+{% include "user/user_group_tabs.html" %}
+
+<h1>Edit group</h1>
 <form method="post">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     {{ form.as_p() }}
-    <input type="submit" value="Update">
+    <input type="submit" class="save-btn" value="Update">
+    <a href="{{ url('group_list') }}">
+    
+        <button class="cancel-btn">Back to list</button>
+    </a>
+
+
 </form>
 
-<a href="{{ url('delete_group', args=[object.pk]) }}">Delete this group</a>
-<a href="{{ url('group_list') }}">Back to list</a>
 
+<a href="{{ url('delete_group', args=[object.pk]) }}">Delete this group</a>
 {% endblock %}

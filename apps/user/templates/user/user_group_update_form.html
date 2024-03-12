@@ -2,14 +2,25 @@
 
 {% block head %}
     {{form.media}}
+
+    <style>
+
+        .input-field {
+            width:20%;   
+        }
+
+    </style>
+
 {% endblock %}
 
 {% block main %}
 
+    {% include "user/user_tabs.html" %}
+
     <table>
 
         {% for group in groups %}
-            <tr >
+            <tr>
                 <td style = "border: 1px solid black;">{{ group.pk }}</td>
                 <td style = "border: 1px solid black;">{{ group.name }}</td>
                 <td><a href="{{ url('delete_user_from_group', args=[object.pk, group.pk]) }}">Delete from this group</a></td>
@@ -21,9 +32,8 @@
 
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
         <h1>Add group</h1>
-        {{form.errors}}
         {{ form }}
-        <button type="submit" value="update">Save</button>
+        <button type="submit" class="create-table-btn" value="update">Save</button>
     </form>
 
     

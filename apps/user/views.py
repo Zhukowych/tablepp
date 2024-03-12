@@ -4,13 +4,10 @@ from django.views.generic.detail import DetailView
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.hashers import make_password
-<<<<<<< HEAD
 from django.db import transaction
 from django.http import HttpResponse
-=======
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponse, HttpResponseRedirect
->>>>>>> origin/user
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from .models import User, Role
@@ -27,16 +24,15 @@ from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from .models import User, Role, UserGroups
-<<<<<<< HEAD
-from .forms.form import UpdateUserGroupForm, TablePermissionsFilter, TablePermissionForm, TablePermissionFormSet, UserForm
-=======
 from .forms.form import (
     UpdateUserGroupForm,
     TablePermissionsFilter,
     TablePermissionForm,
     TablePermissionFormSet,
+    UserForm,
+    GroupForm,
+    RoleForm
 )
->>>>>>> origin/user
 from .models import User, Role, UserGroups, TablePermission
 from .forms.form import UpdateUserGroupForm
 
@@ -96,12 +92,12 @@ class UserDeleteView(IsUserAdminMixin, DeleteView):
 
 class AddRoleView(CreateView):
     model = Role
-    fields = ["role"]
+    form_class = RoleForm
 
 
 class UpdateRoleView(UpdateView):
     model = Role
-    fields = ["role"]
+    form_class = RoleForm
     template_name_suffix = "_update_form"
 
 
@@ -122,12 +118,12 @@ class GroupListView(ListView):
 
 class AddGroupView(CreateView):
     model = UserGroups
-    fields = ["name"]
+    form_class = GroupForm
 
 
 class UpdateGroupView(UpdateView):
     model = UserGroups
-    fields = ["name"]
+    form_class = GroupForm
     template_name_suffix = "_update_form"
 
 
@@ -247,20 +243,11 @@ class UserGroupPermissionEditView(PermissionSaveMixin, UpdateView):
     """Edit group's permissions"""
     model = UserGroups
     fields = []
-    template_name = "permissions/user_form.html"
+    template_name = "permissions/group_form.html"
     pk_url_kwarg = "user_group_id"
 
     def get_success_url(self) -> str:
         return reverse("permission_group_grant", args=[self.object.id])
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context["permissions_form"] = TablePermissionFormSet(self.request.POST or None)
-        return context
-
-    def get_success_url(self) -> str:
-        return reverse("edit_user_group")
-
 
 class UserPermissionDeleteView(DeleteView):
     """Delete TablePermission view"""

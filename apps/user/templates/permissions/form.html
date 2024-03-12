@@ -41,16 +41,16 @@
                             {{ form.column }}
                         </div>
                     </td>
-                    <td></td>
+                    <td class="delete-col"></td>
                  </tr>
             {% endfor %}
 
             {{ permissions_form.management_form }}
         </table>
 
-        <button type="submit">Save</button>
+        <button type="submit" class="create-table-btn">Save</button>
         <a href="{{ url('permission_list') }}">
-            <button>Back to the list</button>
+            <button class="cancel-btn">Back to the list</button>
         </a>
     </form>
     
@@ -58,10 +58,16 @@
 <script type="text/javascript">
     
     $('.formset_row').formset({
-        addText: 'add permission',
-        deleteText: 'remove',
+        addText: '+ Add permission',
+        addCssClass: "formset-add-btn",
+        deleteText: '<i data-feather="trash-2"></i>',
         editText: "edit",
-        prefix: "form"
+        deleteCssClass: "cancel-btn",
+        prefix: "form",
+        added: function(tr){
+            toggle_object_selection(tr);
+            feather.replace();
+        }
     });
 
     function toggle_object_selection(tr) {
@@ -78,12 +84,16 @@
     
     $(document).ready(function(){
         $("tr.formset_row").each(function(){
+            let content_type_select = $("select[id$=content_type]");
+            if (content_type_select.val() == undefined)
+                content_type_select.val("9");
             toggle_object_selection($(this));
         });
     })
         
 
-    $('select#id_content_type').on('change', function() {
+    $(document).on('change', 'select[id$=content_type]', function() {
         toggle_object_selection($(this).closest('tr'));
     });
+
 </script>

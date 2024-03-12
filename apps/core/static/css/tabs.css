@@ -1,0 +1,101 @@
+.tabs {
+    margin-top: 20px;
+    margin-bottom: 16px;
+}
+
+.tabs ul {
+    padding: 0;
+    margin: 0;
+    height: 31px;
+    list-style: none;
+    border-bottom: 1px solid #dde7ee;
+}
+
+.tabs ul li {
+    float: left;
+    margin-right: 5px;
+    position: relative;
+    padding-right: 5px;
+}
+
+.tabs ul li::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: -5px;
+  bottom: 0;
+  width: 20px;
+  -webkit-transform: skew(20deg);
+  -moz-transform: skew(20deg);
+  -ms-transform: skew(20deg);
+  -o-transform: skew(20deg);
+  transform: skew(20deg);
+  -webkit-border-radius: 0 5px 0 0;
+  -moz-border-radius: 0 5px 0 0;
+  border-radius: 0 5px 0 0;
+  border-right: 1px solid #ccc;
+  border-top: 1px solid #ddd;
+  background: #DCD3FF;
+}
+
+.tabs ul li.selected::after {
+    background: #A093D9;
+    border-bottom: 1px solid #fff;
+}
+
+.tabs ul li a,
+.tabs ul li strong {
+    display: block;
+    padding: 0 12px;
+    height: 30px;
+    line-height: 30px;
+    border-left: 1px solid #dde7ee;
+    border-right: 0;
+    border-top: 1px solid #dde7ee;
+}
+
+.tabs ul li a {
+    background-color: #DCD3FF;
+    text-decoration: none;
+}
+
+.tabs ul li a.icon{
+    padding-right: 24px !important;
+    background-repeat: no-repeat;
+    background-position: 97% center;
+    width: inherit;
+}
+
+.tabs ul li:hover::after,
+.tabs ul li a:hover {
+    background-color: #A093D9;
+}
+
+.tabs ul li.selected:hover:after {
+    background-color: #A093D9;
+}
+
+.tabs ul li strong {
+    background-color: #A093D9;
+    border-bottom: 1px solid #fff;
+    font-weight: normal;
+}
+
+.tabs li.selected a,
+.tabs li.selected a:hover {
+    background-color: #A093D9;
+    border-bottom: 1px solid #fff;
+    color: #000;
+}
+
+.tabs li.active a, .tabs li.active a {
+    background-color: #A093D9;
+    color: black;
+    border-bottom: 1px solid #d2d2d2;
+}
+
+.tabs li.selected a:hover {
+    text-decoration: underline;
+}
+

@@ -6,11 +6,19 @@
 
 <script src="{{ static('js/jquery.formset.js') }}"></script> 
 <link href="{{ static('permission_edit.css') }}"  rel="stylesheet"/>
+<style>
 
+.input-field {
+    width: 100%;   
+    position:relative;
+}
+
+</style>
 {% endblock %}
 
 {% block main %}
-    <h1>Edit user's permissions</h1>
+    {% include "user/user_group_tabs.html" %}
+    <h1>Edit groups's permissions</h1>
     {% include 'permissions/form.html' %}
 
 {% endblock %}

@@ -1,0 +1,33 @@
+td {
+    vertical-align: top;
+}
+
+td.delete-col {
+    padding-top: 8px;
+    vertical-align: top;
+}
+
+td.button-container {
+    padding-top: 8px;
+    vertical-align: top;
+}
+
+td.delete-col a {
+    height: 40px;
+}
+
+.formset-add-btn {
+    background-color: #4542d0;
+    text-decoration: none;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.dynamic-form-add td {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
