@@ -35,3 +35,4 @@ class DynamicModelFilterSetMixin:
                 visible.field.widget.attrs['class'] = 'checkbox-input'
             else:
                 visible.field.widget.attrs['class'] = 'input-field'
+
