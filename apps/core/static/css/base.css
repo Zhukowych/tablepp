@@ -65,6 +65,7 @@ margin-bottom: 15px;
 margin-top: 30px;
 }
 
+
 .header-icons {
 display: flex;
 align-items: center;
@@ -132,6 +133,11 @@ border: 1px solid #1e0b69;
 border-radius: 5px;
 cursor: pointer;
 margin-left: 10px;
+
+a {
+		text-decoration: none;
+		color: inherit;
+}
 }
 
 .cancel-btn:focus {
@@ -309,7 +315,13 @@ cursor: pointer;
 margin-left: 10px;
 font-weight: 700;
 transition: background-color 0.3s ease, color 0.3s ease;
+a {
+		text-decoration: none;
+		color: inherit;
 }
+}
+
+
 
 .delete-btn:hover {
 	background-color: #ff6961;

@@ -4,7 +4,6 @@ from typing import Any
 from django.forms import BaseModelForm
 from django.views.generic.detail import DetailView
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.views import LoginView
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
 from django.http import HttpResponse
@@ -49,7 +48,7 @@ class UserLoginView(LoginView):
 
         user_pk = self.request.user.pk
 
-        return reverse("user_detail", kwargs={"pk": user_pk})
+        return reverse("update_user", kwargs={"pk": user_pk})
 
 
 class UsersListView(ListView):
@@ -81,6 +80,10 @@ class AddUserView(CreateView):
 
         return super().form_valid(form)
 
+    def get_success_url(self) -> str:
+        """to what url to return on success"""
+        return reverse("update_user", kwargs={"pk": self.object.pk})
+
 
 class UpdateUserView(UpdateView):
     """View for updating info about user"""
@@ -88,6 +91,10 @@ class UpdateUserView(UpdateView):
     model = User
     form_class = UserForm
     template_name_suffix = "_update_form"
+
+    def get_success_url(self) -> str:
+        """to what url to return on success"""
+        return reverse("update_user", kwargs={"pk": self.object.pk})
 
     def form_valid(self, form):
         """hashes password on save"""
@@ -110,6 +117,11 @@ class AddRoleView(CreateView):
 
     model = Role
     form_class = RoleForm
+    template_name_suffix = "_update_form"
+
+    def get_success_url(self) -> str:
+        """to what url to return on success"""
+        return reverse("update_role", kwargs={"pk": self.object.pk})
 
 
 class UpdateRoleView(UpdateView):
@@ -118,6 +130,10 @@ class UpdateRoleView(UpdateView):
     model = Role
     form_class = RoleForm
     template_name_suffix = "_update_form"
+
+    def get_success_url(self) -> str:
+        """to what url to return on success"""
+        return reverse("update_role", kwargs={"pk": self.object.pk})
 
 
 class RoleDeleterView(IsUserAdminMixin, DeleteView):
@@ -145,6 +161,11 @@ class AddGroupView(CreateView):
 
     model = UserGroups
     form_class = GroupForm
+    template_name_suffix = "_update_form"
+
+    def get_success_url(self) -> str:
+        """to what url to return on success"""
+        return reverse("edit_group", kwargs={"pk": self.object.pk})
 
 
 class UpdateGroupView(UpdateView):
@@ -153,6 +174,10 @@ class UpdateGroupView(UpdateView):
     model = UserGroups
     form_class = GroupForm
     template_name_suffix = "_update_form"
+
+    def get_success_url(self) -> str:
+        """to what url to return on success"""
+        return reverse("edit_group", kwargs={"pk": self.object.pk})
 
 
 class DeleteGroupView(IsUserAdminMixin, DeleteView):
