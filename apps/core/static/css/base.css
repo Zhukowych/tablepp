@@ -300,12 +300,18 @@ font-weight: 700;
 }
 
 .delete-btn {
-background-color: red;
-color: white;
-border: none;
+background-color: transparent;
+color: #ff6961;
+border: 1px solid #ff6961;
 padding: 10px 20px;
 border-radius: 5px;
 cursor: pointer;
-/* margin-left: auto; */
+margin-left: 10px;
 font-weight: 700;
+transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.delete-btn:hover {
+	background-color: #ff6961;
+	color: white;
 }
