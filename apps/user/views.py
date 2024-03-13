@@ -36,6 +36,7 @@ from .forms.form import (
 )
 from .models import User, Role, UserGroups, TablePermission
 from .forms.form import UpdateUserGroupForm
+from .filters import UserListFilter
 
 
 class UserLoginView(LoginView):
@@ -56,6 +57,19 @@ class UsersListView(ListView):
 
     model = User
     paginate_by = 10
+
+    def get_queryset(self) -> QuerySet[Any]:
+        queryset = super().get_queryset()
+        self.filterset = UserListFilter(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        print("DEBUG")
+        context["filter"] = self.filterset
+        print(self.filterset.form.visible_fields())
+        print("DEBUG")
+        return context
 
 
 class RoleListView(ListView):
