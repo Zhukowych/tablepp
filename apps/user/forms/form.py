@@ -40,7 +40,7 @@ class UserForm(BaseModelForm):
             "role",
         ]
 
-    password = forms.CharField(widget=forms.PasswordInput())
+    password = forms.CharField(widget=forms.PasswordInput(), required=False)
 
 
 class GroupForm(BaseModelForm):

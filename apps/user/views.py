@@ -86,7 +86,7 @@ class RoleListView(ListView):
         return context
 
 
-class AddUserView(CreateView):
+class AddUserView(IsUserAdminMixin, CreateView):
     """View for creating user's users"""
 
     model = User

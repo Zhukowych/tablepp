@@ -32,7 +32,7 @@ span.helptext {
 
 <form method="post">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    <table>
+    <table >
     
         {% for field in form.visible_fields() %}
             <tr>

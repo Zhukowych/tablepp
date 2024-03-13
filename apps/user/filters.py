@@ -1,9 +1,9 @@
 import django_filters
 from .models import User, Role, UserGroups
-from ajax_select.fields import AutoCompleteSelectWidget
+from core.forms import BaseFilterSet
 
 
-class UserListFilter(django_filters.FilterSet):
+class UserListFilter(BaseFilterSet):
     """Filterset UserList"""
 
     class META:
@@ -15,18 +15,18 @@ class UserListFilter(django_filters.FilterSet):
     user = django_filters.CharFilter(
         field_name="username",
         lookup_expr="icontains",
-        label="User: ",
+        label="User",
     )
 
     role = django_filters.ModelChoiceFilter(
         field_name="role",
         lookup_expr="exact",
-        label="Role: ",
+        label="Role",
         queryset=Role.objects.all(),
     )
 
 
-class RoleListFilter(django_filters.FilterSet):
+class RoleListFilter(BaseFilterSet):
     """Filterset for Role"""
 
     class META:
@@ -38,11 +38,11 @@ class RoleListFilter(django_filters.FilterSet):
     role = django_filters.CharFilter(
         field_name="role",
         lookup_expr="icontains",
-        label="Role: ",
+        label="Role",
     )
 
 
-class GroupListFilter(django_filters.FilterSet):
+class GroupListFilter(BaseFilterSet):
     """Filterset for Role"""
 
     class META:
@@ -54,5 +54,5 @@ class GroupListFilter(django_filters.FilterSet):
     groups = django_filters.CharFilter(
         field_name="name",
         lookup_expr="icontains",
-        label="Groups: ",
+        label="Groups",
     )

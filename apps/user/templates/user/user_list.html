@@ -1,6 +1,25 @@
 {% extends "base.html" %}
 
 {% block head %}
+
+<style>
+    .object-list-container {
+        width: 35%;        
+    }
+    
+    a {
+        text-decoration: none;
+    }
+    
+    select {
+        width: 100% !important;
+    }
+    
+    
+    
+    
+</style>
+
 {% endblock %}
 
 {% block main %}
@@ -11,6 +30,11 @@
     <div class="object-list-container">
 
         <div class="actiom-btns">
+
+
+            <a href="{{ url('add_user') }}">
+                <button class="save-btn">Add user</button>
+            </a>
             <button class="open-filter-btn">
                 <i class="fas fa-filter"></i> Filters
             </button>
@@ -59,7 +83,6 @@
     
     
 
-    <button type="submit" class="create-table-btn" style="margin-top: 1%;"><a href="{{ url('add_user') }}">Add user</a></button>
         
     <script type="text/javascript">
         $('.open-filter-btn').click(function(){
