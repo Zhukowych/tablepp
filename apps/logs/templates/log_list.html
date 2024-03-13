@@ -1,51 +1,100 @@
 {% extends "base.html" %}
 
 {% block head %}
-
 <style>
 
-table, th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
-} 
+.object-list-container {
+    width: 60%;
+}
+
+.filter-button-container {
+    display: flex;
+    justify-content: right;
+}
+
+.message, .description {
+    text-align: left !important;
+    padding-left: 4px;
+}
+
 </style>
+
+{{ filter.form.media }}
 
 {% endblock %}
 
 {% block main %}
 
-<div>
-    <h1>Tables</h1>
+    <h1>Logs</h1>
 
-    <form method="get">
-        {{ filter.form.as_p() }}
-        <input type="submit" />
-    </form>
+    <div class="object-list-container">
 
-    <table>
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>User</th>
-                <th>ContentType</th>
-                <th>Object</th>
-                <th>Message</th>
-           </tr>
-        </thead>
-        <tbody>
-            {% for object in object_list %}
-                <tr>
-                    <td>{{object.id}}</td>
-                    <td>{{object.user.id}}</td>
-                    <td>{{object.content_type.name}}</td>
-                    <td>{{object.object_id}}</td>
-                    <td>{{object.message}}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
+        <div class="actiom-btns">
+            {% if filter.form.fields %}
+                <button class="open-filter-btn">
+                    <i class="fas fa-filter"></i> Filters
+                </button>
+            {% endif %}
+        </div>
+        <div class="filters-box" hidden>
+            <form action="#" method="get">
+                <table class="filter-table">
+                    {% for field in filter.form.visible_fields() %}
+                        <tr>
+                            <td>{{ field.label_tag() }}</td>
+                            <td>{{ field }}</td>
+                        </tr>   
+                    {% endfor %}
+                </table>
+                <div class="filter-button-container">
+                    <button class="filter-btn" type="submit">
+                            Filter
+                    </button>                    
+                </div>
+            </form>
+       </div>
 
-    </table>
+        <div class="table-temp">
+            <table class="wide">
+                <thead>
+                    <tr>
+                        <th class="abbr">Id</th>
+                        <th>User</th>
+                        <th>Table</th>
+                        <th>Object</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in object_list %}
+                        <tr>
+                            <td>{{ log.id }}</td>
+                            <td><a href="{{ url('object-list', args=[log.table.id]) }}">{{ log.table.name }}</td>
+                            <td><a href="{{ url('update_user', args=[log.user.id]) }}">{{ log.user.username}}</td>
+                            <td><a href="{{ url('object-edit', args=[log.table.id, log.object_id]) }}">{{ log.object_id }}</td>
+                            <td class="message">{{ log.message }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="description">
+                                <i>{{ log.description }}</i>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
 
-</div>
+        </div>
+    </div>
 
+    <script type="text/javascript">
+        $('.open-filter-btn').click(function(){
+            let filter_box = $(".filters-box");
+            console.log(filter_box);
+            if (filter_box.is(":visible")) 
+                filter_box.hide(500);
+            else
+                filter_box.show(500);
+        });
+
+    </script>
 {% endblock %}

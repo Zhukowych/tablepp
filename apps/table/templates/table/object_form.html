@@ -21,13 +21,31 @@ input[type=number] {
 {% endblock %}
 
 {% block main %}
+
+{% if view_name == 'object-add' %}
+    <h1>Create object</h1>
+{% else %}
+    <h1>Edit object</h1>
+{% endif %}
+
+
 <div class="col-md-4">
     <form action="" method="post">
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
         {{ form.as_p() }}
-       <input type="submit" value="Save"/> <a href="{{ url('object-list', args=[table.id]) }}">back to the list</a>
+       <input type="submit" class="save-btn" value="Save"/> 
+        <a href="{{ url('object-list', args=[table.id]) }}">
+            <button class="cancel-btn" type="button">Back to the list</button>
+        </a>
+        {% if view_name == 'object-edit' %}
+            <a href="{{ url('object-delete', args=[table.id, object.id]) }}">
+                <button class="delete-btn" type="button">Delete object</button>
+            </a>
+        {% endif %}
+
     </form>
 </div>
+
 <script type="text/javascript">
     $('.formset_row').formset({
         addText: 'add column',

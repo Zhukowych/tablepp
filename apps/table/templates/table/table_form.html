@@ -51,6 +51,27 @@ select {
     
 }
 
+div.settings-box {
+    border: 2px solid #A093D9;
+    padding: 10px;
+}
+
+table.inner-table tr {
+    border: none;
+}
+
+li {
+  list-style-type: none;
+  margin-bottom: 2px;
+}
+
+li input {
+border: 1px solid #424588;
+border-radius: 5px;
+background-color: #d5daff;
+color: #424588;
+}
+
 </style>
 
 {% endblock %}
@@ -148,6 +169,7 @@ select {
                     <td class="delete-col"></td>
                 </tr>
                 <tr>
+                    <td colspan="5"></td>
                 </tr>
             {% endfor %}
         </table>
@@ -174,25 +196,28 @@ select {
 <script type="text/javascript">
 
     function is_editing(event) {
-        if ($(event.target).find('svg.feather-edit'))
+        let svg_tag = $(event.target).closest("svg.feather-edit") 
+        if (svg_tag.length!=0)
             return true;
         else
             return false;
     }
 
     function toggle_edit_button(event) {
+        let button_container = $(event.target).closest('.edit');
+        let a = $(event.target).closest('a');
         $(event.target).closest("a").empty();
         if (is_editing(event)) {
-            $(event.target).append('<i data-feather="check"></i>');
+            a.append('<i data-feather="check"></i>');
         } else {
-            $(event.target).append('<i data-feather="edit"></i>');
+            a.append('<i data-feather="edit"></i>');
         }
         feather.replace();
     }
 
     function edit_column_settings(event) {
         let formset_row = $(event.target.closest("tr"));
-        let setting_row = formset_row.next("tr");
+        let setting_row = formset_row.next("tr").find("td");
         let column_dtype = formset_row.find("select").val();
         setting_row.html($('div.' + column_dtype + '-setting-form').html());
 
@@ -203,7 +228,7 @@ select {
 
     function save_column_settings(event) {
         let formset_row = $(event.target.closest("tr"));
-        let setting_row = formset_row.next("tr");
+        let setting_row = formset_row.next("tr").find("td");
         let column_dtype = formset_row.find("select").val();
         
         dtypes_form_handlers[column_dtype].export_function(formset_row, setting_row);
@@ -212,16 +237,7 @@ select {
         toggle_edit_button(event);
     }
 
-    $(function(){
-        $(".edit-column").click(function(){
-            if (is_editing(event))
-                edit_column_settings(event);
-            else
-                save_column_settings(event);
-        })
-    });
-
-    $(document).on('click', 'svg', function(event){ 
+    $(document).on('click', '.edit', function(event){ 
         if (is_editing(event))
             edit_column_settings(event);
         else
@@ -230,6 +246,7 @@ select {
     
     function added_new_form(row) {
         row.find("td input[id*=-settings]").val("{}");
+        row.after("<tr><td colspan='5'></td></tr>")
         feather.replace();
     }
 

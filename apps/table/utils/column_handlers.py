@@ -8,11 +8,10 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from django.db.models import Field, IntegerField, CharField
 from django import forms
-from django.forms.renderers import BaseRenderer
-from django.forms.utils import ErrorList
 from django.utils.translation import gettext_lazy as _
 
-from easy_select2.widgets import Select2Multiple, Select2
+from core.forms import BaseForm
+
 
 class ColumnHandler(ABC):
     """

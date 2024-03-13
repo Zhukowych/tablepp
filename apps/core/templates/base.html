@@ -65,16 +65,22 @@
           <a href="{{ url('role_list') }}"><i data-feather="pie-chart"></i>Roles</a>
         </li>
         <li>
-          <a href=""><i data-feather="bar-chart"></i>Reports</a>
-        </li>
-        <li>
-          <a href=""><i data-feather="activity"></i>Logs</a>
+          <a href="{{ url('logs-list') }}"><i data-feather="activity"></i>Logs</a>
         </li>
       </ul>
       <button class="close-sidebar-btn" onclick="closeSidebar()">✕</button>
     </div>
     <div class="container">
+
+
       <div class="content" id="content">
+          {% if messages %}
+        <div class="messages">
+              {% for message in messages %}
+                  {{ message }}
+              {% endfor %}
+        </div>
+          {% endif %}  
         {% block main %}
 
         {% endblock %}

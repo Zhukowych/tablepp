@@ -1,11 +1,16 @@
 {% macro render_form(column_setting_form) %}
-    <table>
+
+    <div class="settings-box">
+       {{ column_setting_form.as_ul() }} 
+    </div>
+
+    <!-- <table>
         <thead>
             {% for field in column_setting_form %}
                 <tr><th>{{field.label_tag()}}</th><th>{{field}}</th></tr>
             {% endfor %}
         </thead>
-    </table>
+    </table> -->
 {% endmacro %}
 
 

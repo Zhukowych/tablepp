@@ -19,7 +19,6 @@
 
 {% block main %}
 
-
     {% include "table/table_tabs.html" %}
 
     <h1>{{ table.name }} list</h1>
@@ -27,11 +26,16 @@
     <div class="object-list-container">
 
         <div class="actiom-btns">
-            <button class="open-filter-btn">
-                <i class="fas fa-filter"></i> Filters
-            </button>
+            <a href="{{ url('object-add', args=[table.id]) }}">
+                <button class="save-btn">+ add new object</button>
+            </a>
+            {% if filter.form.fields %}
+                <button class="open-filter-btn">
+                    <i class="fas fa-filter"></i> Filters
+                </button>
+            {% endif %}
         </div>
-        <div class="filters-box" hidden>
+        <div class="filters-box" {% if not is_filtering %} hidden {% endif %} >
             <form action="#" method="get">
                 <table class="filter-table">
                     {% for field in filter.form.visible_fields() %}
@@ -50,27 +54,33 @@
        </div>
 
         <div class="table-temp">
-
+            {% set displayable_columns =  table.get_displayable_columns(request.user) %}
             <table class="wide">
                 <thead>
                     <tr>
                         <th class="abbr">Id</th>
-                        {% for column in table.columns.all() %}
+                        {% for column in displayable_columns %}
                             <th>{{column.name}}</th>
                         {% endfor %}
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for object in object_list %}
                         <tr>
                             <td>{{object.id}}</td>
-                            {% for column in table.columns.all() %}
+                            {% for column in displayable_columns %}
                                 {% if loop.first %}
                                     <td class="{{ column.get_table_formating_class() }}"><a href="{{ url('object-edit', args=[object.table.id, object.id]) }}">{{ object.get_value_of(column) }}</a></td>
                                 {% else %}
                                     <td class="{{ column.get_table_formating_class() }}">{{ object.get_value_of(column) }}</td>
                                 {% endif %}
                             {% endfor %}
+                            <td>
+                                <a href="{{ url('object-delete', args=[table.id, object.id]) }}" class="delete-btn small">
+                                    <i data-feather="trash-2"></i>
+                                </a>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

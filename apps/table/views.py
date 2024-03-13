@@ -1,15 +1,22 @@
 """Views of table app"""
+import json
 from typing import Any
+from django.forms import BaseModelForm
+from django.http import HttpRequest, HttpResponse
 
-from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy, reverse
 from django.views import View
 from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.db import transaction
+from django.contrib import messages
 
 from table.models import Table, Column
-from table.forms import  TableForm, ColumnFormSet
+from user.models import TablePermission
+from table.forms import  TableForm, ColumnFormSet, TableFilter
+from logs.models import Logs
+from logs.utils import log
 from apps.table.utils.utils import migrate
 
 
@@ -25,9 +32,24 @@ class DasboardView(View):
 
 class TableListView(ListView):
     """List all dynamic tables"""
+
     model = Table
     paginate_by = 10
 
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self.filter = None
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        """get method processor"""
+        self.filter = TableFilter(self.request.GET or None, queryset=Table.objects.all())
+        self.queryset = self.filter.qs
+        return super().get(request)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['filter'] = self.filter
+        return context
 
 class SaveTableMixin:
     """
@@ -69,7 +91,7 @@ class TableCreateView(SaveTableMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['columns_form'] = ColumnFormSet(self.request.POST or None)
         context['dtypes'] = Column.HANDLERS
-        context['table'] = self.object 
+        context['table'] = self.object
         return context
 
 class TableUpdateView(SaveTableMixin, UpdateView):
@@ -93,16 +115,31 @@ class HasPermissionMixin:
     """Check if user has permissions to do action"""
 
     operation = None
+    table_attr = ''
+    redirect_url = 'table-list'
 
     def dispatch(self, request, *args, **kwargs):
-        super().dispatch(request, *args, **kwargs)
+        """Check if user has permission"""
+        http_response = super().dispatch(request, *args, **kwargs)
+        if request.user.has_permission(self.operation, self.table):
+            return http_response
+        else:
+            messages.error(request, "You have no permission to access this page")
+            return redirect(self.get_reject_url())
 
-class TableObjectListView(ListView):
+    def get_reject_url(self) -> None:
+        """Return reserve to which redirect if has no permission"""
+        return reverse('table-list')
+
+
+
+class TableObjectListView(HasPermissionMixin, ListView):
     """List objects added to table"""
     template_name = "table/object_list.html"
     paginate_by = 10
     table = None
     formset = None
+    operation = TablePermission.Operation.READ
 
     def get(self, request, table_id: int=None):
         """List all objects in the table"""
@@ -121,13 +158,18 @@ class TableObjectListView(ListView):
         return context
 
 
-class DynamicModelViewMixin:
+class DynamicModelViewMixin(HasPermissionMixin):
     """
     Mixin for setting up generic create and
     update views to usage with dynamic tables
     """
 
     table = None
+    form_class = None
+    operation = TablePermission.Operation.WRITE
+
+    def get_reject_url(self) -> None:
+        return reverse('object-list', args=[self.table.id])
 
     def get(self, request, table_id: int, *args, **kwargs):
         """Get method for object creationg"""
@@ -144,7 +186,7 @@ class DynamicModelViewMixin:
         Setup CreateView to useage with dynamic model
         """
         self.table = Table.objects.get(pk=table_id)
-        self.fields = self.table.columns.values_list('slug', flat=True)
+        self.form_class = self.table.get_model_form(self.request.user)
         self.model = self.table.get_model()
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
@@ -153,12 +195,29 @@ class DynamicModelViewMixin:
         context['table'] = self.table
         return context
 
+    def dump_object(self) -> str:
+        """Convert current state of object to str"""
+        object_dict = {
+            column.name: getattr(self.object, column.slug)
+            for column in self.table.columns.all()
+        }
+        return json.dumps(object_dict)
+
 
 class TableObjectCreateView(DynamicModelViewMixin, CreateView):
     """Create table objects"""
 
     template_name = "table/object_form.html"
 
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        response = super().form_valid(form)
+        log(
+            user=self.request.user,
+            table=self.table,
+            object_id=self.object.id,
+            message="Created object"
+        )
+        return response
 
 class TableObjectEditView(DynamicModelViewMixin, UpdateView):
     """Table object edit view"""
@@ -166,13 +225,39 @@ class TableObjectEditView(DynamicModelViewMixin, UpdateView):
     template_name = "table/object_form.html"
     pk_url_kwarg = "object_id"
 
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        before_update = self.dump_object()
+        response = super().form_valid(form)
+        after_update = self.dump_object()
+        log(
+            user=self.request.user,
+            table=self.table,
+            object_id=self.object.id,
+            message="Changed Xobject",
+            description=f"Changed object from {before_update} -> {after_update}"
+        )
+        return response
 
-class TableObjectDeleteView(View):
+class TableObjectDeleteView(DynamicModelViewMixin, DeleteView):
     """Table object edit view"""
 
+    operation = TablePermission.Operation.DELETE
+    template_name = "table/object_delete.html"
+    pk_url_kwarg = "object_id"
 
-class TablePermissions(View):
-    """List table permissioins"""
+    def form_valid(self, *args, **kwargs):
+        before_deletions = self.dump_object()
+        log(
+            user=self.request.user,
+            table=self.table,
+            object_id=self.object.id,
+            message="Deleted object",
+            description=f"Deleted object {before_deletions}"
+        )       
+        return super().form_valid(*args, **kwargs)
+
+    def get_success_url(self) -> str:
+        return reverse('object-list', args=[self.table.id])
 
 
 class ImportTableDataView(View):

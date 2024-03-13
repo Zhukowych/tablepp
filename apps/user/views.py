@@ -49,7 +49,7 @@ class UserLoginView(LoginView):
 
         user_pk = self.request.user.pk
 
-        return reverse("user_detail", kwargs={"pk": user_pk})
+        return reverse("update_user", kwargs={"pk": user_pk})
 
 
 class UsersListView(ListView):

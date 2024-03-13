@@ -14,7 +14,13 @@ class Logs(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT, null=True)
-    object_id = models.PositiveIntegerField()
+    object_id = models.PositiveIntegerField(null=True)
     object = GenericForeignKey("content_type", "object_id")
     message = models.CharField(max_length=256)
     description = models.CharField(max_length=512)
+
+    @property
+    def table(self) -> Table:
+        """Return table"""
+        return Table.objects.get(slug=self.content_type.model)
+    

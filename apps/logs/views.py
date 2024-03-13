@@ -12,6 +12,7 @@ class LogsListView(ListView):
 
     model = Logs
     template_name = "log_list.html"
+    ordering = ['-id']
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)

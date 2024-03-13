@@ -13,7 +13,6 @@ from .views import (DasboardView,
 
 
 urlpatterns = [
-
     path('', DasboardView.as_view()),
     path('table/', TableListView.as_view(), name="table-list"),
 

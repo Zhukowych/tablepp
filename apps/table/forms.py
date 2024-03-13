@@ -1,9 +1,10 @@
 """Forms of table app"""
+import django_filters
 from django import forms
 from django.forms import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
-from apps.core.forms import BaseModelForm
+from apps.core.forms import BaseModelForm, BaseFilterSet
 from table.models import Table, Column
 
 
@@ -16,6 +17,15 @@ class TableForm(BaseModelForm):
         fields = ["name", 'description']
 
     description = forms.CharField(widget=forms.Textarea())
+
+
+class TableFilter(BaseFilterSet):
+    """FIlter for tables"""
+
+    class Meta:
+        """Meta for TableFilter"""
+        model = Table
+        fields = ["name"]
 
 
 class ColumnEditForm(BaseModelForm):

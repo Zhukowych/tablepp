@@ -9,6 +9,9 @@ class DynamicModelMixin:
 
     table = None
 
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
     def get_absolute_url(self) -> str:
         """Return url to Table edit page"""
         return reverse('object-edit', kwargs={'table_id': self.table.id,
@@ -21,6 +24,13 @@ class DynamicModelMixin:
 
 class DynamicModelFormMixin:
     """Mixin class for ModelForm that uses dynamic model"""
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        for readonly_column in self.readlonly_columns:
+            self.fields[readonly_column.slug].widget.attrs['readonly'] = True
+
+
 
 
 class DynamicModelFilterSetMixin:
@@ -35,4 +45,3 @@ class DynamicModelFilterSetMixin:
                 visible.field.widget.attrs['class'] = 'checkbox-input'
             else:
                 visible.field.widget.attrs['class'] = 'input-field'
-

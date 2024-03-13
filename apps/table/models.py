@@ -17,6 +17,7 @@ from django.utils.translation import gettext_lazy as _
 from table.utils.column_handlers import IntegerColumnHandler, TextColumnHandler
 from table.utils.dynamic_model import DynamicModelMixin, DynamicModelFormMixin, DynamicModelFilterSetMixin
 from core.forms import BaseModelForm
+from user.models import TablePermission, User
 
 
 def column_settings_default():
@@ -53,9 +54,14 @@ class Table(models.Model):
         """Return url to Table edit page"""
         return reverse('table-edit', kwargs={'table_id': self.id})
 
-    def get_displayable_columns(self) -> QuerySet[Column]:
+    def get_displayable_columns(self, user) -> QuerySet[Column]:
         """Return list of columns that can be displayed in talbe"""
-        return self.columns.filter(is_displayble=True)
+        displayable_columns = [
+            column
+            for column in self.columns.filter(is_displayable=True)
+            if user.has_permission(TablePermission.Operation.READ, column)
+        ]
+        return displayable_columns
 
     def get_filterable_columns(self) -> QuerySet[Column]:
         """Return list of columns that can be present in filters"""
@@ -77,7 +83,7 @@ class Table(models.Model):
         raise ValueError("You must pass column object either column name to delete it.")
 
     def get_model(self) -> models.Model:
-        """Create tab"""
+        """Create model"""
 
         class Meta:
             """Meta for dynammic_model"""
@@ -104,7 +110,7 @@ class Table(models.Model):
         # Create an Admin class if admin options were provided
         return model
 
-    def get_model_form(self) -> ModelForm:
+    def get_model_form(self, user: User) -> BaseModelForm:
         """
         Create model form for table.
         Form for adding and editing
@@ -112,11 +118,19 @@ class Table(models.Model):
         class Meta:
             """Meta for talbe's model form"""
 
+        displayable_columns = self.get_displayable_columns(user)
+        displayable_column_names = [field.slug for field in displayable_columns]
         setattr(Meta, "model", self.get_model())
-        setattr(Meta, "fields", "__all__")
+        setattr(Meta, "fields",  displayable_column_names)
 
-        model_form = type(f"{self.slug}ModelForm", (BaseModelForm, DynamicModelFormMixin),
+        model_form = type(f"{self.slug}ModelForm", (DynamicModelFormMixin, BaseModelForm),
                            {'Meta':Meta})
+
+        readonly_columns = [column
+                            for column in displayable_columns
+                            if not user.has_permission(TablePermission.Operation.WRITE, column) ]
+        setattr(model_form, 'readlonly_columns', readonly_columns)
+
         return model_form
 
     def get_filterset(self) -> django_filters.FilterSet:
@@ -135,7 +149,6 @@ class Table(models.Model):
 
         setattr(Meta, 'model', self.get_model())
         setattr(Meta, 'fields', fields_filters)
-        print(fields_filters)
         filterset = type(f"table_{self.slug}FilterSet",
                          (DynamicModelFilterSetMixin, django_filters.FilterSet),
                          {"Meta": Meta})
@@ -182,7 +195,7 @@ class Column(models.Model):
 
     def __repr__(self) -> str:
         """Return a string representation of Column"""
-        return f"Column(name={self.name})"
+        return f"Column(table={self.table.name}, name={self.name})"
 
     def get_django_model_field(self) -> Type[models.Field]:
         """

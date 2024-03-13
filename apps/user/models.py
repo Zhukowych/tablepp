@@ -45,17 +45,25 @@ class User(AbstractUser):
 
     def has_permission(self, operation: TablePermission.Type, object) -> bool:
         """Return has permission of that operation with accept status"""
-        permissions = self.permissions.filter(object=object, operation=operation)
+        if self.is_superuser:
+            return True
+
+        content_type = ContentType.objects.get_for_model(object)
+        permissions = self.permissions.filter(object_id=object.id,
+                                              operation=operation,
+                                              content_type=content_type)
         if permissions.exists():
             return permissions.first().accept
 
-        group_permissions = [group.permissions for group in self.user_groups]
+        group_permissions = [group.permissions for group in self.user_groups.all()]
 
         for group_permission in group_permissions:
             if group_permission.exists():
                 return group_permission.first().accept
 
-        return False
+        if content_type.model == "table":
+            return False
+        return True
 
 
 class UserGroups(models.Model):

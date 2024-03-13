@@ -1,17 +1,86 @@
 {% extends "base.html" %}
 
 {% block head %}
+
+<style>
+
+    .search-field {
+    width: 20%;
+    }
+
+    .filter-btn {
+    background-color: #d5daff;
+    color: #1e0b69;
+    border: #1e0b69 1px solid;
+    padding: 10px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 2%;
+    font-weight: 700;
+    }
+
+    .table-previews {
+    display: flex;
+    flex-wrap: wrap;
+    }
+
+    .table-preview {
+    width: calc(30% - 25px);
+    margin-top: 30px;
+    margin-right: 20px;
+    padding: 10px;
+    border: 1px solid #1e0b69;
+    border-radius: 5px;
+    }
+
+    .table-preview img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    }
+
+    h3 {
+    margin-top: 15px;
+    font-size: 18px;
+    color: #1e0b69;
+    }
+
+    p {
+    font-size: 14px;
+    color: #5a4a9a;
+    margin-top: -10px;
+    }
+
+    .input-field {
+        width: 20%;
+    }
+
+</style>
+
+
 {% endblock %}
 
 {% block main %}
-<h1>Tables</h1>
-<ul>
 
-{% for table in object_list %}
-    <li><a href="{{ url('table-edit', args=[table.id]) }}">{{table.name}}</a> </li>
-{% else %}
-    <li>No tables yet.</li>
-{% endfor %}
-</ul>
+
+      <h1>My tables</h1>
+      <div>
+        <form action="#" method="get">
+
+            {{ filter.form.name }}
+            <button class="filter-btn" type="submit"><i class="fas fa-filter" ></i> Filter</button>
+        </form>
+     </div>
+      <div class="table-previews">
+       {% for table in object_list %}
+            <div class="table-preview">
+                <!-- <img src="C:\Users\teylo\OneDrive\Рабочий стол\UCU\Programming_basics\project3\new\images\Sheet.png" alt="Preview 1"> -->
+                <h3><a href="{{ url('object-list', args=[table.id]) }}">{{ table.name }}</a></h3>
+                <p>{{ table.description }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    
+    
 
 {% endblock %}
