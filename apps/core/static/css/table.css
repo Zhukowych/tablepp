@@ -1,0 +1,125 @@
+.edit-table-btn {
+    background-color: #D5DAFF;
+    border: 1px solid #4542d0;
+    color: #4542d0;
+    padding: 10px 10px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .open-filter-btn,
+  .import-btn,
+  .export-btn {
+    background-color: transparent;
+    border: none;
+    color: #4542d0;
+    padding: 10px 10px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .edit-table-btn:hover,
+  .open-filter-btn:hover,
+  .filter-btn:hover,
+  .import-btn:hover,
+  .export-btn:hover {
+    background-color: #4542d0;
+    color: #fff;
+    border-radius: 5px;
+  }
+  
+  .filter-btn {
+    background-color: #D5DAFF;
+    border: 1px solid #4542d0;
+    color: #4542d0;
+    padding: 10px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+
+  .actiom-btns {
+    margin-bottom: 10px;
+  }
+  
+  .table-temp table {
+    border-collapse: collapse;
+  }
+
+  .table-temp table.short {
+    width: 60%;
+  }
+  
+  .table-temp table.wide {
+    width: 100%;
+  }
+
+  .table-temp th,
+  .table-temp td {
+    border: 1px solid #A093D9;
+    color: #342A61;
+    text-align: center;
+  }
+
+  .table-temp td.text {
+    text-align: left;
+    padding-left: 5px;
+  }
+  
+  .table-temp th {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  
+  .user-name {
+    font-weight: bold;
+    font-size: 20px;
+  }
+  
+  .table-temp th {
+    background-color: #DFE3FF;
+    color: #552FF1;
+  }
+  
+  .table-temp tbody tr:hover {
+    background-color: #ddd;
+  }
+  
+  .table-temp input[type="checkbox"] {
+    margin-top: 0;
+  }
+  
+  .table-temp p {
+    margin: 10px;
+    color: #342A61;
+    font-size: 14px;
+  }
+
+
+  .table-temp table {
+    table-layout: fixed;
+  }
+
+
+.abbr {
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 4%;
+}
+
+div.filters-box {
+    border: 2px solid #A093D9;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.filters-box td {
+    vertical-align: middle;
+}
+
+.filters-box input {
+    height: 30px;
+    width: 100%;
+}

@@ -7,6 +7,17 @@ from apps.core.forms import BaseModelForm
 from table.models import Table, Column
 
 
+class TableForm(BaseModelForm):
+    """TableForm"""
+
+    class Meta:
+        """Meta for TableForm"""
+        model = Table
+        fields = ["name", 'description']
+
+    description = forms.CharField(widget=forms.Textarea())
+
+
 class ColumnEditForm(BaseModelForm):
     """ColumnEditForm"""
 

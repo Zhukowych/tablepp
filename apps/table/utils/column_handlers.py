@@ -32,6 +32,10 @@ class ColumnHandler(ABC):
     def get_model_field(self) -> Field:
         """Return model field for column"""
 
+    @abstractmethod
+    def get_css_formating_class(self) -> Field:
+        """Return css class to format table col"""
+
     @classmethod
     def get_settings_form(cls) -> forms.Form:
         """Return an instance of column setting form"""
@@ -106,6 +110,9 @@ class IntegerColumnHandler(ColumnHandler):
         kwargs = self.get_kwargs()
         return IntegerField(_(self.name), **kwargs)
 
+    def get_css_formating_class(self) -> Field:
+        return "integer"
+
 class TextColumnHandler(ColumnHandler):
     """Handler for IntegerColumn"""
 
@@ -114,3 +121,6 @@ class TextColumnHandler(ColumnHandler):
     def get_model_field(self) -> Field:
         kwargs = self.get_kwargs()
         return CharField(_(self.name), max_length=64, **kwargs)
+
+    def get_css_formating_class(self) -> Field:
+        return "text"

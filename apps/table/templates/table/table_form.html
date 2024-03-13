@@ -29,6 +29,26 @@ td .input-field {
 
 select {
     margin-left: 20px;
+    width: 90% !important;
+}
+
+.edit-col {
+    vertical-align: top;
+    padding-top: 8px;
+}
+
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 45px;
+}
+
+.checkbox-input {
+    align-self: center;
+    height: 100%;
+    
 }
 
 </style>
@@ -71,16 +91,23 @@ select {
 </script>
 
 <div class="col-md-4">
-    <h1>Create a table</h1>
+    
+    {% if view_name == "table-add" %}
+        <h1>Create a table</h1>
+    {% else %}
+        {% include "table/table_tabs.html" %}
+        <h1>Edit a table</h1>
+    {% endif %}
+
     <form action="" method="post">
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-        <div class="input-container">
-            <input name="{{ form.name.name }}" type="text" class="input-field" placeholder="Table title">    
-        </div>
-        <textarea name="{{form.description.name}}"
-                  type="text" class="input-field"
-                  placeholder="Description">
-        </textarea>
+        {{ form.name.label_tag() }}<br>
+        {{ form.name }}
+        <br><br>
+        {{ form.description.label_tag() }}<br>
+        {{ form.description }}
+        <br>
+    
         <table>
             {{ columns_form.management_form }}
             {% set cycling_list = cycler('row1', 'row2') %}
@@ -90,7 +117,6 @@ select {
                         <tr>
                             <th>{{form.name.label}}</th>
                             <th>{{form.dtype.label}}</th>
-                            <th>{{form.is_filterable.label}}</th>
                             <th>{{form.is_displayable.label}}</th>
                             <th>Edit</th>
                             <th>Delete</th>
@@ -110,16 +136,12 @@ select {
                         {{ form.dtype.errors.as_ul() }}
                         {{ form.dtype }}
                     </td>
-                    <td>
-                        {{ form.is_filterable.errors.as_ul() }}
-                        {{ form.is_filterable }}
-                    </td>
-                    <td>
+                    <td class="checkbox">
                         {{ form.is_displayable.errors.as_ul() }}
                         {{ form.is_displayable }}
                     </td>
-                    <td class="button-container">
-                        <a class="edit-column cancel-btn" href="javascript:void(0);">
+                    <td class="edit-col">
+                        <a class="edit cancel-btn" href="javascript:void(0);">
                             <i data-feather="edit"></i>
                         </a>
                     </td>
@@ -152,17 +174,20 @@ select {
 <script type="text/javascript">
 
     function is_editing(event) {
-        if (event.target.text == "edit settings")
+        if ($(event.target).find('svg.feather-edit'))
             return true;
         else
             return false;
     }
 
     function toggle_edit_button(event) {
-        if (is_editing(event))
-            event.target.text = "save settings";
-        else
-            event.target.text = "edit settings";
+        $(event.target).closest("a").empty();
+        if (is_editing(event)) {
+            $(event.target).append('<i data-feather="check"></i>');
+        } else {
+            $(event.target).append('<i data-feather="edit"></i>');
+        }
+        feather.replace();
     }
 
     function edit_column_settings(event) {
@@ -197,7 +222,10 @@ select {
     });
 
     $(document).on('click', 'svg', function(event){ 
-        console.log(123);
+        if (is_editing(event))
+            edit_column_settings(event);
+        else
+            save_column_settings(event);
    });
     
     function added_new_form(row) {

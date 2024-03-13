@@ -17,7 +17,7 @@ urlpatterns = [
     path('', DasboardView.as_view()),
     path('table/', TableListView.as_view(), name="table-list"),
 
-    path('table/add/', TableCreateView.as_view()),
+    path('table/add/', TableCreateView.as_view(), name='table-add'),
     path('table/<int:table_id>/edit/', TableUpdateView.as_view(), name='table-edit'),
 
     path('table/<int:table_id>/list/', TableObjectListView.as_view(), name="object-list"),
