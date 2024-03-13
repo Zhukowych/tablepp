@@ -32,7 +32,7 @@ span.helptext {
 
 <form method="post">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    <table>
+    <table >
     
         {% for field in form.visible_fields() %}
             <tr>
@@ -54,9 +54,7 @@ span.helptext {
     </a>
     {% if view_name == 'update_user' %}
 
-        <a href="{{ url('delete_user', args = [object.pk]) }}">
-            <button class="delete-btn" type="button">Delete User</button>
-        </a>
+        <button class="delete-btn" type="button"><a href="{{ url('delete_user', args = [object.pk]) }}">Delete User</a></button>
         
     {% endif %}
 </form>

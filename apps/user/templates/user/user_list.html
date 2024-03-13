@@ -1,18 +1,100 @@
 {% extends "base.html" %}
 
 {% block head %}
+
+<style>
+    .object-list-container {
+        width: 35%;        
+    }
+    
+    a {
+        text-decoration: none;
+    }
+    
+    select {
+        width: 100% !important;
+    }
+    
+    
+    
+    
+</style>
+
 {% endblock %}
 
 {% block main %}
-<h1>Users</h1>
-<ul>
-{% for user in object_list %}
-    <li><a href="{{ url('update_user', args=[user.pk]) }}">{{user.username}}</a> </li>
-{% else %}
-    <li>No users yet.</li>
-{% endfor %}
-<a href="{{ url('add_user') }}">Add User</a>
-</ul>
+
+
+<h1>User list</h1>
+
+    <div class="object-list-container">
+
+        <div class="actiom-btns">
+
+
+            <a href="{{ url('add_user') }}">
+                <button class="save-btn">Add user</button>
+            </a>
+            <button class="open-filter-btn">
+                <i class="fas fa-filter"></i> Filters
+            </button>
+        </div>
+        <div class="filters-box" hidden>
+            <form action="#" method="get">
+                <table class="filter-table">
+                    {% for field in filter.form.visible_fields() %}
+                        <tr>
+                            <td>{{ field.label_tag() }}</td>
+                            <td>{{ field }}</td>
+                        </tr>   
+                    {% endfor %}
+                </table>
+                <div class="filter-button-container">
+                    <button class="filter-btn" type="submit">
+                            Filter
+                    </button>                    
+                </div>
+            </form>
+        </div>
+
+        <div class="table-temp">
+
+            <table class="wide">
+                <thead>
+                    <tr>
+                        <th class="abbr">Id</th>
+                        <th >Name</th>
+                        <th >Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for object in object_list %}
+                        <tr>
+                            <td>{{object.id}}</td>
+                            <td><a href="{{ url('update_user', args=[object.pk]) }}">{{object.username}}</a></td>
+                            <td>{{object.role}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    
+    
+
+        
+    <script type="text/javascript">
+        $('.open-filter-btn').click(function(){
+            let filter_box = $(".filters-box");
+            console.log(filter_box);
+            if (filter_box.is(":visible")) 
+                filter_box.hide(500);
+            else
+                filter_box.show(500);
+        });
+
+    </script>
 
 
 {% endblock %}

@@ -4,7 +4,6 @@ from typing import Any
 from django.forms import BaseModelForm
 from django.views.generic.detail import DetailView
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.views import LoginView
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
 from django.http import HttpResponse
@@ -37,6 +36,7 @@ from .forms.form import (
 )
 from .models import User, Role, UserGroups, TablePermission
 from .forms.form import UpdateUserGroupForm
+from .filters import UserListFilter, RoleListFilter, GroupListFilter
 
 
 class UserLoginView(LoginView):
@@ -58,6 +58,16 @@ class UsersListView(ListView):
     model = User
     paginate_by = 10
 
+    def get_queryset(self) -> QuerySet[Any]:
+        queryset = super().get_queryset()
+        self.filterset = UserListFilter(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["filter"] = self.filterset
+        return context
+
 
 class RoleListView(ListView):
     """View for list of roles"""
@@ -65,8 +75,18 @@ class RoleListView(ListView):
     model = Role
     paginate_by = 10
 
+    def get_queryset(self) -> QuerySet[Any]:
+        queryset = super().get_queryset()
+        self.filterset = RoleListFilter(self.request.GET, queryset=queryset)
+        return self.filterset.qs
 
-class AddUserView(CreateView):
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["filter"] = self.filterset
+        return context
+
+
+class AddUserView(IsUserAdminMixin, CreateView):
     """View for creating user's users"""
 
     model = User
@@ -81,6 +101,10 @@ class AddUserView(CreateView):
 
         return super().form_valid(form)
 
+    def get_success_url(self) -> str:
+        """to what url to return on success"""
+        return reverse("update_user", kwargs={"pk": self.object.pk})
+
 
 class UpdateUserView(UpdateView):
     """View for updating info about user"""
@@ -88,6 +112,10 @@ class UpdateUserView(UpdateView):
     model = User
     form_class = UserForm
     template_name_suffix = "_update_form"
+
+    def get_success_url(self) -> str:
+        """to what url to return on success"""
+        return reverse("update_user", kwargs={"pk": self.object.pk})
 
     def form_valid(self, form):
         """hashes password on save"""
@@ -105,19 +133,28 @@ class UserDeleteView(IsUserAdminMixin, DeleteView):
     success_url = reverse_lazy("user_list")
 
 
-class AddRoleView(CreateView):
+class AddRoleView(IsUserAdminMixin, CreateView):
     """View for adding roles"""
 
     model = Role
     form_class = RoleForm
+    template_name_suffix = "_update_form"
+
+    def get_success_url(self) -> str:
+        """to what url to return on success"""
+        return reverse("update_role", kwargs={"pk": self.object.pk})
 
 
-class UpdateRoleView(UpdateView):
+class UpdateRoleView(IsUserAdminMixin, UpdateView):
     """View for updating roles name"""
 
     model = Role
     form_class = RoleForm
     template_name_suffix = "_update_form"
+
+    def get_success_url(self) -> str:
+        """to what url to return on success"""
+        return reverse("update_role", kwargs={"pk": self.object.pk})
 
 
 class RoleDeleterView(IsUserAdminMixin, DeleteView):
@@ -133,26 +170,41 @@ class GroupListView(ListView):
     model = UserGroups
     template_name = "user/group_list.html"
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        """Get context data"""
+    def get_queryset(self) -> QuerySet[Any]:
+        """get query set"""
+        queryset = super().get_queryset()
+        self.filterset = GroupListFilter(self.request.GET, queryset=queryset)
+        return self.filterset.qs
 
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """get context data"""
         context = super().get_context_data(**kwargs)
+        context["filter"] = self.filterset
         return context
 
 
-class AddGroupView(CreateView):
+class AddGroupView(IsUserAdminMixin, CreateView):
     """View for adding groups"""
 
     model = UserGroups
     form_class = GroupForm
+    template_name_suffix = "_update_form"
+
+    def get_success_url(self) -> str:
+        """to what url to return on success"""
+        return reverse("edit_group", kwargs={"pk": self.object.pk})
 
 
-class UpdateGroupView(UpdateView):
+class UpdateGroupView(IsUserAdminMixin, UpdateView):
     """View for updating group info"""
 
     model = UserGroups
     form_class = GroupForm
     template_name_suffix = "_update_form"
+
+    def get_success_url(self) -> str:
+        """to what url to return on success"""
+        return reverse("edit_group", kwargs={"pk": self.object.pk})
 
 
 class DeleteGroupView(IsUserAdminMixin, DeleteView):
@@ -162,7 +214,7 @@ class DeleteGroupView(IsUserAdminMixin, DeleteView):
     success_url = reverse_lazy("group_list")
 
 
-class EditUserGroupView(UpdateView):
+class EditUserGroupView(IsUserAdminMixin, UpdateView):
     """View for adding user to groups"""
 
     model = User
@@ -227,7 +279,7 @@ class PermissionListView(ListView):
         return context
 
 
-class PermissionCreateView(CreateView):
+class PermissionCreateView(IsUserAdminMixin, CreateView):
     """Create new TablePermission"""
 
     model = TablePermission
@@ -235,7 +287,7 @@ class PermissionCreateView(CreateView):
     template_name = "permissions/form.html"
 
 
-class PermissionUpdateView(UpdateView):
+class PermissionUpdateView(IsUserAdminMixin, UpdateView):
     """Create new TablePermission"""
 
     model = TablePermission

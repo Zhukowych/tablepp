@@ -16,14 +16,12 @@
 <form method="post">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     {{ form.as_p() }}
-    <input type="submit" class="save-btn" value="Update">
-    <a href="{{ url('role_list') }}">
-        <button class="cancel-btn">Back to list</button>
-    </a>
+    <input type="submit" class="save-btn" value="Save">
+        <button class="cancel-btn"><a href="{{ url('role_list') }}">Back to list</a></button>
+    {% if view_name == 'update_role'%}
+            <button class="delete-btn"><a href="{{ url('delete_role', args=[object.pk])}}">Delete role</a></button>
+    {% endif %}
 </form>
 
-<ul>
-<li><a href="{{ url('delete_role', args=[object.pk]) }}">Delete this role</a></li>
-</ul>
 
 {% endblock %}

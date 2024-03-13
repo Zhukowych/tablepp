@@ -12,21 +12,22 @@
 
 {% block main %}
 
-{% include "user/user_group_tabs.html" %}
+{% if view_name=='edit_group' %}
+    {% include "user/user_group_tabs.html" %}
+    <h1>Edit group</h1>
+{% else %}
+    <h1>Create group</h1>
+{% endif %}
 
-<h1>Edit group</h1>
 <form method="post">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     {{ form.as_p() }}
-    <input type="submit" class="save-btn" value="Update">
-    <a href="{{ url('group_list') }}">
-    
-        <button class="cancel-btn">Back to list</button>
-    </a>
-
-
+    <input type="submit" class="save-btn" value="Save">
+        <button class="cancel-btn"><a href="{{ url('group_list') }}">Back to list</a></button>
+    {% if view_name == 'edit_group' %}
+        <button class="delete-btn"><a href="{{ url('delete_group', args = [object.pk]) }}">Delete Group</a></button>
+    {% endif %}
 </form>
 
 
-<a href="{{ url('delete_group', args=[object.pk]) }}">Delete this group</a>
 {% endblock %}
