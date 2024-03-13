@@ -45,7 +45,6 @@
           <i class="fas fa-bell"></i>
         </button>
         <button class="icon-btn account-icon" onclick="openAccount()"></button>
-        <button class="create-table-btn" onclick="createTable()">+ Create new table </button>
 
         <form method="post" action="{{ url('logout') }}">
             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">

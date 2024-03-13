@@ -133,7 +133,7 @@ class UserDeleteView(IsUserAdminMixin, DeleteView):
     success_url = reverse_lazy("user_list")
 
 
-class AddRoleView(CreateView):
+class AddRoleView(IsUserAdminMixin, CreateView):
     """View for adding roles"""
 
     model = Role
@@ -145,7 +145,7 @@ class AddRoleView(CreateView):
         return reverse("update_role", kwargs={"pk": self.object.pk})
 
 
-class UpdateRoleView(UpdateView):
+class UpdateRoleView(IsUserAdminMixin, UpdateView):
     """View for updating roles name"""
 
     model = Role
@@ -183,7 +183,7 @@ class GroupListView(ListView):
         return context
 
 
-class AddGroupView(CreateView):
+class AddGroupView(IsUserAdminMixin, CreateView):
     """View for adding groups"""
 
     model = UserGroups
@@ -195,7 +195,7 @@ class AddGroupView(CreateView):
         return reverse("edit_group", kwargs={"pk": self.object.pk})
 
 
-class UpdateGroupView(UpdateView):
+class UpdateGroupView(IsUserAdminMixin, UpdateView):
     """View for updating group info"""
 
     model = UserGroups
@@ -214,7 +214,7 @@ class DeleteGroupView(IsUserAdminMixin, DeleteView):
     success_url = reverse_lazy("group_list")
 
 
-class EditUserGroupView(UpdateView):
+class EditUserGroupView(IsUserAdminMixin, UpdateView):
     """View for adding user to groups"""
 
     model = User
@@ -279,7 +279,7 @@ class PermissionListView(ListView):
         return context
 
 
-class PermissionCreateView(CreateView):
+class PermissionCreateView(IsUserAdminMixin, CreateView):
     """Create new TablePermission"""
 
     model = TablePermission
@@ -287,7 +287,7 @@ class PermissionCreateView(CreateView):
     template_name = "permissions/form.html"
 
 
-class PermissionUpdateView(UpdateView):
+class PermissionUpdateView(IsUserAdminMixin, UpdateView):
     """Create new TablePermission"""
 
     model = TablePermission
