@@ -36,7 +36,7 @@ from .forms.form import (
 )
 from .models import User, Role, UserGroups, TablePermission
 from .forms.form import UpdateUserGroupForm
-from .filters import UserListFilter
+from .filters import UserListFilter, RoleListFilter, GroupListFilter
 
 
 class UserLoginView(LoginView):
@@ -65,10 +65,7 @@ class UsersListView(ListView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        print("DEBUG")
         context["filter"] = self.filterset
-        print(self.filterset.form.visible_fields())
-        print("DEBUG")
         return context
 
 
@@ -77,6 +74,16 @@ class RoleListView(ListView):
 
     model = Role
     paginate_by = 10
+
+    def get_queryset(self) -> QuerySet[Any]:
+        queryset = super().get_queryset()
+        self.filterset = RoleListFilter(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["filter"] = self.filterset
+        return context
 
 
 class AddUserView(CreateView):
@@ -163,10 +170,16 @@ class GroupListView(ListView):
     model = UserGroups
     template_name = "user/group_list.html"
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        """Get context data"""
+    def get_queryset(self) -> QuerySet[Any]:
+        """get query set"""
+        queryset = super().get_queryset()
+        self.filterset = GroupListFilter(self.request.GET, queryset=queryset)
+        return self.filterset.qs
 
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """get context data"""
         context = super().get_context_data(**kwargs)
+        context["filter"] = self.filterset
         return context
 
 

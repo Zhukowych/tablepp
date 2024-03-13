@@ -5,7 +5,6 @@
 
 {% block main %}
 
-</ul>
 
 <h1>User list</h1>
 
@@ -48,7 +47,7 @@
                     {% for object in object_list %}
                         <tr>
                             <td>{{object.id}}</td>
-                            <td>{{object.username}}</td>
+                            <td><a href="{{ url('update_user', args=[object.pk]) }}">{{object.username}}</a></td>
                             <td>{{object.role}}</td>
                         </tr>
                     {% endfor %}
