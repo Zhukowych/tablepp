@@ -4,20 +4,7 @@
 {% endblock %}
 
 {% block main %}
-<h1>Users</h1>
 
-<form method="get">
-    {{ filter.form.as_p() }}
-    <button type="submit">Filter</button>
-</form>
-
-<ul>
-{% for user in object_list %}
-    <li><a href="{{ url('update_user', args=[user.pk]) }}">{{user.username}}</a> </li>
-{% else %}
-    <li>No users yet.</li>
-{% endfor %}
-<a href="{{ url('add_user') }}">Add User</a>
 </ul>
 
 <h1>User list</h1>
@@ -32,11 +19,10 @@
         <div class="filters-box" hidden>
             <form action="#" method="get">
                 <table class="filter-table">
-                    {% for user in filter.form.visible_fields() %}
+                    {% for field in filter.form.visible_fields() %}
                         <tr>
-                            <td>{{ user.pk }}</td>
-                            <td>{{ user.username }}</td>
-                            <td>{{ user.role }}</td>
+                            <td>{{ field.label_tag() }}</td>
+                            <td>{{ field }}</td>
                         </tr>   
                     {% endfor %}
                 </table>
@@ -54,6 +40,8 @@
                 <thead>
                     <tr>
                         <th class="abbr">Id</th>
+                        <th >Name</th>
+                        <th >Role</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -61,6 +49,7 @@
                         <tr>
                             <td>{{object.id}}</td>
                             <td>{{object.username}}</td>
+                            <td>{{object.role}}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -68,6 +57,10 @@
 
         </div>
     </div>
+    
+    
+
+    <button type="submit" class="create-table-btn" style="margin-top: 1%;"><a href="{{ url('add_user') }}">Add user</a></button>
         
     <script type="text/javascript">
         $('.open-filter-btn').click(function(){

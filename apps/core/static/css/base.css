@@ -123,7 +123,13 @@ border-radius: 5px;
 cursor: pointer;
 /* margin-left: auto; */
 font-weight: 700;
+
+a {
+	text-decoration: none;
 }
+
+}
+
 
 .cancel-btn {
 padding: 10px 20px;
@@ -326,6 +332,7 @@ a > .delete-btn {
 	color: inherit;
 
 }
+
 
 
 
