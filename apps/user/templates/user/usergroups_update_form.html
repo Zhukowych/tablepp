@@ -1,33 +1,53 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block head %}
 
-{% block head %}
+<style>
+    .input-field {
+        width: 30%;
+    }
+    table {
+        width: 100%;
+    }
+</style>
 
-    <style>
-        .input-field {
-            width:30%;
-        }
-    </style>
-
-{% endblock %}
-
-{% block main %}
-
-{% if view_name=='edit_group' %}
-    {% include "user/user_group_tabs.html" %}
-    <h1>Edit group</h1>
+{% endblock %} {% block main %} {% if view_name=='edit_group' %} {% include
+"user/user_group_tabs.html" %}
+<h1>Edit group</h1>
 {% else %}
-    <h1>Create group</h1>
+<h1>Create group</h1>
 {% endif %}
 
 <form method="post">
-    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    {{ form.as_p() }}
-    <input type="submit" class="save-btn" value="Save">
-        <button class="cancel-btn"><a href="{{ url('group_list') }}">Back to list</a></button>
-    {% if view_name == 'edit_group' %}
-        <button class="delete-btn"><a href="{{ url('delete_group', args = [object.pk]) }}">Delete Group</a></button>
-    {% endif %}
-</form>
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
+    <table>
+        {% for field in form.visible_fields() %}
+        <tr>
+            <td><label>{{ field.label }}:</label></td>
+        </tr>
+        <tr>
+            <td>
+                {{ field }} <br />
+                {{ display_errors(field) }}
+            </td>
+        </tr>
+        <tr>
+            <td><span class="helptext">{{ field.help_text }}</span></td>
+        </tr>
+        {% endfor %}
+    </table>
 
+    <div class="action-buttons">
+        <button type="submit" class="create-table-btn">Save</button>
+        <a href="{{ url('group_list') }}">
+            <button class="cancel-btn" type="button">Back to the list</button>
+        </a>
+        {% if view_name == 'edit_group' %}
+        <button class="delete-btn" type="button">
+            <a href="{{ url('delete_group', args = [object.pk]) }}"
+                >Delete Group</a
+            >
+        </button>
+        {% endif %}
+    </div>
+</form>
 
 {% endblock %}

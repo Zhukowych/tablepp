@@ -1,27 +1,45 @@
-{% extends "base.html" %}
-
-{% block  head %}
+{% extends "base.html" %} {% block head %}
 <style>
-    .input-field {
-        width:30%;
+    table {
+        width: 80%;
     }
 </style>
 
-
-{% endblock %}
-
-{% block main %}
+{% endblock %} {% block main %}
 
 <h1>Change role name</h1>
 <form method="post">
-    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    {{ form.as_p() }}
-    <input type="submit" class="save-btn" value="Save">
-        <button class="cancel-btn"><a href="{{ url('role_list') }}">Back to list</a></button>
-    {% if view_name == 'update_role'%}
-            <button class="delete-btn"><a href="{{ url('delete_role', args=[object.pk])}}">Delete role</a></button>
-    {% endif %}
-</form>
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
+    <table>
+        {% for field in form.visible_fields() %}
+        <tr>
+            <td><label>{{ field.label }}:</label></td>
+        </tr>
+        <tr>
+            <td>
+                {{ field }} <br />
+                {{ display_errors(field) }}
+            </td>
+        </tr>
+        <tr>
+            <td><span class="helptext">{{ field.help_text }}</span></td>
+        </tr>
+        {% endfor %}
+    </table>
 
+    <div class="action-buttons">
+        <button type="submit" class="create-table-btn">Save</button>
+        <a href="{{ url('role_list') }}">
+            <button class="cancel-btn" type="button">Back to the list</button>
+        </a>
+        {% if view_name == 'update_role' %}
+        <button class="delete-btn" type="button">
+            <a href="{{ url('delete_role', args = [object.pk]) }}"
+                >Delete Role</a
+            >
+        </button>
+        {% endif %}
+    </div>
+</form>
 
 {% endblock %}
