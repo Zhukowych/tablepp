@@ -49,7 +49,7 @@
         <tr>
           <th class="abbr">Id</th>
           {% for column in displayable_columns %}
-          <th>{{column.name}}</th>
+          <th>{{ column.name }}</th>
           {% endfor %}
           <th>Actions</th>
         </tr>
@@ -57,12 +57,13 @@
       <tbody>
         {% for object in object_list %}
         <tr>
-          <td>{{object.id}}</td>
+          <td>{{ object.id }}</td>
           {% for column in displayable_columns %} {% if loop.first %}
           <td class="{{ column.get_table_formating_class() }}">
             <a
               href="{{ url('object-edit', args=[object.table.id, object.id]) }}"
-              >{{ object.get_value_of(column) }}</a
+            >
+              {{ object.get_value_of(column) }}</a
             >
           </td>
           {% else %}
