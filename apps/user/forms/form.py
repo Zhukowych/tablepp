@@ -6,7 +6,7 @@ from django.db.models.base import Model
 from django.forms.utils import ErrorList
 import django_filters
 from django import forms
-from django.forms import modelformset_factory
+from django.forms import modelformset_factory, HiddenInput
 from django.contrib.contenttypes.models import ContentType
 from ajax_select.fields import AutoCompleteSelectWidget, AutoCompleteSelectField
 from apps.core.forms import BaseModelForm
@@ -29,6 +29,8 @@ class UserForm(BaseModelForm):
     """UserForm"""
 
     class Meta:
+        """Meta class"""
+
         model = User
         fields = [
             "username",
@@ -41,6 +43,15 @@ class UserForm(BaseModelForm):
         ]
 
     password = forms.CharField(widget=forms.PasswordInput(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        is_superuser = kwargs.pop("is_superuser")
+        super().__init__(*args, **kwargs)
+
+        if not is_superuser:
+            for field in self.fields:
+                self.fields[field].widget.attrs["readonly"] = True
+            self.fields["password"].widget.attrs["readonly"] = False
 
 
 class GroupForm(BaseModelForm):
