@@ -169,6 +169,7 @@ class GroupListView(ListView):
 
     model = UserGroups
     template_name = "user/group_list.html"
+    paginate_by = 10
 
     def get_queryset(self) -> QuerySet[Any]:
         """get query set"""
@@ -313,6 +314,7 @@ class PermissionSaveMixin:
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """get context data"""
         context = super().get_context_data(**kwargs)
         context["permissions_form"] = TablePermissionFormSet(
             self.request.POST or None, queryset=self.object.permissions.all()
@@ -342,9 +344,3 @@ class UserGroupPermissionEditView(PermissionSaveMixin, UpdateView):
 
     def get_success_url(self) -> str:
         return reverse("permission_group_grant", args=[self.object.id])
-
-
-class UserPermissionDeleteView(DeleteView):
-    """Delete TablePermission view"""
-
-    pass
