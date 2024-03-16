@@ -1,13 +1,12 @@
 {% extends "base.html" %}
 
 {% block head %}
-<script src="{{ static('js/jquery.formset.js') }}"></script> 
+    <script src="{{ static('js/jquery.formset.js') }}"></script>
 
-<style>
+    <style>
 
 
-
-</style>
+    </style>
 
 {% endblock %}
 
@@ -36,15 +35,21 @@
                 </tr>
             {% endfor %}
         </table>
-       <input type="submit" class="save-btn" value="Save"/>
-        <a href="{{ url('object-list', args=[table.id]) }}">
-            <button class="cancel-btn" type="button">Back to the list</button>
-        </a>
-        {% if view_name == 'object-edit' %}
-            <a href="{{ url('object-delete', args=[table.id, object.id]) }}">
-                <button class="delete-btn" type="button">Delete object</button>
+
+        <div class="action-buttons">
+            <input type="submit" class="save-btn" value="Save"/>
+            <a href="{{ url('object-list', args=[table.id]) }}">
+                <button class="cancel-btn" type="button">Back to the list</button>
             </a>
-        {% endif %}
+            {% if view_name == 'object-edit' %}
+                <a href="{{ url('object-delete', args=[table.id, object.id]) }}">
+                    <button class="delete-btn" type="button">Delete object</button>
+                </a>
+                <a href="{{ url('object-add', args=[table.id]) }}">
+                    <button class="save-btn" type="button">Add one more</button>
+                </a>
+            {% endif %}
+        </div>
 
     </form>
 </div>

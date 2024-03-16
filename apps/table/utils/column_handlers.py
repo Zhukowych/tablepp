@@ -10,8 +10,6 @@ from django.db.models import Field, IntegerField, CharField
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from core.forms import BaseForm
-
 
 class ColumnHandler(ABC):
     """
@@ -96,6 +94,8 @@ class IntegerSettingsForm(ColumnSettingsForm):
 class TextSettingForm(ColumnSettingsForm):
     """Text column settings form"""
 
+    DEFAULT_MAX_LENGTH = 128
+
     class Filters(Enum):
         """Filters for text column"""
         EXACT = 'exact', _("Exact value")
@@ -103,7 +103,7 @@ class TextSettingForm(ColumnSettingsForm):
 
     template_name = "settings_form/text_column_form.html"
 
-    max_length = forms.IntegerField(label=_("Max length"), initial=128)
+    max_length = forms.IntegerField(label=_("Max length"), initial=DEFAULT_MAX_LENGTH)
 
     class Meta:
         field_order = ['filters', 'max_length']
@@ -121,8 +121,8 @@ class IntegerColumnHandler(ColumnHandler):
         return "integer"
 
     def validate_value(self, value) -> bool:
-        min_value = IntegerSettingsForm.DEFAULT_MIN_VALUE
-        max_value = IntegerSettingsForm.DEFAULT_MAX_VALUE
+        min_value = self.settings.get('min_value') or IntegerSettingsForm.DEFAULT_MIN_VALUE
+        max_value = self.settings.get('max_value') or IntegerSettingsForm.DEFAULT_MAX_VALUE
         if not min_value <= value <= max_value:
             raise forms.ValidationError(f"Value must be between {min_value} and {max_value}")
         return True
@@ -141,4 +141,7 @@ class TextColumnHandler(ColumnHandler):
 
     def validate_value(self, value: str) -> bool:
         """Validate text field"""
+        max_length = self.settings.get('max_length') or TextSettingForm.DEFAULT_MAX_LENGTH
+        if len(value) > max_length:
+            raise forms.ValidationError(f"Length must be less than or equal to {max_length}")
         return True

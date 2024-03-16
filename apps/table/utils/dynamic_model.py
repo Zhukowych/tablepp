@@ -35,7 +35,9 @@ class DynamicModelFormMixin:
         errors = {}
         for column in self.columns:
             field_value = self.cleaned_data[column.slug]
+            print(field_value)
             try:
+
                 column.handler.validate_value(field_value)
             except forms.ValidationError as error:
                 errors[column.slug] = [error.message]

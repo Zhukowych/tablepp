@@ -4,20 +4,20 @@
 
 <style>
 
-.input-field {
-    width: 100%;   
-}
+    .input-field {
+        width: 100%;
+    }
 
-table {
-    width: 40%;
-}
+    table {
+        width: 40%;
+    }
 
-span.helptext {
-    color: grey;
-}
+    span.helptext {
+        color: grey;
+    }
 </style>
 
-<link href="{{ static('css/tabs.css') }}" rel="stylesheet" />
+<link href="{{ static('css/tabs.css') }}" rel="stylesheet"/>
 
 {% endblock %}
 
@@ -32,8 +32,8 @@ span.helptext {
 
 <form method="post">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    <table >
-    
+    <table>
+
         {% for field in form.visible_fields() %}
             <tr>
                 <td><label>{{ field.label }}:</label></td>
@@ -42,21 +42,23 @@ span.helptext {
                 <td>{{ field }}</td>
             </tr>
             <tr>
-                <td><span class="helptext">{{ field.help_text }}</span></td>                
+                <td><span class="helptext">{{ field.help_text }}</span></td>
             </tr>
         {% endfor %}
 
     </table>
 
-    <button type="submit" class="create-table-btn">Save</button>
-    <a href="{{ url('user_list') }}">
-        <button class="cancel-btn" type="button">Back to the list</button>
-    </a>
-    {% if view_name == 'update_user' %}
+    <div class="action-buttons">
+        <button type="submit" class="create-table-btn">Save</button>
+        <a href="{{ url('user_list') }}">
+            <button class="cancel-btn" type="button">Back to the list</button>
+        </a>
+        {% if view_name == 'update_user' %}
+            <button class="delete-btn" type="button">
+                <a href="{{ url('delete_user', args = [object.pk]) }}">Delete User</a></button>
+        {% endif %}
+    </div>
 
-        <button class="delete-btn" type="button"><a href="{{ url('delete_user', args = [object.pk]) }}">Delete User</a></button>
-        
-    {% endif %}
 </form>
 
 {% endblock %}

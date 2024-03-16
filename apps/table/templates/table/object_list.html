@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 
 {% block head %}
-<script src="{{ static('js/jquery.formset.js') }}"></script> 
-<style>
+    <script src="{{ static('js/jquery.formset.js') }}"></script>
+    <style>
 
-.object-list-container {
-    width: 60%;
-}
+        .object-list-container {
+            width: 60%;
+        }
 
-.filter-button-container {
-    display: flex;
-    justify-content: right;
-}
+        .filter-button-container {
+            display: flex;
+            justify-content: right;
+        }
 
-</style>
+    </style>
 
 {% endblock %}
 
@@ -42,47 +42,50 @@
                         <tr>
                             <td>{{ field.label_tag() }}</td>
                             <td>{{ field }}</td>
-                        </tr>   
+                        </tr>
                     {% endfor %}
                 </table>
                 <div class="filter-button-container">
                     <button class="filter-btn" type="submit">
-                            Filter
-                    </button>                    
+                        Filter
+                    </button>
                 </div>
             </form>
-       </div>
+        </div>
 
         <div class="table-temp">
-            {% set displayable_columns =  table.get_displayable_columns(request.user) %}
+            {% set displayable_columns = table.get_displayable_columns(request.user) %}
             <table class="wide">
                 <thead>
-                    <tr>
-                        <th class="abbr">Id</th>
-                        {% for column in displayable_columns %}
-                            <th>{{column.name}}</th>
-                        {% endfor %}
-                        <th>Actions</th>
-                    </tr>
+                <tr>
+                    <th class="abbr">Id</th>
+                    {% for column in displayable_columns %}
+                        <th>{{ column.name }}</th>
+                    {% endfor %}
+                    <th>Actions</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {% for object in object_list %}
-                        <tr>
-                            <td>{{object.id}}</td>
-                            {% for column in displayable_columns %}
-                                {% if loop.first %}
-                                    <td class="{{ column.get_table_formating_class() }}"><a href="{{ url('object-edit', args=[object.table.id, object.id]) }}">{{ object.get_value_of(column) }}</a></td>
-                                {% else %}
-                                    <td class="{{ column.get_table_formating_class() }}">{{ object.get_value_of(column) }}</td>
-                                {% endif %}
-                            {% endfor %}
-                            <td>
-                                <a href="{{ url('object-delete', args=[table.id, object.id]) }}" class="delete-btn small">
-                                    <i data-feather="trash-2"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
+                {% for object in object_list %}
+                    <tr>
+                        <td>{{ object.id }}</td>
+                        {% for column in displayable_columns %}
+                            {% if loop.first %}
+                                <td class="{{ column.get_table_formating_class() }}"><a
+                                        href="{{ url('object-edit', args=[object.table.id, object.id]) }}">
+                                    {{ object.get_value_of(column) }}</a></td>
+                            {% else %}
+                                <td class="{{ column.get_table_formating_class() }}">
+                                    {{ object.get_value_of(column) }}</td>
+                            {% endif %}
+                        {% endfor %}
+                        <td>
+                            <a href="{{ url('object-delete', args=[table.id, object.id]) }}" class="delete-btn small">
+                                <i data-feather="trash-2"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
                 </tbody>
             </table>
 
@@ -92,10 +95,10 @@
     </div>
 
     <script type="text/javascript">
-        $('.open-filter-btn').click(function(){
+        $('.open-filter-btn').click(function () {
             let filter_box = $(".filters-box");
             console.log(filter_box);
-            if (filter_box.is(":visible")) 
+            if (filter_box.is(":visible"))
                 filter_box.hide(500);
             else
                 filter_box.show(500);
