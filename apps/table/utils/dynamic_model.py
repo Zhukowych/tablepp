@@ -30,8 +30,18 @@ class DynamicModelFormMixin:
         for readonly_column in self.readlonly_columns:
             self.fields[readonly_column.slug].widget.attrs['readonly'] = True
 
+    def clean(self):
+        """Validate form data"""
+        errors = {}
+        for column in self.columns:
+            field_value = self.cleaned_data[column.slug]
+            try:
+                column.handler.validate_value(field_value)
+            except forms.ValidationError as error:
+                errors[column.slug] = [error.message]
 
-
+        if errors:
+            raise forms.ValidationError(errors)
 
 class DynamicModelFilterSetMixin:
     """Mixin class for FilterSet that works with dynamic model"""

@@ -124,3 +124,12 @@ div.filters-box {
     height: 30px;
     width: 100%;
 }
+
+.form-table {
+  width: 80%;
+}
+
+.form-table td:first-child {
+    width: 1%;
+    vertical-align: middle;
+}

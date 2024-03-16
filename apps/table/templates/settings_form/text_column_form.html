@@ -26,8 +26,7 @@
         function create_text_column_settings_form(column_row, settings_row){
             let settings_input = get_settings_input(column_row);
             let settings = JSON.parse(settings_input.val());
-            max_length_input(settings_row).val(settings.max_length);
-            check_selected_filters(settings_row, settings.filters || []);
+            max_length_input(settings_row).val(settings.max_length || max_length_input(settings_row).val() );
         }
 
         function export_text_column_settings_form(column_row, settings_row){

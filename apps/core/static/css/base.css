@@ -260,6 +260,15 @@ color: #424588;
 margin-right: 20px;
 }
 
+input[type=number] {
+	height: 40px;
+	padding-left: 10px;
+	border: 1px solid #424588;
+	border-radius: 5px;
+	background-color: #d5daff;
+	color: #424588;
+}
+
 .button-container {
 display: flex;
 justify-content: flex-start;
@@ -308,7 +317,7 @@ border: none;
 padding: 10px 20px;
 border-radius: 5px;
 cursor: pointer;
-/* margin-left: auto; */
+height: 44px;
 font-weight: 700;
 }
 
@@ -333,9 +342,6 @@ a > .delete-btn {
 	color: inherit;
 
 }
-
-
-
 
 .delete-btn.small {
 	border: none;
@@ -368,4 +374,20 @@ a > .delete-btn {
 	background-color: #ff6961;
 	border: 2px solid red;
 	border-radius: 5px;
+}
+
+.invalid_field {
+	border: 1px solid red;
+}
+
+span.error {
+	color: #ff1d31;
+	font-style: italic;
+	font-size: 14px;
+}
+
+.pagination {
+	margin-top: 10px;
+	display: flex;
+	justify-content: center;
 }

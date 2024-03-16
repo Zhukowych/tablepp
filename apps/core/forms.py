@@ -16,6 +16,10 @@ class BaseModelForm(ModelForm):
                 visible.field.widget.attrs['class'] = 'checkbox-input'
             else:
                 visible.field.widget.attrs['class'] = 'input-field'
+        for visible_field in self.visible_fields():
+            existing_classes = visible_field.field.widget.attrs.get('class', '')
+            if visible_field.errors:
+                visible_field.field.widget.attrs['class'] = existing_classes + " invalid_field"
 
 
 class BaseForm(forms.Form):

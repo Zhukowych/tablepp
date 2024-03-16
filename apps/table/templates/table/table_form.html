@@ -124,11 +124,15 @@ color: #424588;
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
         {{ form.name.label_tag() }}<br>
         {{ form.name }}
-        <br><br>
+        <br>
+        {{ display_errors(form.name) }}
+        <br>
         {{ form.description.label_tag() }}<br>
         {{ form.description }}
         <br>
-    
+        {{ display_errors(form.description) }}
+        <br>
+
         <table>
             {{ columns_form.management_form }}
             {% set cycling_list = cycler('row1', 'row2') %}
@@ -150,8 +154,8 @@ color: #424588;
                         {% for hidden in form.hidden_fields() %}
                             {{ hidden }}
                         {% endfor %}
-                        {{ form.name.errors.as_ul() }}
                         {{ form.name }}
+                        {{ display_errors(form.name) }}
                     </td>
                     <td>
                         {{ form.dtype.errors.as_ul() }}
@@ -219,10 +223,12 @@ color: #424588;
         let formset_row = $(event.target.closest("tr"));
         let setting_row = formset_row.next("tr").find("td");
         let column_dtype = formset_row.find("select").val();
+        let settings_input = get_settings_input(formset_row);
+        let settings = JSON.parse(settings_input.val());
         setting_row.html($('div.' + column_dtype + '-setting-form').html());
 
+        check_selected_filters(setting_row, settings.filters || []);
         dtypes_form_handlers[column_dtype].create_function(formset_row, setting_row);
-
         toggle_edit_button(event);
     }
 

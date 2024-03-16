@@ -11,11 +11,11 @@
     .filter-btn {
     background-color: #d5daff;
     color: #1e0b69;
+    height: 44px;
     border: #1e0b69 1px solid;
     padding: 10px 10px;
     border-radius: 5px;
     cursor: pointer;
-    margin-left: 2%;
     font-weight: 700;
     }
 
@@ -53,6 +53,7 @@
 
     .input-field {
         width: 20%;
+        margin: 0 !important;
     }
 
 </style>
@@ -69,12 +70,15 @@
 
             {{ filter.form.name }}
             <button class="filter-btn" type="submit"><i class="fas fa-filter" ></i> Filter</button>
+
+            <a href="{{ url('table-add') }}">
+                <button class="save-btn" type="button">+ add new table</button>
+            </a>
         </form>
      </div>
       <div class="table-previews">
        {% for table in object_list %}
             <div class="table-preview">
-                <!-- <img src="C:\Users\teylo\OneDrive\Рабочий стол\UCU\Programming_basics\project3\new\images\Sheet.png" alt="Preview 1"> -->
                 <h3><a href="{{ url('object-list', args=[table.id]) }}">{{ table.name }}</a></h3>
                 <p>{{ table.description }}</p>
             </div>

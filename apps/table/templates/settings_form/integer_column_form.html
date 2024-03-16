@@ -20,8 +20,8 @@
             let settings_input = get_settings_input(column_row);
             let settings = JSON.parse(settings_input.val());
 
-            min_value_input(settings_row).val(settings.min_value);
-            max_value_input(settings_row).val(settings.max_value);
+            min_value_input(settings_row).val(settings.min_value || min_value_input(settings_row).val());
+            max_value_input(settings_row).val(settings.max_value || max_value_input(settings_row).val());
         }
 
         function export_integer_field_settings_form(column_row, settings_row){

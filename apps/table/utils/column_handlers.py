@@ -35,6 +35,10 @@ class ColumnHandler(ABC):
     def get_css_formating_class(self) -> Field:
         """Return css class to format table col"""
 
+    @abstractmethod
+    def validate_value(self, value) -> bool:
+        """Validate value or raise ValidationError"""
+
     @classmethod
     def get_settings_form(cls) -> forms.Form:
         """Return an instance of column setting form"""
@@ -68,8 +72,12 @@ class ColumnSettingsForm(forms.Form):
         choices = [ (filter_type.value[0], filter_type.value[1]) for filter_type in self.Filters]
         self.fields['filters'].choices = choices
 
-class IntegerSettigForm(ColumnSettingsForm):
+
+class IntegerSettingsForm(ColumnSettingsForm):
     """Integer field settings form"""
+
+    DEFAULT_MIN_VALUE = -100
+    DEFAULT_MAX_VALUE = 100
 
     template_name = "settings_form/integer_column_form.html"
 
@@ -81,8 +89,8 @@ class IntegerSettigForm(ColumnSettingsForm):
     class Meta:
         field_order = ['filters', 'min_value', 'max_value']
 
-    min_value = forms.IntegerField(label=_("Min value"))
-    max_value = forms.IntegerField(label=_("Max value"))
+    min_value = forms.IntegerField(label=_("Min value"), initial=DEFAULT_MIN_VALUE)
+    max_value = forms.IntegerField(label=_("Max value"), initial=DEFAULT_MAX_VALUE)
 
 
 class TextSettingForm(ColumnSettingsForm):
@@ -95,7 +103,7 @@ class TextSettingForm(ColumnSettingsForm):
 
     template_name = "settings_form/text_column_form.html"
 
-    max_length = forms.IntegerField(label=_("Max length"))
+    max_length = forms.IntegerField(label=_("Max length"), initial=128)
 
     class Meta:
         field_order = ['filters', 'max_length']
@@ -103,7 +111,7 @@ class TextSettingForm(ColumnSettingsForm):
 class IntegerColumnHandler(ColumnHandler):
     """Handler for IntegerColumn"""
 
-    settings_form = IntegerSettigForm
+    settings_form = IntegerSettingsForm
 
     def get_model_field(self) -> Field:
         kwargs = self.get_kwargs()
@@ -111,6 +119,13 @@ class IntegerColumnHandler(ColumnHandler):
 
     def get_css_formating_class(self) -> Field:
         return "integer"
+
+    def validate_value(self, value) -> bool:
+        min_value = IntegerSettingsForm.DEFAULT_MIN_VALUE
+        max_value = IntegerSettingsForm.DEFAULT_MAX_VALUE
+        if not min_value <= value <= max_value:
+            raise forms.ValidationError(f"Value must be between {min_value} and {max_value}")
+        return True
 
 class TextColumnHandler(ColumnHandler):
     """Handler for IntegerColumn"""
@@ -123,3 +138,7 @@ class TextColumnHandler(ColumnHandler):
 
     def get_css_formating_class(self) -> Field:
         return "text"
+
+    def validate_value(self, value: str) -> bool:
+        """Validate text field"""
+        return True

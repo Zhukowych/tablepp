@@ -61,7 +61,6 @@ class SaveTableMixin:
         """Do action when create form is valid"""
         context = self.get_context_data()
         columns_form = context['columns_form']
-
         if any( error for error in columns_form.errors[:-1]):
             return self.form_invalid(form)
         with transaction.atomic():
@@ -132,11 +131,10 @@ class HasPermissionMixin:
         return reverse('table-list')
 
 
-
 class TableObjectListView(HasPermissionMixin, ListView):
     """List objects added to table"""
     template_name = "table/object_list.html"
-    paginate_by = 10
+    paginate_by = 2
     table = None
     formset = None
     operation = TablePermission.Operation.READ

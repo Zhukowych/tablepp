@@ -124,11 +124,12 @@ class Table(models.Model):
         setattr(Meta, "fields",  displayable_column_names)
 
         model_form = type(f"{self.slug}ModelForm", (DynamicModelFormMixin, BaseModelForm),
-                           {'Meta':Meta})
+                           {'Meta': Meta})
 
         readonly_columns = [column
                             for column in displayable_columns
                             if not user.has_permission(TablePermission.Operation.WRITE, column) ]
+        setattr(model_form, "columns", self.columns.all())
         setattr(model_form, 'readlonly_columns', readonly_columns)
 
         return model_form
@@ -159,6 +160,10 @@ class Table(models.Model):
 class Column(models.Model):
     """Field entity"""
 
+    class Meta:
+        """Model settings"""
+        unique_together = ('name', 'table')
+
     class DType(models.IntegerChoices):
         """enum for types of columns"""
         TEXT = 0, _("Text")
@@ -172,7 +177,7 @@ class Column(models.Model):
         DType.INTEGER: IntegerColumnHandler
     }
 
-    name = models.CharField(_("Name"), max_length=64, unique=True)
+    name = models.CharField(_("Name"), max_length=64)
     slug = models.CharField(_("Slug"), max_length=64, unique=True)
     dtype = models.IntegerField(_("Data type"), choices=DType, default=DType.INTEGER)
     settings = models.JSONField(_("Settings"), default=dict)

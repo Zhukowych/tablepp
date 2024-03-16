@@ -4,16 +4,7 @@
 <script src="{{ static('js/jquery.formset.js') }}"></script> 
 
 <style>
-input[type=number] {
-	height: 50px;
-	width: 350px;
-	border: none;
-	border-radius: 10px;
-	box-shadow: none;
-	background-color: #C7CEFF;
-	padding-left: 20px;
-	/*margin-top: 10px;*/
-}
+
 
 
 </style>
@@ -32,8 +23,20 @@ input[type=number] {
 <div class="col-md-4">
     <form action="" method="post">
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-        {{ form.as_p() }}
-       <input type="submit" class="save-btn" value="Save"/> 
+
+        <table class="form-table">
+            {% for field in form.visible_fields() %}
+                <tr>
+                    <td>{{ field.label_tag() }}</td>
+                    <td>
+                        {{ field }}<br>
+                        {{ display_errors(field) }}
+                    </td>
+
+                </tr>
+            {% endfor %}
+        </table>
+       <input type="submit" class="save-btn" value="Save"/>
         <a href="{{ url('object-list', args=[table.id]) }}">
             <button class="cancel-btn" type="button">Back to the list</button>
         </a>
