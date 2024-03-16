@@ -52,10 +52,13 @@ class User(AbstractUser):
         permissions = self.permissions.filter(object_id=object.id,
                                               operation=operation,
                                               content_type=content_type)
+
         if permissions.exists():
             return permissions.first().accept
 
-        group_permissions = [group.permissions for group in self.user_groups.all()]
+        group_permissions = [group.permissions.filter(content_type=content_type,
+                                                      object_id=object.id,
+                                                      operation=operation) for group in self.user_groups.all()]
 
         for group_permission in group_permissions:
             if group_permission.exists():
