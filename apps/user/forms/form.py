@@ -40,6 +40,7 @@ class UserForm(BaseModelForm):
             "last_name",
             "email",
             "role",
+            "is_superuser",
         ]
 
     password = forms.CharField(widget=forms.PasswordInput(), required=False)

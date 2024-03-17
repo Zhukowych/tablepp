@@ -26,7 +26,7 @@ user.is_superuser %} {% include "user/user_tabs.html" %} {% endif %}
 <form method="post">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
     <table>
-        {% for field in form.visible_fields() %}
+        {% for field in form.visible_fields()[:-1] %}
         <tr>
             <td><label>{{ field.label }}:</label></td>
         </tr>
@@ -36,7 +36,15 @@ user.is_superuser %} {% include "user/user_tabs.html" %} {% endif %}
         <tr>
             <td><span class="helptext">{{ field.help_text }}</span></td>
         </tr>
-        {% endfor %}
+        {% endfor %} {% if request.user.is_superuser %}
+        <tr>
+            <td>
+                <label>{{ form.visible_fields()[-1].label }}</label> {{
+                form.visible_fields()[-1] }}
+            </td>
+        </tr>
+        <tr></tr>
+        {% endif %}
     </table>
 
     <div class="action-buttons">

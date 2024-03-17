@@ -120,7 +120,10 @@ class UpdateUserView(IsUserAdminMixin, UpdateView):
     def form_valid(self, form):
         """hashes password on save"""
         user = form.save(commit=False)
-        user.password = make_password(form.cleaned_data["password"])
+        if form.cleaned_data["password"] == "":
+            user.password = User.objects.get(pk=self.object.pk).password
+        else:
+            user.password = make_password(form.cleaned_data["password"])
         user.save()
 
         return super().form_valid(form)
