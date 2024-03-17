@@ -13,6 +13,8 @@ class CheckAuthenticated:
         self.get_response = get_response
 
     def __call__(self, request, *args: Any, **kwds: Any) -> Any:
+        if request.path.startswith('/static/'):
+            return self.get_response(request)
 
         if not request.user.is_authenticated and request.path != "/user/login/":
             return redirect(reverse("login_page"))
