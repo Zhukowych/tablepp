@@ -52,7 +52,8 @@ user.is_superuser %} {% include "user/user_tabs.html" %} {% endif %}
         <a href="{{ url('user_list') }}">
             <button class="cancel-btn" type="button">Back to the list</button>
         </a>
-        {% if view_name == 'update_user' %}
+        {% if view_name == 'update_user' and request.user.is_superuser %}
+
         <button class="delete-btn" type="button">
             <a href="{{ url('delete_user', args = [object.pk]) }}"
                 >Delete User</a

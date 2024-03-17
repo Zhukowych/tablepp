@@ -11,6 +11,8 @@ from django.contrib.contenttypes.models import ContentType
 from ajax_select.fields import AutoCompleteSelectWidget, AutoCompleteSelectField
 from apps.core.forms import BaseModelForm
 from user.models import TablePermission, User, UserGroups, Role
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 
 class UpdateUserGroupForm(BaseModelForm):
@@ -28,6 +30,10 @@ class UpdateUserGroupForm(BaseModelForm):
 class UserForm(BaseModelForm):
     """UserForm"""
 
+    password_confirm = forms.CharField(
+        widget=forms.PasswordInput(), label="Confirm password", required=False
+    )
+
     class Meta:
         """Meta class"""
 
@@ -35,6 +41,7 @@ class UserForm(BaseModelForm):
         fields = [
             "username",
             "password",
+            "password_confirm",
             "email",
             "first_name",
             "last_name",
@@ -53,6 +60,27 @@ class UserForm(BaseModelForm):
             for field in self.fields:
                 self.fields[field].widget.attrs["readonly"] = True
             self.fields["password"].widget.attrs["readonly"] = False
+            self.fields["password_confirm"].widget.attrs["readonly"] = False
+
+    def clean(self) -> dict[str, Any]:
+
+        cleaned_data = super().clean()
+
+        if cleaned_data["password"] != cleaned_data["password_confirm"]:
+            self.add_error(
+                "password_confirm", ValidationError("Passwords do not match.")
+            )
+
+        return cleaned_data
+
+    # def is_valid(self) -> bool:
+
+    # print(self.cleaned_data)
+
+    # if self.cleaned_data["password"] != self.cleaned_data["password_confirm"]:
+    # raise ValidationError("Passwords do not match.", code="invalid")
+
+    # return super().is_valid()
 
 
 class GroupForm(BaseModelForm):

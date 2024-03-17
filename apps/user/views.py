@@ -25,6 +25,7 @@ from .forms.form import (
     RoleForm,
 )
 from .filters import UserListFilter, RoleListFilter, GroupListFilter
+from django.contrib import messages
 
 
 class UserLoginView(LoginView):
@@ -89,6 +90,10 @@ class AddUserView(IsUserAdminMixin, CreateView):
 
         return super().form_valid(form)
 
+    # def form_invalid(self, form: BaseModelForm) -> HttpResponse:
+    # messages.error(self.request, "Password's do not match")
+    # return super().form_invalid(form)
+
     def get_success_url(self) -> str:
         """to what url to return on success"""
         return reverse("update_user", kwargs={"pk": self.object.pk})
@@ -127,6 +132,12 @@ class UpdateUserView(IsUserAdminMixin, UpdateView):
         user.save()
 
         return super().form_valid(form)
+
+    # def form_invalid(self, form):
+    # """error message on not valid forms"""
+
+    # messages.error(self.request, "Password's do not match")
+    # return super().form_invalid(form)
 
     def get_form_kwargs(self) -> dict[str, Any]:
         kwargs = super().get_form_kwargs()
