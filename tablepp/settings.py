@@ -66,10 +66,10 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.jinja2.Jinja2",
         "DIRS": [
-            "apps/core/templates",
-            "apps/table/templates",
-            "apps/user/templates",
-            "apps/logs/templates"
+            BASE_DIR / "apps/core/templates",
+            BASE_DIR / "apps/table/templates",
+            BASE_DIR / "apps/user/templates",
+            BASE_DIR / "apps/logs/templates"
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -165,6 +165,8 @@ STATICFILES_DIRS = [
     BASE_DIR / "apps/core/static/",
     BASE_DIR / "apps/user/static/"
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
