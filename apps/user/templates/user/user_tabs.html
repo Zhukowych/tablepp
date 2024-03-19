@@ -5,9 +5,11 @@
         </li>
         <li class="{{ insert_on_name('edit_user_group', 'selected') }}">
             <a href="{{ url('edit_user_group', args=[object.id]) }}">Groups</a>
-        </li>    
+        </li>
         <li class="{{ insert_on_name('permission_user_grant', 'selected') }}">
-            <a href="{{ url('permission_user_grant', args=[object.id]) }}">Permissions</a>
+            <a href="{{ url('permission_user_grant', args=[object.id]) }}"
+                >Permissions</a
+            >
         </li>
     </ul>
 </div>

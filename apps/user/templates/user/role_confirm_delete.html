@@ -1,16 +1,10 @@
-{% extends "base.html" %}
-
-{% block head %}
-{% endblock %}
-
-{% block main %}
+{% extends "base.html" %} {% block head %} {% endblock %} {% block main %}
 
 <form method="post">
-    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
     <p>Are you sure you want to delete "{{ object }}"?</p>
     {{ form }}
-    <input type="submit" value="Confirm">
+    <input type="submit" value="Confirm" />
 </form>
-
 
 {% endblock %}

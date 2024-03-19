@@ -1,72 +1,61 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block head %} {{form.media}}
 
-{% block head %}
-    {{form.media}}
+<style>
+    table {
+        width: 35%;
+    }
+    .object-list-container {
+        width: 65%;
+    }
 
-    <style>
+    a {
+        text-decoration: none;
+    }
+    td {
+        vertical-align: middle;
+    }
+</style>
 
-        table {
-            width: 35%;
-        }
-        .object-list-container {
-            width: 65%;        
-        }
-        
-        a {
-            text-decoration: none;
-        }
-        td {
-            vertical-align: middle;
-        }
-        
-        
-    
+{% endblock %} {% block main %} {% include "user/user_tabs.html" %}
 
-    </style>
-
-{% endblock %}
-
-{% block main %}
-
-    {% include "user/user_tabs.html" %}
-
-
-
-    <div class="object-list-container">
+<div class="object-list-container">
     <div class="table-temp">
-
-            <table class="wide">
-                <thead>
-                    <tr>
-                        <th class="abbr">Id</th>
-                        <th >Name</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for group in groups %}
-                        <tr>
-                            <td>{{group.pk}}</td>
-                            <td><a href="{{ url('update_user', args=[object.pk]) }}">{{group.name}}</a></td>
-                            <td><button class="delete-btn small" type="button"><a href="{{ url('delete_user_from_group', args=[object.pk, group.pk]) }}">Delete from this group</a></button></td>
-
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-        </div>
+        <table class="wide">
+            <thead>
+                <tr>
+                    <th class="abbr">Id</th>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for group in groups %}
+                <tr>
+                    <td>{{group.pk}}</td>
+                    <td>
+                        <a href="{{ url('update_user', args=[object.pk]) }}"
+                            >{{group.name}}</a
+                        >
+                    </td>
+                    <td>
+                        <button class="delete-btn small" type="button">
+                            <a
+                                href="{{ url('delete_user_from_group', args=[object.pk, group.pk]) }}"
+                                >Delete from this group</a
+                            >
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-<form action="" method="post">
-        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-        <h1>Add group</h1>
-        {{ form }}
-        <button type="submit" class="create-table-btn" value="update">Save</button>
-    </form>
-
 </div>
+<form action="" method="post">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
+    <h1>Add group</h1>
+    {{ form }}
+    <button type="submit" class="create-table-btn" value="update">Save</button>
+</form>
 
-
-    
-    
 {% endblock %}

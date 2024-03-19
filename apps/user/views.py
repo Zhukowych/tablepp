@@ -2,29 +2,19 @@
 
 from typing import Any
 from django.forms import BaseModelForm
-from django.views.generic.detail import DetailView
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
-from django.http import HttpResponse
-from django.contrib.auth.mixins import UserPassesTestMixin
-from django.http import HttpResponse, HttpResponseRedirect
+
+# from django.contrib.auth.mixins import UserPassesTestMixin
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-from django.contrib import messages
-from .models import User, Role
 from core.utils import IsUserAdminMixin
-from django.forms import BaseModelForm
 from django.db.models.query import QuerySet
-from django.shortcuts import render, redirect
-from django.views.generic.detail import DetailView
-from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.hashers import make_password
-from django.http import HttpResponse
-from django.urls import reverse, reverse_lazy
-from django.contrib import messages
-from .models import User, Role, UserGroups
+from .models import User, Role, UserGroups, TablePermission
 from .forms.form import (
     UpdateUserGroupForm,
     TablePermissionsFilter,
@@ -34,9 +24,8 @@ from .forms.form import (
     GroupForm,
     RoleForm,
 )
-from .models import User, Role, UserGroups, TablePermission
-from .forms.form import UpdateUserGroupForm
 from .filters import UserListFilter, RoleListFilter, GroupListFilter
+from django.contrib import messages
 
 
 class UserLoginView(LoginView):
@@ -101,17 +90,33 @@ class AddUserView(IsUserAdminMixin, CreateView):
 
         return super().form_valid(form)
 
+    # def form_invalid(self, form: BaseModelForm) -> HttpResponse:
+    # messages.error(self.request, "Password's do not match")
+    # return super().form_invalid(form)
+
     def get_success_url(self) -> str:
         """to what url to return on success"""
         return reverse("update_user", kwargs={"pk": self.object.pk})
 
+    def get_form_kwargs(self) -> dict[str, Any]:
+        kwargs = super().get_form_kwargs()
+        kwargs["is_superuser"] = self.request.user.is_superuser
+        return kwargs
 
-class UpdateUserView(UpdateView):
+
+class UpdateUserView(IsUserAdminMixin, UpdateView):
     """View for updating info about user"""
 
     model = User
     form_class = UserForm
     template_name_suffix = "_update_form"
+
+    def dispatch(self, request, *args, **kwargs):
+
+        if request.user.pk == kwargs["pk"]:
+            return UpdateView.dispatch(self, request, *args, **kwargs)
+
+        return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self) -> str:
         """to what url to return on success"""
@@ -120,10 +125,24 @@ class UpdateUserView(UpdateView):
     def form_valid(self, form):
         """hashes password on save"""
         user = form.save(commit=False)
-        user.password = make_password(form.cleaned_data["password"])
+        if form.cleaned_data["password"] == "":
+            user.password = User.objects.get(pk=self.object.pk).password
+        else:
+            user.password = make_password(form.cleaned_data["password"])
         user.save()
 
         return super().form_valid(form)
+
+    # def form_invalid(self, form):
+    # """error message on not valid forms"""
+
+    # messages.error(self.request, "Password's do not match")
+    # return super().form_invalid(form)
+
+    def get_form_kwargs(self) -> dict[str, Any]:
+        kwargs = super().get_form_kwargs()
+        kwargs["is_superuser"] = self.request.user.is_superuser
+        return kwargs
 
 
 class UserDeleteView(IsUserAdminMixin, DeleteView):
@@ -151,6 +170,7 @@ class UpdateRoleView(IsUserAdminMixin, UpdateView):
     model = Role
     form_class = RoleForm
     template_name_suffix = "_update_form"
+    redirect_url = "role_list"
 
     def get_success_url(self) -> str:
         """to what url to return on success"""
@@ -169,6 +189,7 @@ class GroupListView(ListView):
 
     model = UserGroups
     template_name = "user/group_list.html"
+    paginate_by = 10
 
     def get_queryset(self) -> QuerySet[Any]:
         """get query set"""
@@ -201,6 +222,7 @@ class UpdateGroupView(IsUserAdminMixin, UpdateView):
     model = UserGroups
     form_class = GroupForm
     template_name_suffix = "_update_form"
+    redirect_url = "group_list"
 
     def get_success_url(self) -> str:
         """to what url to return on success"""
@@ -313,6 +335,7 @@ class PermissionSaveMixin:
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """get context data"""
         context = super().get_context_data(**kwargs)
         context["permissions_form"] = TablePermissionFormSet(
             self.request.POST or None, queryset=self.object.permissions.all()
@@ -342,9 +365,3 @@ class UserGroupPermissionEditView(PermissionSaveMixin, UpdateView):
 
     def get_success_url(self) -> str:
         return reverse("permission_group_grant", args=[self.object.id])
-
-
-class UserPermissionDeleteView(DeleteView):
-    """Delete TablePermission view"""
-
-    pass

@@ -2,6 +2,7 @@ body {
     margin: 0;
     font-family: "Inter", sans-serif;
     background-color: #eaedff;
+    overflow-x: hidden;
 }
 
 .content {
@@ -65,7 +66,6 @@ h2 {
     margin-top: 30px;
 }
 
-
 .header-icons {
     display: flex;
     align-items: center;
@@ -127,9 +127,7 @@ h2 {
     a {
         text-decoration: none;
     }
-
 }
-
 
 .cancel-btn {
     padding: 10px 20px;
@@ -138,6 +136,7 @@ h2 {
     border: 1px solid #1e0b69;
     border-radius: 5px;
     cursor: pointer;
+    margin-left: 10px;
 
     a {
         text-decoration: none;
@@ -258,7 +257,7 @@ h2 {
     margin-right: 20px;
 }
 
-input[type=number] {
+input[type="number"] {
     height: 40px;
     padding-left: 10px;
     border: 1px solid #424588;
@@ -315,7 +314,7 @@ input[type=number] {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    height: 38px;
+    height: 44px;
     font-weight: 700;
 }
 
@@ -326,9 +325,9 @@ input[type=number] {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    margin-left: 10px;
     font-weight: 700;
     transition: background-color 0.3s ease, color 0.3s ease;
-
     a {
         text-decoration: none;
         color: inherit;
@@ -338,7 +337,6 @@ input[type=number] {
 a > .delete-btn {
     text-decoration: none;
     color: inherit;
-
 }
 
 .delete-btn.small {
@@ -388,12 +386,4 @@ span.error {
     margin-top: 10px;
     display: flex;
     justify-content: center;
-}
-
-.action-buttons {
-    margin-top: 5px;
-}
-
-.action-buttons a {
-    text-decoration: none;
 }

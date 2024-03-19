@@ -1,33 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <title>Log in form</title>
-    <link href="{{ static('base.css') }}" rel="stylesheet">
-    <link href="{{ static('login.css') }}" rel="stylesheet">
-  </head>
-  <body>
-    <form class="form-signin" method="post">
-        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-        <div class="text-center mb-4">
-            <h1 class="h1">WELCOME TO TABLE++</h1>
-        </div>
-        <div class="form-label-group">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Log in form</title>
+        <link href="{{ static('base.css') }}" rel="stylesheet" />
+        <link href="{{ static('login.css') }}" rel="stylesheet" />
+    </head>
+    <body>
+        <form class="form-signin" method="post">
+            <input
+                type="hidden"
+                name="csrfmiddlewaretoken"
+                value="{{ csrf_token }}" />
+            <div class="text-center mb-4">
+                <h1 class="h1">WELCOME TO TABLE++</h1>
+            </div>
+            <div class="form-label-group">
+                <center>
+                    <input
+                        type="text"
+                        id="inputUsername"
+                        class="form-control"
+                        placeholder="Username"
+                        name="username"
+                        required
+                        autofocus />
+                </center>
+
+                {% for error in form.non_field_errors() %} {{ error }} {% endfor
+                %}
+            </div>
+            <div class="form-label-group">
+                <center>
+                    <input
+                        type="password"
+                        id="inputPassword"
+                        class="form-control"
+                        placeholder="Password"
+                        name="password"
+                        required />
+                </center>
+            </div>
             <center>
-                <input type="text" id="inputUsername" class="form-control" placeholder="Username" name="username" required autofocus>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">
+                    Log in
+                </button>
             </center>
-        </div>
-        <div class="form-label-group">
-            <center>
-                <input type="password" id="inputPassword" class="form-control" placeholder="Password" name="password" required>
-            </center>
-        </div>
-        <center>
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Log in</button>
-        </center>
-    </form>
-  </body>
+        </form>
+    </body>
 </html>

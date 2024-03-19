@@ -4,7 +4,9 @@
             <a href="{{ url('edit_group', args=[object.id]) }}">Edit</a>
         </li>
         <li class="{{ insert_on_name('permission_group_grant', 'selected') }}">
-            <a href="{{ url('permission_group_grant', args=[object.id]) }}">Permissions</a>
+            <a href="{{ url('permission_group_grant', args=[object.id]) }}"
+                >Permissions</a
+            >
         </li>
     </ul>
 </div>

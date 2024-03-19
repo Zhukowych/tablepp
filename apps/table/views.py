@@ -1,4 +1,5 @@
 """Views of table app"""
+
 import json
 from typing import Any
 from django.forms import BaseModelForm
@@ -14,7 +15,7 @@ from django.contrib import messages
 
 from table.models import Table, Column
 from user.models import TablePermission
-from table.forms import  TableForm, ColumnFormSet, TableFilter
+from table.forms import TableForm, ColumnFormSet, TableFilter
 from logs.models import Logs
 from logs.utils import log
 from apps.table.utils.utils import migrate
@@ -42,26 +43,29 @@ class TableListView(ListView):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         """get method processor"""
-        self.filter = TableFilter(self.request.GET or None, queryset=Table.objects.all())
+        self.filter = TableFilter(
+            self.request.GET or None, queryset=Table.objects.all()
+        )
         self.queryset = self.filter.qs
         return super().get(request)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context['filter'] = self.filter
+        context["filter"] = self.filter
         return context
+
 
 class SaveTableMixin:
     """
-    Mixin for saving Table object in 
+    Mixin for saving Table object in
     both create and update views
     """
 
     def form_valid(self, form):
         """Do action when create form is valid"""
         context = self.get_context_data()
-        columns_form = context['columns_form']
-        if any( error for error in columns_form.errors[:-1]):
+        columns_form = context["columns_form"]
+        if any(error for error in columns_form.errors[:-1]):
             return self.form_invalid(form)
         with transaction.atomic():
             self.object = form.save(commit=True)
@@ -81,17 +85,19 @@ class SaveTableMixin:
 
 class TableCreateView(SaveTableMixin, CreateView):
     """Edit dynamic table"""
+
     model = Table
     form_class = TableForm
-    success_url = reverse_lazy('table-list')
+    success_url = reverse_lazy("table-list")
 
     def get_context_data(self, **kwargs) -> dict:
         """Return context of the view"""
         context = super().get_context_data(**kwargs)
-        context['columns_form'] = ColumnFormSet(self.request.POST or None)
-        context['dtypes'] = Column.HANDLERS
-        context['table'] = self.object
+        context["columns_form"] = ColumnFormSet(self.request.POST or None)
+        context["dtypes"] = Column.HANDLERS
+        context["table"] = self.object
         return context
+
 
 class TableUpdateView(SaveTableMixin, UpdateView):
     """Update Table view"""
@@ -104,9 +110,11 @@ class TableUpdateView(SaveTableMixin, UpdateView):
     def get_context_data(self, **kwargs) -> dict:
         """Return context of the view"""
         context = super().get_context_data(**kwargs)
-        context['columns_form'] = ColumnFormSet(self.request.POST or None, instance=self.object)
-        context['dtypes'] = Column.HANDLERS
-        context['table'] = self.object
+        context["columns_form"] = ColumnFormSet(
+            self.request.POST or None, instance=self.object
+        )
+        context["dtypes"] = Column.HANDLERS
+        context["table"] = self.object
         return context
 
 
@@ -114,8 +122,8 @@ class HasPermissionMixin:
     """Check if user has permissions to do action"""
 
     operation = None
-    table_attr = ''
-    redirect_url = 'table-list'
+    table_attr = ""
+    redirect_url = "table-list"
 
     def dispatch(self, request, *args, **kwargs):
         """Check if user has permission"""
@@ -128,18 +136,19 @@ class HasPermissionMixin:
 
     def get_reject_url(self) -> None:
         """Return reserve to which redirect if has no permission"""
-        return reverse('table-list')
+        return reverse("table-list")
 
 
 class TableObjectListView(HasPermissionMixin, ListView):
     """List objects added to table"""
+
     template_name = "table/object_list.html"
     paginate_by = 2
     table = None
     formset = None
     operation = TablePermission.Operation.READ
 
-    def get(self, request, table_id: int=None):
+    def get(self, request, table_id: int = None):
         """List all objects in the table"""
         self.table = Table.objects.get(pk=table_id)
         self.model = self.table.get_model()
@@ -151,8 +160,8 @@ class TableObjectListView(HasPermissionMixin, ListView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Modify rendering context"""
         context = super().get_context_data(**kwargs)
-        context['table'] = self.table
-        context['filter'] = self.formset
+        context["table"] = self.table
+        context["filter"] = self.formset
         return context
 
 
@@ -167,7 +176,7 @@ class DynamicModelViewMixin(HasPermissionMixin):
     operation = TablePermission.Operation.WRITE
 
     def get_reject_url(self) -> None:
-        return reverse('object-list', args=[self.table.id])
+        return reverse("object-list", args=[self.table.id])
 
     def get(self, request, table_id: int, *args, **kwargs):
         """Get method for object creationg"""
@@ -190,7 +199,7 @@ class DynamicModelViewMixin(HasPermissionMixin):
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         """Change context for view"""
         context = super().get_context_data(**kwargs)
-        context['table'] = self.table
+        context["table"] = self.table
         return context
 
     def dump_object(self) -> str:
@@ -213,9 +222,10 @@ class TableObjectCreateView(DynamicModelViewMixin, CreateView):
             user=self.request.user,
             table=self.table,
             object_id=self.object.id,
-            message="Created object"
+            message="Created object",
         )
         return response
+
 
 class TableObjectEditView(DynamicModelViewMixin, UpdateView):
     """Table object edit view"""
@@ -232,9 +242,10 @@ class TableObjectEditView(DynamicModelViewMixin, UpdateView):
             table=self.table,
             object_id=self.object.id,
             message="Changed Xobject",
-            description=f"Changed object from {before_update} -> {after_update}"
+            description=f"Changed object from {before_update} -> {after_update}",
         )
         return response
+
 
 class TableObjectDeleteView(DynamicModelViewMixin, DeleteView):
     """Table object edit view"""
@@ -250,12 +261,12 @@ class TableObjectDeleteView(DynamicModelViewMixin, DeleteView):
             table=self.table,
             object_id=self.object.id,
             message="Deleted object",
-            description=f"Deleted object {before_deletions}"
-        )       
+            description=f"Deleted object {before_deletions}",
+        )
         return super().form_valid(*args, **kwargs)
 
     def get_success_url(self) -> str:
-        return reverse('object-list', args=[self.table.id])
+        return reverse("object-list", args=[self.table.id])
 
 
 class ImportTableDataView(View):

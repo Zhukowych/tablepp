@@ -1,93 +1,87 @@
-{% extends "base.html" %}
-
-{% block head %}
+{% extends "base.html" %} {% block head %}
 
 <style>
     .object-list-container {
-        width: 35%;        
+        width: 35%;
     }
-    
+
     a {
         text-decoration: none;
     }
-    
+
     select {
         width: 100% !important;
     }
-    
-    
-    
-    
 </style>
-{% endblock %}
+{% endblock %} {% block main %}
 
-{% block main %}
+<h1>Roles list</h1>
 
-
-<h1>Roles list test</h1>
-
-    <div class="object-list-container">
-        
-        <div class="actiom-btns">
-
-            <a href="{{ url('add_role') }}"><button type="submit" class="create-table-btn" style="margin-top: 1%;">Add role</button></a>
-            <button class="open-filter-btn">
-                <i class="fas fa-filter"></i> Filters
-            </button>
-        </div>
-        <div class="filters-box" hidden>
-            <form action="#" method="get">
-                <table class="filter-table">
-                    {% for field in filter.form.visible_fields() %}
-                        <tr>
-                            <td>{{ field.label_tag() }}</td>
-                            <td>{{ field }}</td>
-                        </tr>   
-                    {% endfor %}
-                </table>
-                <div class="filter-button-container">
-                    <button class="filter-btn" type="submit">
-                            Filter
-                    </button>                    
-                </div>
-            </form>
-        </div>
-
-        <div class="table-temp">
-
-            <table class="wide">
-                <thead>
-                    <tr>
-                        <th class="abbr">Id</th>
-                        <th >Role</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for object in object_list %}
-                        <tr>
-                            <td>{{object.id}}</td>
-                            <td><a href="{{ url('update_role', args=[object.pk]) }}">{{object}}</a></td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-        </div>
+<div class="object-list-container">
+    <div class="actiom-btns">
+        {%if request.user.is_superuser%}
+        <a href="{{ url('add_role') }}"
+            ><button
+                type="submit"
+                class="create-table-btn"
+                style="margin-top: 1%">
+                Add role
+            </button></a
+        >
+        {%endif%}
+        <button class="open-filter-btn">
+            <i class="fas fa-filter"></i> Filters
+        </button>
     </div>
-    
-    
+    <div class="filters-box" hidden>
+        <form action="#" method="get">
+            <table class="filter-table">
+                {% for field in filter.form.visible_fields() %}
+                <tr>
+                    <td>{{ field.label_tag() }}</td>
+                    <td>{{ field }} {{ display_errors(field) }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            <div class="filter-button-container">
+                <button class="filter-btn" type="submit">Filter</button>
+            </div>
+        </form>
+    </div>
 
-        
-    <script type="text/javascript">
-        $('.open-filter-btn').click(function(){
-            let filter_box = $(".filters-box");
-            console.log(filter_box);
-            if (filter_box.is(":visible")) 
-                filter_box.hide(500);
-            else
-                filter_box.show(500);
-        });
-    </script>
+    <div class="table-temp">
+        <table class="wide">
+            <thead>
+                <tr>
+                    <th class="abbr">Id</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in object_list %}
+                <tr>
+                    <td>{{object.id}}</td>
+                    <td>
+                        <a href="{{ url('update_role', args=[object.pk]) }}"
+                            >{{object}}</a
+                        >
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
+    {{ add_paginator(page_obj) }}
+</div>
+
+<script type="text/javascript">
+    $(".open-filter-btn").click(function () {
+        let filter_box = $(".filters-box");
+        console.log(filter_box);
+        if (filter_box.is(":visible")) filter_box.hide(500);
+        else filter_box.show(500);
+    });
+</script>
 
 {% endblock %}
