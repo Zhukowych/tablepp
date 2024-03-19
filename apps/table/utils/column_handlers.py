@@ -10,9 +10,11 @@ from enum import Enum
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Field, IntegerField, CharField, FloatField, BigAutoField
+from django.db.models import Field, IntegerField, CharField, FloatField, TextField
 from django import forms
 from django.utils.translation import gettext_lazy as _
+
+from annotated_types import Any
 
 
 class ColumnHandler(ABC):
@@ -42,6 +44,10 @@ class ColumnHandler(ABC):
     @abstractmethod
     def validate_value(self, value) -> bool:
         """Validate value or raise ValidationError"""
+
+    @abstractmethod
+    def format_value(self, value) -> str:
+        """Formats value"""
 
     @classmethod
     def get_settings_form(cls) -> forms.Form:
@@ -144,6 +150,23 @@ class TextSettingForm(ColumnSettingsForm):
         field_order = ["filters", "max_length"]
 
 
+class BigTextSettingForm(ColumnSettingsForm):
+    """Text column settings form"""
+
+    class Filters(Enum):
+        """Filters for text column"""
+
+        EXACT = "exact", _("Exact value")
+        CONTAINS = "contains", _("Contains")
+
+    template_name = "settings_form/text_column_form.html"
+
+    class Meta:
+        """Meta class"""
+
+        field_order = ["filters"]
+
+
 RELATABLE_MODELS = ContentType.objects.filter(
     model__startswith="table_"
 ) | ContentType.objects.filter(model="user")
@@ -185,6 +208,10 @@ class IntegerColumnHandler(ColumnHandler):
             )
         return True
 
+    def format_value(self, value: int) -> int:
+        """Formats value"""
+        return value
+
 
 class FloatColumnHandler(ColumnHandler):
     """Handler for FloatColumn"""
@@ -211,6 +238,10 @@ class FloatColumnHandler(ColumnHandler):
             )
         return True
 
+    def format_value(self, value: float) -> float:
+        """Formats value"""
+        return value
+
 
 class TextColumnHandler(ColumnHandler):
     """Handler for IntegerColumn"""
@@ -234,6 +265,31 @@ class TextColumnHandler(ColumnHandler):
                 f"Length must be less than or equal to {max_length}"
             )
         return True
+
+    def format_value(self, value: str) -> str:
+        """Formats value"""
+        return value
+
+
+class BigTextColumnHandler(ColumnHandler):
+    """Handler for IntegerColumn"""
+
+    settings_form = BigTextSettingForm
+
+    def get_model_field(self) -> Field:
+        kwargs = self.get_kwargs()
+        return TextField(_(self.name), **kwargs)
+
+    def get_css_formating_class(self) -> Field:
+        return "Big text"
+
+    def validate_value(self, value: str) -> bool:
+        """Validate text field"""
+        return True
+
+    def format_value(self, value: str) -> str:
+        """Formats value"""
+        return value[:7] + "..."
 
 
 class RelationColumnHandler(ColumnHandler):

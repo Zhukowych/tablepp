@@ -1,0 +1,35 @@
+{% macro render_form(column_setting_form) %}
+
+<div class="settings-box">{{ column_setting_form.as_ul() }}</div>
+
+<!-- <table>
+        <thead>
+            {% for field in column_setting_form %}
+                <tr><th>{{field.label_tag()}}</th><th>{{field}}</th></tr>
+            {% endfor %}
+        </thead>
+    </table> -->
+{% endmacro %} {% macro settings_script(dtype) %}
+
+<script type="text/javascript">
+    function create_big_text_column_settings_form(column_row, settings_row) {
+        let settings_input = get_settings_input(column_row);
+        let settings = JSON.parse(settings_input.val());
+    }
+
+    function export_bit_text_column_settings_form(column_row, settings_row) {
+        let settings_input = get_settings_input(column_row);
+        let settings = {
+            filters: get_selected_filters(settings_row),
+        };
+
+        settings_input.val(JSON.stringify(settings));
+    }
+
+    register_dtype("{{ dtype }}", {
+        create_function: create_big_text_column_settings_form,
+        export_function: export_big_text_column_settings_form,
+    });
+</script>
+
+{% endmacro %}

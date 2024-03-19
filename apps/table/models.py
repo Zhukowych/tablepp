@@ -19,6 +19,7 @@ from table.utils.column_handlers import (
     IntegerColumnHandler,
     TextColumnHandler,
     FloatColumnHandler,
+    BigTextColumnHandler,
 )
 from table.utils.dynamic_model import (
     DynamicModelMixin,
@@ -197,6 +198,7 @@ class Column(models.Model):
         DType.INTEGER: IntegerColumnHandler,
         DType.RELATION: RelationColumnHandler,
         DType.FLOAT: FloatColumnHandler,
+        DType.BIG_TEXT: BigTextColumnHandler,
     }
 
     name = models.CharField(_("Name"), max_length=64)
