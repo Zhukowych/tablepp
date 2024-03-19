@@ -4,9 +4,7 @@ from django import forms
 from django.forms import ModelForm
 
 
-class BaseModelForm(ModelForm):
-    """Base Model Form"""
-
+class BaseFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for visible in self.visible_fields():
@@ -16,11 +14,15 @@ class BaseModelForm(ModelForm):
                 visible.field.widget.attrs['class'] = 'checkbox-input'
             else:
                 visible.field.widget.attrs['class'] = 'input-field'
+
         for visible_field in self.visible_fields():
             existing_classes = visible_field.field.widget.attrs.get('class', '')
             if visible_field.errors:
                 visible_field.field.widget.attrs['class'] = existing_classes + " invalid_field"
 
+
+class BaseModelForm(BaseFormMixin, ModelForm):
+    """Base Model Form"""
 
 class BaseForm(forms.Form):
     """Base form"""

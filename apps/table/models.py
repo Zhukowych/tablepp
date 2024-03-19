@@ -19,6 +19,8 @@ from table.utils.dynamic_model import DynamicModelMixin, DynamicModelFormMixin, 
 from core.forms import BaseModelForm
 from user.models import TablePermission, User
 
+from apps.table.utils.column_handlers import RelationColumnHandler
+
 
 def column_settings_default():
     """Generator of default values for field settigns"""
@@ -39,7 +41,7 @@ class Table(models.Model):
 
         if not self.slug:
             code = time.time_ns() + random.randint(1, 10)
-            self.slug = "talbe_" + hashlib.md5(str(code).encode())\
+            self.slug = "table_" + hashlib.md5(str(code).encode())\
                         .hexdigest()
 
     def __str__(self) -> str:
@@ -171,10 +173,12 @@ class Column(models.Model):
         POSITIVE_INTEGER = 2, _("Positive integer")
         FLOAT = 3, _("Float")
         BIG_TEXT = 4, _("Big text")
+        RELATION = 5, _("Relationship")
 
     HANDLERS = {
         DType.TEXT: TextColumnHandler,
-        DType.INTEGER: IntegerColumnHandler
+        DType.INTEGER: IntegerColumnHandler,
+        DType.RELATION: RelationColumnHandler
     }
 
     name = models.CharField(_("Name"), max_length=64)

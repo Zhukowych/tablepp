@@ -1,0 +1,36 @@
+{% macro render_form(column_setting_form) %}
+    <div class="settings-box">
+        {{ column_setting_form.as_ul() }}
+    </div>
+{% endmacro %}
+
+{% macro settings_script(dtype) %}
+
+    <script type="text/javascript">
+
+        function content_type_input(setting_row) {
+            return setting_row.find("select#id_content_type");
+        }
+
+        function create_relation_field_settings_form(column_row, settings_row){
+            let settings_input = get_settings_input(column_row);
+            let settings = JSON.parse(settings_input.val());
+            content_type_input(settings_row).val(settings.content_type_id || min_value_input(settings_row).val());
+        }
+
+        function export_relation_field_settings_form(column_row, settings_row){
+            let settings_input = get_settings_input(column_row);
+            let settings = {
+                content_type_id: content_type_input(settings_row).find(":selected").val(),
+            };
+            get_selected_filters(settings_row);
+            settings_input.val(JSON.stringify(settings));
+        }
+
+        register_dtype("{{ dtype }}", {create_function: create_relation_field_settings_form,
+                                       export_function:  export_relation_field_settings_form})
+
+    </script>
+
+
+{% endmacro %}
