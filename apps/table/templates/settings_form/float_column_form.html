@@ -1,0 +1,43 @@
+{% macro render_form(column_setting_form) %}
+<div class="settings-box">{{ column_setting_form.as_ul() }}</div>
+{% endmacro %} {% macro settings_script(dtype) %}
+
+<script type="text/javascript">
+    function min_value_input(setting_row) {
+        return setting_row.find("input#id_min_value");
+    }
+
+    function max_value_input(setting_row) {
+        return setting_row.find("input#id_max_value");
+    }
+
+    function create_float_field_settings_form(column_row, settings_row) {
+        let settings_input = get_settings_input(column_row);
+        let settings = JSON.parse(settings_input.val());
+
+        min_value_input(settings_row).val(
+            settings.min_value || min_value_input(settings_row).val()
+        );
+        max_value_input(settings_row).val(
+            settings.max_value || max_value_input(settings_row).val()
+        );
+    }
+
+    function export_float_field_settings_form(column_row, settings_row) {
+        let settings_input = get_settings_input(column_row);
+        let settings = {
+            min_value: parseInt(min_value_input(settings_row).val()),
+            max_value: parseInt(max_value_input(settings_row).val()),
+        };
+        get_selected_filters(settings_row);
+
+        settings_input.val(JSON.stringify(settings));
+    }
+
+    register_dtype("{{ dtype }}", {
+        create_function: create_float_field_settings_form,
+        export_function: export_float_field_settings_form,
+    });
+</script>
+
+{% endmacro %}

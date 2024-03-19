@@ -1,6 +1,7 @@
 """
 Models of table app
 """
+
 from __future__ import annotations
 
 import time
@@ -14,8 +15,16 @@ from django.db.models import QuerySet
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from table.utils.column_handlers import IntegerColumnHandler, TextColumnHandler
-from table.utils.dynamic_model import DynamicModelMixin, DynamicModelFormMixin, DynamicModelFilterSetMixin
+from table.utils.column_handlers import (
+    IntegerColumnHandler,
+    TextColumnHandler,
+    FloatColumnHandler,
+)
+from table.utils.dynamic_model import (
+    DynamicModelMixin,
+    DynamicModelFormMixin,
+    DynamicModelFilterSetMixin,
+)
 from core.forms import BaseModelForm
 from user.models import TablePermission, User
 
@@ -41,8 +50,7 @@ class Table(models.Model):
 
         if not self.slug:
             code = time.time_ns() + random.randint(1, 10)
-            self.slug = "table_" + hashlib.md5(str(code).encode())\
-                        .hexdigest()
+            self.slug = "table_" + hashlib.md5(str(code).encode()).hexdigest()
 
     def __str__(self) -> str:
         """Return a string representation of Table"""
@@ -54,7 +62,7 @@ class Table(models.Model):
 
     def get_absolute_url(self) -> str:
         """Return url to Table edit page"""
-        return reverse('table-edit', kwargs={'table_id': self.id})
+        return reverse("table-edit", kwargs={"table_id": self.id})
 
     def get_displayable_columns(self, user) -> QuerySet[Column]:
         """Return list of columns that can be displayed in talbe"""
@@ -91,8 +99,8 @@ class Table(models.Model):
             """Meta for dynammic_model"""
 
         # we must set the app_label and table name
-        setattr(Meta, 'app_label', 'table')
-        setattr(Meta, 'db_table', self.slug)
+        setattr(Meta, "app_label", "table")
+        setattr(Meta, "db_table", self.slug)
 
         # Update Meta with any options that were provided
         if self.options is not None:
@@ -100,7 +108,7 @@ class Table(models.Model):
                 setattr(Meta, key, value)
 
         # Set up a dictionary to simulate declarations within a class
-        attrs = {'__module__': 'apps.table', 'Meta': Meta}
+        attrs = {"__module__": "apps.table", "Meta": Meta}
 
         # Add in any fields that were provided
         for column in self.columns.all():
@@ -108,7 +116,7 @@ class Table(models.Model):
 
         # Create the class, which automatically triggers ModelBase processing
         model = type(self.slug, (models.Model, DynamicModelMixin), attrs)
-        setattr(model, 'table', self)
+        setattr(model, "table", self)
         # Create an Admin class if admin options were provided
         return model
 
@@ -117,22 +125,28 @@ class Table(models.Model):
         Create model form for table.
         Form for adding and editing
         """
+
         class Meta:
             """Meta for talbe's model form"""
 
         displayable_columns = self.get_displayable_columns(user)
         displayable_column_names = [field.slug for field in displayable_columns]
         setattr(Meta, "model", self.get_model())
-        setattr(Meta, "fields",  displayable_column_names)
+        setattr(Meta, "fields", displayable_column_names)
 
-        model_form = type(f"{self.slug}ModelForm", (DynamicModelFormMixin, BaseModelForm),
-                           {'Meta': Meta})
+        model_form = type(
+            f"{self.slug}ModelForm",
+            (DynamicModelFormMixin, BaseModelForm),
+            {"Meta": Meta},
+        )
 
-        readonly_columns = [column
-                            for column in displayable_columns
-                            if not user.has_permission(TablePermission.Operation.WRITE, column) ]
+        readonly_columns = [
+            column
+            for column in displayable_columns
+            if not user.has_permission(TablePermission.Operation.WRITE, column)
+        ]
         setattr(model_form, "columns", self.columns.all())
-        setattr(model_form, 'readlonly_columns', readonly_columns)
+        setattr(model_form, "readlonly_columns", readonly_columns)
 
         return model_form
 
@@ -146,15 +160,16 @@ class Table(models.Model):
 
         filterable_columns = self.get_filterable_columns()
         fields_filters = {
-            column.slug: column.get_filters_names()
-            for column in filterable_columns
+            column.slug: column.get_filters_names() for column in filterable_columns
         }
 
-        setattr(Meta, 'model', self.get_model())
-        setattr(Meta, 'fields', fields_filters)
-        filterset = type(f"table_{self.slug}FilterSet",
-                         (DynamicModelFilterSetMixin, django_filters.FilterSet),
-                         {"Meta": Meta})
+        setattr(Meta, "model", self.get_model())
+        setattr(Meta, "fields", fields_filters)
+        filterset = type(
+            f"table_{self.slug}FilterSet",
+            (DynamicModelFilterSetMixin, django_filters.FilterSet),
+            {"Meta": Meta},
+        )
 
         return filterset
 
@@ -164,10 +179,12 @@ class Column(models.Model):
 
     class Meta:
         """Model settings"""
-        unique_together = ('name', 'table')
+
+        unique_together = ("name", "table")
 
     class DType(models.IntegerChoices):
         """enum for types of columns"""
+
         TEXT = 0, _("Text")
         INTEGER = 1, _("Integer")
         POSITIVE_INTEGER = 2, _("Positive integer")
@@ -178,7 +195,8 @@ class Column(models.Model):
     HANDLERS = {
         DType.TEXT: TextColumnHandler,
         DType.INTEGER: IntegerColumnHandler,
-        DType.RELATION: RelationColumnHandler
+        DType.RELATION: RelationColumnHandler,
+        DType.FLOAT: FloatColumnHandler,
     }
 
     name = models.CharField(_("Name"), max_length=64)
@@ -189,16 +207,14 @@ class Column(models.Model):
     is_filterable = models.BooleanField(_("Filterable?"), default=True)
     is_displayable = models.BooleanField(_("Displayable?"), default=True)
 
-    table = models.ForeignKey(Table, on_delete=models.CASCADE,
-                              related_name="columns")
+    table = models.ForeignKey(Table, on_delete=models.CASCADE, related_name="columns")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         if not self.slug:
             code = time.time_ns() + random.randint(1, 10)
-            self.slug = "column_" + hashlib.md5(str(code).encode())\
-                        .hexdigest()
+            self.slug = "column_" + hashlib.md5(str(code).encode()).hexdigest()
 
         self.handler = self.HANDLERS[self.dtype](self.name, self.slug, self.settings)
 
