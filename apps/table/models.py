@@ -192,7 +192,6 @@ class Column(models.Model):
 
         TEXT = 0, _("Text")
         INTEGER = 1, _("Integer")
-        POSITIVE_INTEGER = 2, _("Positive integer")
         FLOAT = 3, _("Float")
         BIG_TEXT = 4, _("Big text")
         RELATION = 5, _("Relationship")
@@ -200,7 +199,6 @@ class Column(models.Model):
     HANDLERS = {
         DType.TEXT: TextColumnHandler,
         DType.INTEGER: IntegerColumnHandler,
-        DType.POSITIVE_INTEGER: IntegerColumnHandler,
         DType.RELATION: RelationColumnHandler,
         DType.FLOAT: FloatColumnHandler,
         DType.BIG_TEXT: BigTextColumnHandler,
