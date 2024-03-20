@@ -200,6 +200,7 @@ class Column(models.Model):
     HANDLERS = {
         DType.TEXT: TextColumnHandler,
         DType.INTEGER: IntegerColumnHandler,
+        DType.POSITIVE_INTEGER: IntegerColumnHandler,
         DType.RELATION: RelationColumnHandler,
         DType.FLOAT: FloatColumnHandler,
         DType.BIG_TEXT: BigTextColumnHandler,
