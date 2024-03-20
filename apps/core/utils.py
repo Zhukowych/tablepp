@@ -1,4 +1,5 @@
 """mixins"""
+from json import JSONEncoder
 
 from django.shortcuts import redirect
 from django.contrib import messages
@@ -16,3 +17,11 @@ class IsUserAdminMixin:
         else:
             messages.error(request, "You have no permission to access this page")
             return redirect(self.redirect_url)
+
+
+class BaseJSONEncoder(JSONEncoder):
+    """Extended encoder, uses repr of object
+    if can't convert it to JSON"""
+
+    def default(self, obj):
+        return repr(obj)
