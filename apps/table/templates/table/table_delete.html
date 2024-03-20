@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block main %}
+<h1>Delete object</h1>
+<p>Are you sure you want to delete table?</p>
+<form method="post" action="#">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <button class="delete-btn" type="submit">Delete table</button>
+</form>
+
+{% endblock %}

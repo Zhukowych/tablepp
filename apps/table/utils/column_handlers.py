@@ -309,7 +309,13 @@ class RelationColumnHandler(ColumnHandler):
         if not content_type_id:
             raise ValueError("Model name must be specified in RelationColumn setting")
 
-        return models.ForeignKey(f"{content_type.model}",
+        try:
+            return models.ForeignKey(f"{content_type.model}",
                                  on_delete=models.SET_NULL,
                                  null=True,
                                  verbose_name=_(self.name))
+        except:
+            pass
+
+    def format_value(self, value) -> str:
+        return value

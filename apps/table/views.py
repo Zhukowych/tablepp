@@ -18,6 +18,7 @@ from user.models import TablePermission
 from table.forms import TableForm, ColumnFormSet, TableFilter
 from logs.models import Logs
 from logs.utils import log
+from apps.core.utils import IsUserAdminMixin
 
 from apps.core.utils import BaseJSONEncoder
 from apps.table.utils.utils import migrate
@@ -165,6 +166,19 @@ class TableObjectListView(HasPermissionMixin, ListView):
         context["table"] = self.table
         context["filter"] = self.formset
         return context
+
+
+class TableDeleteView(IsUserAdminMixin, DeleteView):
+
+    pk_url_kwarg = "table_id"
+    model = Table
+    template_name = "table/table_delete.html"
+    success_url = reverse_lazy("table-list")
+
+    def form_valid(self, form):
+        result = super().form_valid(form)
+        migrate()
+        return result
 
 
 class DynamicModelViewMixin(HasPermissionMixin):

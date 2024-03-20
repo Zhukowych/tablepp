@@ -9,7 +9,7 @@ from .views import (DasboardView,
                     TableObjectEditView,
                     TableObjectDeleteView,
                     ImportTableDataView,
-                    ExportTableDataView)
+                    ExportTableDataView, TableDeleteView)
 
 
 urlpatterns = [
@@ -18,7 +18,7 @@ urlpatterns = [
 
     path('table/add/', TableCreateView.as_view(), name='table-add'),
     path('table/<int:table_id>/edit/', TableUpdateView.as_view(), name='table-edit'),
-
+    path('table/<int:table_id>/delete/', TableDeleteView.as_view(), name='table-delete'),
     path('table/<int:table_id>/list/', TableObjectListView.as_view(), name="object-list"),
     path('table/<int:table_id>/add/', TableObjectCreateView.as_view(), name="object-add"),
     path('table/<int:table_id>/<int:object_id>/edit/', TableObjectEditView.as_view(),

@@ -190,11 +190,23 @@
                     </tr>
                 {% endfor %}
             </table>
-            <button class="create-table-btn" type="submit">Save</button>
 
-            <a href="{{ url('table-list') }}">
-                <button class="cancel-btn" type="button">Back to the list</button>
-            </a>
+            <div class="action-buttons">
+                <button class="create-table-btn" type="submit">Save</button>
+
+                <a href="{{ url('table-list') }}">
+                    <button class="cancel-btn" type="button">Back to the list</button>
+                </a>
+
+                {% if view_name == 'table-edit' %}
+                    <a href="{{ url('table-delete', args=[object.id]) }}">
+                        <button class="delete-btn" type="button">Delete table</button>
+                    </a>
+
+                {% endif %}
+
+            </div>
+
         </form>
 
         <div class="column-setting-forms" hidden>
