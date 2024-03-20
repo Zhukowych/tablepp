@@ -1,10 +1,9 @@
 {% extends "base.html" %}
 
 {% block head %}
-    <script src="{{ static('js/jquery.formset.js') }}"></script>
+    {{ form.media }}
 
-    <style>
-
+    <style type="text/css">
 
     </style>
 
@@ -26,9 +25,9 @@
         <table class="form-table">
             {% for field in form.visible_fields() %}
                 <tr>
-                    <td>{{ field.label_tag() }}</td>
+                    <td class="label">{{ field.label_tag() }}</td>
                     <td>
-                        {{ field }}<br>
+                        {{ field }}
                         {{ display_errors(field) }}
                     </td>
 
@@ -54,11 +53,4 @@
     </form>
 </div>
 
-<script type="text/javascript">
-    $('.formset_row').formset({
-        addText: 'add column',
-        deleteText: 'remove',
-        prefix: 'column_set'
-    });
-</script>
 {% endblock %}

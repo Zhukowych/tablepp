@@ -22,5 +22,8 @@ class Logs(models.Model):
     @property
     def table(self) -> Table:
         """Return table"""
-        return Table.objects.get(slug=self.content_type.model)
+        try:
+            return Table.objects.get(slug=self.content_type.model)
+        except Table.DoesNotExist:
+            return None
     

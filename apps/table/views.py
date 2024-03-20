@@ -18,6 +18,8 @@ from user.models import TablePermission
 from table.forms import TableForm, ColumnFormSet, TableFilter
 from logs.models import Logs
 from logs.utils import log
+
+from apps.core.utils import BaseJSONEncoder
 from apps.table.utils.utils import migrate
 
 
@@ -172,7 +174,6 @@ class DynamicModelViewMixin(HasPermissionMixin):
     """
 
     table = None
-    form_class = None
     operation = TablePermission.Operation.WRITE
 
     def get_reject_url(self) -> None:
@@ -208,7 +209,7 @@ class DynamicModelViewMixin(HasPermissionMixin):
             column.name: getattr(self.object, column.slug)
             for column in self.table.columns.all()
         }
-        return json.dumps(object_dict)
+        return json.dumps(object_dict, cls=BaseJSONEncoder)
 
 
 class TableObjectCreateView(DynamicModelViewMixin, CreateView):
@@ -253,6 +254,11 @@ class TableObjectDeleteView(DynamicModelViewMixin, DeleteView):
     operation = TablePermission.Operation.DELETE
     template_name = "table/object_delete.html"
     pk_url_kwarg = "object_id"
+
+    def setup_view(self, table_id: int) -> None:
+        """Setup view"""
+        self.table = Table.objects.get(pk=table_id)
+        self.model = self.table.get_model()
 
     def form_valid(self, *args, **kwargs):
         before_deletions = self.dump_object()

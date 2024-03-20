@@ -136,6 +136,10 @@ class Table(models.Model):
 
         return model_form
 
+    def register_ajax_lookup(self):
+        """Add ajax lookup to table"""
+
+
     def get_filterset(self) -> django_filters.FilterSet:
         """
         Create FilterSet class for table

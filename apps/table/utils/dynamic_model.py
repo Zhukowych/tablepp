@@ -1,5 +1,7 @@
 """Dynamic model"""
 from typing import Any
+
+from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectWidget
 from django.urls import reverse
 from django import forms
 
@@ -27,15 +29,28 @@ class DynamicModelFormMixin:
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+
+        self._create_autocomplete_fields()
+        self._check_readonly_columns()
+
+    def _check_readonly_columns(self) -> None:
+        """Block fields for readonly columns """
         for readonly_column in self.readlonly_columns:
             self.fields[readonly_column.slug].widget.attrs['readonly'] = True
+
+    def _create_autocomplete_fields(self):
+        """Add autocomplete fields for ForeignKey columns"""
+        for column in self.columns:
+            if column.dtype != 5:
+                continue
+            self.fields[column.slug].widget = AutoCompleteSelectWidget("user",
+                                                                       attrs={'class': 'input-field'})
 
     def clean(self):
         """Validate form data"""
         errors = {}
         for column in self.columns:
             field_value = self.cleaned_data[column.slug]
-            print(field_value)
             try:
 
                 column.handler.validate_value(field_value)
@@ -57,3 +72,5 @@ class DynamicModelFilterSetMixin:
                 visible.field.widget.attrs['class'] = 'checkbox-input'
             else:
                 visible.field.widget.attrs['class'] = 'input-field'
+
+

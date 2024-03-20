@@ -314,7 +314,7 @@ input[type="number"] {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    height: 44px;
+    height: 38px;
     font-weight: 700;
 }
 
@@ -386,4 +386,12 @@ span.error {
     margin-top: 10px;
     display: flex;
     justify-content: center;
+}
+
+.action-buttons {
+    margin-top: 10px;
+}
+
+.action-buttons a {
+    text-decoration: none;
 }

@@ -1,0 +1,48 @@
+@media (max-width: 480px) {
+  .sidebar {
+    width: 120px;
+  }
+
+  .sidebar ul li a {
+    font-size: 16px;
+  }
+
+  .table-preview {
+    padding: 5px 10px;
+  }
+
+  .table-preview a {
+    font-size: 14px;
+  }
+
+  .table-preview p {
+    font-size: 12px;
+  }
+
+  .input-field {
+    width: 80%;
+  }
+
+  .save-btn {
+    font-size: 12px;
+    padding: 5px 10px;
+    height: 35px;
+    margin-top: 5px;
+  }
+
+  .filter-btn {
+    font-size: 12px;
+    padding: 5px 10px;
+    height: 35px;
+  }
+
+  h1 {
+    margin-bottom: 10px;
+  }
+
+  .cancel-btn {
+    padding: 10px;
+    font-size: 12px;
+  }
+}
+

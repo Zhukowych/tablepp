@@ -67,18 +67,20 @@
                 </thead>
                 <tbody>
                     {% for log in object_list %}
-                        <tr>
-                            <td>{{ log.id }}</td>
-                            <td><a href="{{ url('object-list', args=[log.table.id]) }}">{{ log.table.name }}</td>
-                            <td><a href="{{ url('update_user', args=[log.user.id]) }}">{{ log.user.username}}</td>
-                            <td><a href="{{ url('object-edit', args=[log.table.id, log.object_id]) }}">{{ log.object_id }}</td>
-                            <td class="message">{{ log.message }}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="5" class="description">
-                                <i>{{ log.description }}</i>
-                            </td>
-                        </tr>
+                        {% if log.table %}
+                            <tr>
+                                <td>{{ log.id }}</td>
+                                <td><a href="{{ url('object-list', args=[log.table.id]) }}">{{ log.table.name }}</td>
+                                <td><a href="{{ url('update_user', args=[log.user.id]) }}">{{ log.user.username}}</td>
+                                <td><a href="{{ url('object-edit', args=[log.table.id, log.object_id]) }}">{{ log.object_id }}</td>
+                                <td class="message">{{ log.message }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" class="description">
+                                    <i>{{ log.description }}</i>
+                                </td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
