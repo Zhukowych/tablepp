@@ -13,3 +13,16 @@ def log(user, table, object_id, message, description=None):
         message=message,
         description=description if description else message
     )
+
+
+def get_difference_dict(first_dict: dict, second_dict: dict) -> tuple[dict, dict]:
+    """
+    Return dicts of keys that changed value
+    """
+    first_difference_dict = {}
+    second_difference_dict = {}
+    for key in first_dict:
+        if first_dict.get(key) != second_dict.get(key):
+            first_difference_dict[key] = first_dict[key]
+            second_difference_dict[key] = second_dict[key]
+    return first_difference_dict, second_difference_dict

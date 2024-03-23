@@ -5,3 +5,4 @@ test/
 db.sqlite3
 tablepp/local_settings.py
 .idea/
+media/

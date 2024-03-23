@@ -28,6 +28,6 @@ urlpatterns = [
                                                        name="object-edit"),
     path('table/<int:table_id>/<int:object_id>/delete/', TableObjectDeleteView.as_view(), 
                                                          name="object-delete"),
-    path('table/<int:table_id>/export/', ExportTableDataView.as_view())
+    path('table/<int:table_id>/export/', ExportTableDataView.as_view(), name='table-export')
 
 ]

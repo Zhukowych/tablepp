@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %} Logs {% endblock%}
+
+{% block head %}
+<style>
+
+.object-list-container {
+    width: 60%;
+}
+
+.filter-button-container {
+    display: flex;
+    justify-content: right;
+}
+
+.message, .description {
+    text-align: left !important;
+    padding-left: 4px;
+}
+
+</style>
+
+
+{% endblock %}
+
+{% block main %}
+
+    <h1>Log detail</h1>
+
+    <div class="object-list-container">
+
+        <div class="table-temp">
+            <table class="wide">
+                <thead>
+                    <tr>
+                        <th class="abbr">Id</th>
+                        <th>User</th>
+                        <th>Table</th>
+                        <th>Object</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ object.id }}</td>
+                        <td><a href="{{ url('update_user', args=[object.user.id]) }}">{{ object.user.username}}</td>
+                        <td><a href="{{ url('object-list', args=[object.table.id]) }}">{{ object.table.name }}</td>
+                        <td><a href="{{ url('object-edit', args=[object.table.id, object.object_id]) }}">{{ object.object_id }}</td>
+                        <td class="message">{{ object.message }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="description">
+                            <i>{{ object.description }}</i>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+{% endblock %}

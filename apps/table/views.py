@@ -1,7 +1,10 @@
 """Views of table app"""
-
-import json
+import os
+import time
+import openpyxl
 from typing import Any
+from datetime import datetime
+from django.conf import settings
 
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
@@ -12,6 +15,7 @@ from django.http import HttpRequest, HttpResponse
 from django.apps.registry import apps
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
+from django.utils.encoding import smart_str
 from django.utils.safestring import mark_safe
 from django.views import View
 from django.views.generic.list import ListView
@@ -27,6 +31,7 @@ from logs.utils import log
 from apps.core.utils import IsUserAdminMixin
 
 from apps.core.utils import BaseJSONEncoder
+from apps.logs.utils import get_difference_dict
 from apps.table.utils.utils import migrate
 
 
@@ -322,13 +327,13 @@ class DynamicModelViewMixin(HasPermissionMixin):
         context["table"] = self.table
         return context
 
-    def dump_object(self) -> str:
+    def dump_object(self) -> dict:
         """Convert current state of object to str"""
         object_dict = {
             column.name: getattr(self.object, column.slug)
             for column in self.table.columns.all()
         }
-        return json.dumps(object_dict, cls=BaseJSONEncoder)
+        return object_dict
 
 
 class TableObjectCreateView(DynamicModelViewMixin, CreateView):
@@ -353,10 +358,17 @@ class TableObjectEditView(DynamicModelViewMixin, UpdateView):
     template_name = "table/object_form.html"
     pk_url_kwarg = "object_id"
 
+    before_update = {}
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        self.before_update = self.dump_object()
+        return self.object
+
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        before_update = self.dump_object()
         response = super().form_valid(form)
         after_update = self.dump_object()
+        before_update, after_update = get_difference_dict(self.before_update, after_update)
         log(
             user=self.request.user,
             table=self.table,
@@ -433,9 +445,27 @@ class TableObjectDeleteView(DynamicModelViewMixin, DeleteView):
         return f"You cannot delete this object, because {','.join(hrefs)} are related to it"
 
 
-class ImportTableDataView(View):
+class ExportTableDataView(TableObjectListView):
     """Import table data view"""
 
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        self.configure_view()
 
-class ExportTableDataView(View):
-    """Import table data view"""
+        workbook = openpyxl.Workbook()
+        worksheet = workbook.active
+
+        worksheet.append(("Id", ) + tuple(column.name for column in self.table.columns.all()))
+
+        for object in self.queryset:
+            worksheet.append((object.id,) + tuple(str(object.get_repr_of(column))
+                                                  for column in self.table.columns.all())
+                             )
+        path = os.path.join(settings.MEDIA_ROOT, f"{time.time_ns()}.xlsx")
+        name = f"{self.table.name}_export_on_{datetime.now().strftime('%Y-%m-%d %H:%M')}.xlsx"
+
+        workbook.save(path)
+
+        response = HttpResponse(open(path, 'rb'), content_type='application/force-download')
+        response['Content-Disposition'] = 'attachment; filename=%s' % smart_str(name)
+
+        return response

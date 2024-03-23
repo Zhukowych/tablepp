@@ -38,6 +38,10 @@ class DynamicModelMixin:
         """Get value of column at this object"""
         return column.handler.format_value(getattr(self, column.slug))
 
+    def get_repr_of(self, column) -> Any:
+        """Get repr of column at this object"""
+        return getattr(self, column.slug)
+
     def get_all_relations(self):
         fields = self._meta.get_fields()
         return [field.related_model.objects.filter(**{field.related_name: self.id})

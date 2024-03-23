@@ -9,6 +9,11 @@
         display: flex;
         justify-content: right;
     }
+
+    .action-buttons {
+        margin-bottom: 10px;
+    }
+
 </style>
 
 {% endblock %}
@@ -21,14 +26,17 @@
 <h1>{% block h1 %}{% endblock %}</h1>
 
 <div class="object-list-container">
-    <div class="actiom-btns">
+    <div class="action-buttons">
         <a href="{{ url('object-add', args=[table.id]) }}">
             <button class="save-btn">+ add new object</button>
         </a>
-        {% if filter.form.fields %}
-        <button class="open-filter-btn">
-            <i class="fas fa-filter"></i> Filters
+        <button class="export-btn">
+            <a href="{{ url('table-export', args=[table.id]) }}"><i class="fas fa-file-export"></i> Export</a>
         </button>
+        {% if filter.form.fields %}
+            <button class="open-filter-btn">
+                <i class="fas fa-filter"></i> Filters
+            </button>
         {% endif %}
     </div>
     <div class="filters-box" {% if not is_filtering %} hidden {% endif %}>

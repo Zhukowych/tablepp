@@ -13,6 +13,7 @@
   .export-btn {
     background-color: transparent;
     border: none;
+    height: 38px;
     color: #4542d0;
     padding: 10px 10px;
     margin-right: 10px;

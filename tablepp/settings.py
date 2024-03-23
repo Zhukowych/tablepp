@@ -161,6 +161,8 @@ STATICFILES_FINDERS = (
 
 STATIC_URL = "static/"
 
+MEDIA_ROOT = BASE_DIR / "media"
+
 STATICFILES_DIRS = [
     BASE_DIR / "apps/core/static/",
     BASE_DIR / "apps/user/static/"

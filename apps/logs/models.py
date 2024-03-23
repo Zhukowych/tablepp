@@ -17,7 +17,7 @@ class Logs(models.Model):
     object_id = models.PositiveIntegerField(null=True)
     object = GenericForeignKey("content_type", "object_id")
     message = models.CharField(max_length=256)
-    description = models.CharField(max_length=512)
+    description = models.CharField(max_length=2048)
 
     @property
     def table(self) -> Table:
