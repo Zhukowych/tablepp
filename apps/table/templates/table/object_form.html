@@ -1,64 +1,59 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title%} {% if view_name == 'object-edit' %}
+Edit an object {% else %} create an object {% endif %} {%endblock%} {% block
+head %}
+<script src="{{ static('js/jquery.formset.js') }}"></script>
 
-{% block head %}
-    <script src="{{ static('js/jquery.formset.js') }}"></script>
+<style></style>
 
-    <style>
-
-
-    </style>
-
-{% endblock %}
-
-{% block main %}
-
-{% if view_name == 'object-add' %}
-    <h1>Create object</h1>
+{% endblock %} {% block main %} {% if view_name == 'object-add' %}
+<h1>Create object</h1>
 {% else %}
-    <h1>Edit object</h1>
+<h1>Edit object</h1>
 {% endif %}
-
 
 <div class="col-md-4">
     <form action="" method="post">
-        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        <input
+            type="hidden"
+            name="csrfmiddlewaretoken"
+            value="{{ csrf_token }}" />
 
         <table class="form-table">
             {% for field in form.visible_fields() %}
-                <tr>
-                    <td>{{ field.label_tag() }}</td>
-                    <td>
-                        {{ field }}<br>
-                        {{ display_errors(field) }}
-                    </td>
-
-                </tr>
+            <tr>
+                <td>{{ field.label_tag() }}</td>
+                <td>
+                    {{ field }}<br />
+                    {{ display_errors(field) }}
+                </td>
+            </tr>
             {% endfor %}
         </table>
 
         <div class="action-buttons">
-            <input type="submit" class="save-btn" value="Save"/>
+            <input type="submit" class="save-btn" value="Save" />
             <a href="{{ url('object-list', args=[table.id]) }}">
-                <button class="cancel-btn" type="button">Back to the list</button>
+                <button class="cancel-btn" type="button">
+                    Back to the list
+                </button>
             </a>
             {% if view_name == 'object-edit' %}
-                <a href="{{ url('object-delete', args=[table.id, object.id]) }}">
-                    <button class="delete-btn" type="button">Delete object</button>
-                </a>
-                <a href="{{ url('object-add', args=[table.id]) }}">
-                    <button class="save-btn" type="button">Add one more</button>
-                </a>
+            <a href="{{ url('object-delete', args=[table.id, object.id]) }}">
+                <button class="delete-btn" type="button">Delete object</button>
+            </a>
+            <a href="{{ url('object-add', args=[table.id]) }}">
+                <button class="save-btn" type="button">Add one more</button>
+            </a>
             {% endif %}
         </div>
-
     </form>
 </div>
 
 <script type="text/javascript">
-    $('.formset_row').formset({
-        addText: 'add column',
-        deleteText: 'remove',
-        prefix: 'column_set'
+    $(".formset_row").formset({
+        addText: "add column",
+        deleteText: "remove",
+        prefix: "column_set",
     });
 </script>
 {% endblock %}

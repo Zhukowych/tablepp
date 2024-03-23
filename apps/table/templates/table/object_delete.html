@@ -1,14 +1,9 @@
-{% extends "base.html" %}
-
-{% block head %}
-{% endblock %}
-
-
-{% block main %}
+{% extends "base.html" %} {% block title %} Delete object? {% endblock%} {%
+block head %} {% endblock %} {% block main %}
 <h1>Delete object</h1>
 <p>Are you sure you want to delete object?</p>
 <form method="post" action="#">
-    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
     <button class="delete-btn" type="submit">Delete object</button>
 </form>
 

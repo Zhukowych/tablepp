@@ -1,9 +1,7 @@
-{% extends "base.html" %}
-
-{% block head %}
+{% extends "base.html" %} {% block title%} Tables list {%endblock%} {% block
+head %}
 
 <style>
-
     .search-field {
         width: 20%;
     }
@@ -59,34 +57,34 @@
     .save-btn {
         height: 44px;
     }
-
 </style>
 
+{% endblock %} {% block main %}
 
-{% endblock %}
+<h1>My tables</h1>
+<div>
+    <form action="#" method="get">
+        {{ filter.form.name }}
+        <button class="filter-btn" type="submit">
+            <i class="fas fa-filter"></i> Filter
+        </button>
 
-{% block main %}
-
-
-    <h1>My tables</h1>
-    <div>
-        <form action="#" method="get">
-
-            {{ filter.form.name }}
-            <button class="filter-btn" type="submit"><i class="fas fa-filter"></i> Filter</button>
-
-            <a href="{{ url('table-add') }}">
-                <button class="save-btn" type="button">+ add new table</button>
-            </a>
-        </form>
+        <a href="{{ url('table-add') }}">
+            <button class="save-btn" type="button">+ add new table</button>
+        </a>
+    </form>
+</div>
+<div class="table-previews">
+    {% for table in object_list %}
+    <div class="table-preview">
+        <h3>
+            <a href="{{ url('object-list', args=[table.id]) }}"
+                >{{ table.name }}</a
+            >
+        </h3>
+        <p>{{ table.description }}</p>
     </div>
-    <div class="table-previews">
-        {% for table in object_list %}
-            <div class="table-preview">
-                <h3><a href="{{ url('object-list', args=[table.id]) }}">{{ table.name }}</a></h3>
-                <p>{{ table.description }}</p>
-            </div>
-        {% endfor %}
-    </div>
+    {% endfor %}
+</div>
 
 {% endblock %}

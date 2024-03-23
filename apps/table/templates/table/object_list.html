@@ -1,4 +1,5 @@
-{% extends "base.html" %} {% block head %}
+{% extends "base.html" %} {%block title%}{{table.name}} table{%endblock%} {%
+block head %}
 <script src="{{ static('js/jquery.formset.js') }}"></script>
 <style>
     .object-list-container {
@@ -62,8 +63,7 @@
                     {% for column in displayable_columns %} {% if loop.first %}
                     <td class="{{ column.get_table_formating_class() }}">
                         <a
-                            href="{{ url('object-edit', args=[object.table.id, object.id]) }}"
-                        >
+                            href="{{ url('object-edit', args=[object.table.id, object.id]) }}">
                             {{ object.get_value_of(column) }}</a
                         >
                     </td>
@@ -75,8 +75,7 @@
                     <td>
                         <a
                             href="{{ url('object-delete', args=[table.id, object.id]) }}"
-                            class="delete-btn small"
-                        >
+                            class="delete-btn small">
                             <i data-feather="trash-2"></i>
                         </a>
                     </td>

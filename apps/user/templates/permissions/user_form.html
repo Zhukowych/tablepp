@@ -1,29 +1,17 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {%block title%} Edit {{object.username}}'s permissions
+{%endblock%} {% block head %} {{ permissions_form.media }}
 
-{% block head %}
-
-{{ permissions_form.media }}
-
-<script src="{{ static('js/jquery.formset.js') }}"></script> 
-<link href="{{ static('permission_edit.css') }}" rel="stylesheet">
+<script src="{{ static('js/jquery.formset.js') }}"></script>
+<link href="{{ static('permission_edit.css') }}" rel="stylesheet" />
 
 <style>
-
-.input-field {
-    width: 100%;   
-    position:relative;
-}
-
+    .input-field {
+        width: 100%;
+        position: relative;
+    }
 </style>
 
+{% endblock %} {% block main %} {% include "user/user_tabs.html" %}
 
-{% endblock %}
-
-{% block main %}
-    
-    {% include "user/user_tabs.html" %}
-
-    <h1>Edit user's permissions</h1>
-    {% include 'permissions/form.html' %}
-
-{% endblock %}
+<h1>Edit user's permissions</h1>
+{% include 'permissions/form.html' %} {% endblock %}
