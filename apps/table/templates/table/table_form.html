@@ -1,24 +1,20 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %} {% if view_name == "table-add" %}
+Create a table {% else %} Edit a table {% endif %} {%endblock%}{% block head %}
+{% for dtype, handler in dtypes.items() %} {{ handler.get_settings_form().media
+}} {% endfor %}
 
-{% block head %}
-
-
-{% for dtype, handler in dtypes.items() %}
-    {{ handler.get_settings_form().media }}
-{% endfor %}
-
-<link href="{{ static('create_table.css') }}" rel="stylesheet">
+<link href="{{ static('create_table.css') }}" rel="stylesheet" />
 
 <script src="{{ static('js/jquery.formset.js') }}"></script>
 
 <style type="text/css">
-
     table {
-        border: 2px solid #512FD9;
+        border: 2px solid #512fd9;
     }
 
-    table, tr {
-        border: 1px solid #512FD9;
+    table,
+    tr {
+        border: 1px solid #512fd9;
         border-left: none;
         border-right: none;
         border-collapse: collapse;
@@ -38,7 +34,6 @@
         padding-top: 8px;
     }
 
-
     .checkbox {
         display: flex;
         align-items: center;
@@ -49,11 +44,10 @@
     .checkbox-input {
         align-self: center;
         height: 100%;
-
     }
 
     div.settings-box {
-        border: 2px solid #A093D9;
+        border: 2px solid #a093d9;
         padding: 10px;
     }
 
@@ -84,45 +78,66 @@
         background-color: #d5daff;
         color: #424588;
     }
-
 </style>
 
-{% endblock %}
+{% endblock %} {% block main %}
 
-{% block main %}
+<script type="text/javascript">
+    dtypes_form_handlers = {};
 
-    <script type="text/javascript">
+    function register_dtype(dtype, handlers) {
+        dtypes_form_handlers[dtype] = handlers;
+    }
 
-        dtypes_form_handlers = {}
+    function get_settings_input(column_row) {
+        return column_row.find("td input[id*=-settings]");
+    }
 
-        function register_dtype(dtype, handlers) {
-            dtypes_form_handlers[dtype] = handlers;
+    function get_selected_filters(settings_row) {
+        let filter_checkboxes = settings_row.find(
+            "input[id*='id_filters']:checked"
+        );
+        let selected_filters = [];
+        for (let i = 0; i < filter_checkboxes.length; i++) {
+            selected_filters.push($(filter_checkboxes[i]).val());
         }
+        return selected_filters;
+    }
 
-        function get_settings_input(column_row) {
-            return column_row.find("td input[id*=-settings]");
+    function check_selected_filters(settings_row, selected_filters) {
+        let filter_checkboxes = settings_row.find("input[id*='id_filters']");
+        for (let i = 0; i < filter_checkboxes.length; i++) {
+            let filter_checkbox = $(filter_checkboxes[i]);
+            if (selected_filters.includes(filter_checkbox.val()))
+                filter_checkbox.prop("checked", true);
         }
+    }
+</script>
 
-        function get_selected_filters(settings_row) {
-            let filter_checkboxes = settings_row.find("input[id*='id_filters']:checked");
-            let selected_filters = [];
-            for (let i = 0; i < filter_checkboxes.length; i++) {
-                selected_filters.push($(filter_checkboxes[i]).val());
-            }
-            return selected_filters;
-        }
+<div class="col-md-4">
+    {% if view_name == "table-add" %}
+    <h1>Create a table</h1>
+    {% else %} {% include "table/table_tabs.html" %}
+    <h1>Edit a table</h1>
+    {% endif %}
 
-        function check_selected_filters(settings_row, selected_filters) {
-            let filter_checkboxes = settings_row.find("input[id*='id_filters']");
-            for (let i = 0; i < filter_checkboxes.length; i++) {
-                let filter_checkbox = $(filter_checkboxes[i]);
-                if (selected_filters.includes(filter_checkbox.val()))
-                    filter_checkbox.prop("checked", true);
-            }
+    <form action="" method="post">
+        <input
+            type="hidden"
+            name="csrfmiddlewaretoken"
+            value="{{ csrf_token }}" />
+        {{ form.name.label_tag() }}<br />
+        {{ form.name }}
+        <br />
+        {{ display_errors(form.name) }}
+        <br />
+        {{ form.description.label_tag() }}<br />
+        {{ form.description }}
+        <br />
+        {{ display_errors(form.description) }}
+        <br />
 
-        }
 
-    </script>
 
     <div class="col-md-4">
 
@@ -222,55 +237,83 @@
                     {{ settings_script(dtype) }}
                 </div>
             {% endfor %}
+        </table>
+        <button class="create-table-btn" type="submit">Save</button>
+
+        <a href="{{ url('table-list') }}">
+            <button class="cancel-btn" type="button">Back to the list</button>
+        </a>
+    </form>
+
+    <div class="column-setting-forms" hidden>
+        {% for dtype, handler in dtypes.items() %} {% from
+        handler.get_settings_form().template_name import render_form,
+        settings_script %}
+        <div class="{{ dtype }}-setting-form">
+            {{ render_form(handler.get_settings_form()) }}
         </div>
+        <div class="{{ dtype }}-setting-script">
+            {{ settings_script(dtype) }}
+        </div>
+        {% endfor %}
     </div>
+</div>
 
-    <script type="text/javascript">
+<script type="text/javascript">
+    function is_editing(event) {
+        let svg_tag = $(event.target).closest("svg.feather-edit");
+        if (svg_tag.length != 0) return true;
+        else return false;
+    }
 
-        function is_editing(event) {
-            let svg_tag = $(event.target).closest("svg.feather-edit")
-            if (svg_tag.length != 0)
-                return true;
-            else
-                return false;
+    function toggle_edit_button(event) {
+        let button_container = $(event.target).closest(".edit");
+        let a = $(event.target).closest("a");
+        $(event.target).closest("a").empty();
+        if (is_editing(event)) {
+            a.append('<i data-feather="check"></i>');
+        } else {
+            a.append('<i data-feather="edit"></i>');
         }
+        feather.replace();
+    }
 
-        function toggle_edit_button(event) {
-            let button_container = $(event.target).closest('.edit');
-            let a = $(event.target).closest('a');
-            $(event.target).closest("a").empty();
-            if (is_editing(event)) {
-                a.append('<i data-feather="check"></i>');
-            } else {
-                a.append('<i data-feather="edit"></i>');
-            }
-            feather.replace();
-        }
+    function edit_column_settings(event) {
+        let formset_row = $(event.target.closest("tr"));
+        let setting_row = formset_row.next("tr").find("td");
+        let column_dtype = formset_row.find("select").val();
+        let settings_input = get_settings_input(formset_row);
+        let settings = JSON.parse(settings_input.val());
+        setting_row.html($("div." + column_dtype + "-setting-form").html());
 
-        function edit_column_settings(event) {
-            let formset_row = $(event.target.closest("tr"));
-            let setting_row = formset_row.next("tr").find("td");
-            let column_dtype = formset_row.find("select").val();
-            let settings_input = get_settings_input(formset_row);
-            let settings = JSON.parse(settings_input.val());
-            setting_row.html($('div.' + column_dtype + '-setting-form').html());
+        check_selected_filters(setting_row, settings.filters || []);
+        dtypes_form_handlers[column_dtype].create_function(
+            formset_row,
+            setting_row
+        );
+        toggle_edit_button(event);
+    }
 
-            check_selected_filters(setting_row, settings.filters || []);
-            dtypes_form_handlers[column_dtype].create_function(formset_row, setting_row);
-            toggle_edit_button(event);
-        }
+    function save_column_settings(event) {
+        let formset_row = $(event.target.closest("tr"));
+        let setting_row = formset_row.next("tr").find("td");
+        let column_dtype = formset_row.find("select").val();
 
-        function save_column_settings(event) {
-            let formset_row = $(event.target.closest("tr"));
-            let setting_row = formset_row.next("tr").find("td");
-            let column_dtype = formset_row.find("select").val();
+        dtypes_form_handlers[column_dtype].export_function(
+            formset_row,
+            setting_row
+        );
 
-            dtypes_form_handlers[column_dtype].export_function(formset_row, setting_row);
+        setting_row.html("");
+        toggle_edit_button(event);
+    }
 
-            setting_row.html("");
-            toggle_edit_button(event);
-        }
+    $(document).on("click", ".edit", function (event) {
+        if (is_editing(event)) edit_column_settings(event);
+        else save_column_settings(event);
+    });
 
+<<<<<<< HEAD
 
         function added_new_form(row) {
             row.find("td input[id*=-settings]").val("{}");
@@ -298,20 +341,25 @@
                  alert("You cannot change datatype of column one you created it!");
              }
          });
+=======
+    function added_new_form(row) {
+        row.find("td input[id*=-settings]").val("{}");
+        row.after("<tr><td colspan='5'></td></tr>");
+        feather.replace();
+    }
 
-        $('.formset_row').formset({
-            addText: '+ Add column',
-            addCssClass: "formset-add-btn",
-            deleteText: '<i data-feather="trash-2"></i>',
-            deleteCssClass: "delete-btn",
-            editText: "edit",
-            prefix: 'columns',
-            added: added_new_form
-        });
+    $(".formset_row").formset({
+        addText: "+ Add column",
+        addCssClass: "formset-add-btn",
+        deleteText: '<i data-feather="trash-2"></i>',
+        deleteCssClass: "delete-btn",
+        editText: "edit",
+        prefix: "columns",
+        added: added_new_form,
+    });
 
-        $(document).ready(function () {
-        });
-
-    </script>
+    $(document).ready(function () {});
+</script>
+>>>>>>> origin/readme
 
 {% endblock %}

@@ -1,4 +1,5 @@
-{% extends "base.html" %} {% block head %} {% endblock %} {% block main %}
+{% extends "base.html" %} {%block title%}Delete {{ object.name }}?{%endblock%}{%
+block head %} {% endblock %} {% block main %}
 
 <form method="post">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />

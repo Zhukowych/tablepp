@@ -1,5 +1,7 @@
 {% extends 'table/base_object_list.html' %}
 
+{% block title %}{{table.name}} table {% endblock %}
+
 {% block tabs %}
     {% include "table/table_tabs.html" %}
 {% endblock %}

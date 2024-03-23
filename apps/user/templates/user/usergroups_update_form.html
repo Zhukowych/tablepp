@@ -1,5 +1,6 @@
-{% extends "base.html" %} {% block head %}
-
+{% extends "base.html" %} {% block title %} {% if view_name == 'edit_group'%}
+Update {{ object.name }}'s {%else%} Create a group {%endif%}{% endblock %} {%
+block head %}
 <style>
     .input-field {
         width: 30%;

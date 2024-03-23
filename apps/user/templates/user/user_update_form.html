@@ -1,5 +1,6 @@
-{% extends "base.html" %} {% block head %}
-
+{% extends "base.html" %} {%block title%} {%if view_name == 'update_user'%}
+Update {{ object.username }}'s info {%else %} Add user {%endif%}{%endblock%} {%
+block head %}
 <style>
     .input-field {
         width: 100%;
