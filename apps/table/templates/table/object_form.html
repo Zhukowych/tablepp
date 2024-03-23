@@ -1,11 +1,15 @@
-{% extends "base.html" %} {% block title%} {% if view_name == 'object-edit' %}
-Edit an object {% else %} create an object {% endif %} {%endblock%} {% block
-head %}
-<script src="{{ static('js/jquery.formset.js') }}"></script>
+{% extends "base.html" %}
+{% block title%}
+    {% if view_name == 'object-edit' %}
+        Edit an object
+    {% else %}
+        create an object
+    {% endif %}
+{%endblock%}
 
 {% block head %}
+    <script src="{{ static('js/jquery.formset.js') }}"></script>
     {{ form.media }}
-
     <style type="text/css">
 
     </style>
