@@ -1,4 +1,5 @@
-{% extends "base.html" %} {% block title %} Update {{object.role }}'s role info
+{% extends "base.html" %} {% block title %} {% if view_name == 'update_role'%}
+Update {{object.role }}'s role info {% else %} Add role {% endif%}
 {%endblock%}{% block head %}
 <style>
     table {
