@@ -8,7 +8,7 @@ import time
 import random
 import hashlib
 import traceback
-from typing import Type, Self
+from typing import Type
 
 import django_filters
 from ajax_select import registry
@@ -196,7 +196,7 @@ class Table(models.Model):
 
         return filterset
 
-    def get_dependent_tables(self) -> list[Self]:
+    def get_dependent_tables(self) -> list["Table"]:
         """
         Return list of tables that are dependent on this table
         through relation
@@ -210,7 +210,7 @@ class Table(models.Model):
                 dependent_tables.append(relation_columns.table)
         return dependent_tables
 
-    def get_related_objects_of_table(self, table: Self, object) -> QuerySet:
+    def get_related_objects_of_table(self, table: "Table", object) -> QuerySet:
         model = self.get_model()
         fields = model._meta.get_fields()
         for field in fields:
