@@ -1,0 +1,95 @@
+{% extends "base.html" %} {% block head %}
+<script src="{{ static('js/jquery.formset.js') }}"></script>
+<style>
+    .object-list-container {
+        width: 60%;
+    }
+
+    .filter-button-container {
+        display: flex;
+        justify-content: right;
+    }
+</style>
+
+{% endblock %}
+
+{% block main %}
+
+{% block tabs %}
+{% endblock %}
+
+<h1>{% block h1 %}{% endblock %}</h1>
+
+<div class="object-list-container">
+    <div class="actiom-btns">
+        <a href="{{ url('object-add', args=[table.id]) }}">
+            <button class="save-btn">+ add new object</button>
+        </a>
+        {% if filter.form.fields %}
+        <button class="open-filter-btn">
+            <i class="fas fa-filter"></i> Filters
+        </button>
+        {% endif %}
+    </div>
+    <div class="filters-box" {% if not is_filtering %} hidden {% endif %}>
+        <form action="#" method="get">
+            <table class="filter-table">
+                {% for field in filter.form.visible_fields() %}
+                <tr>
+                    <td>{{ field.label_tag() }}</td>
+                    <td>{{ field }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            <div class="filter-button-container">
+                <button class="filter-btn" type="submit">Filter</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-temp">
+        {% set displayable_columns = table.get_displayable_columns(request.user)
+        %}
+        <table class="wide">
+            <thead>
+                <tr>
+                    <th class="abbr">Id</th>
+                    {% for column in displayable_columns %}
+                    <th>{{ column.name }}</th>
+                    {% endfor %}
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in object_list %}
+                <tr>
+                    <td>
+                        <a href="{{ url('object-edit', args=[object.table.id, object.id]) }}">{{ object.id }}</a>
+                    </td>
+                    {% for column in displayable_columns %}
+                        <td class="{{ column.get_table_formating_class() }}">
+                            <a>{{ object.get_value_of(column) }}</a>
+                        </td>
+                    {% endfor %}
+                    <td>
+                        <a href="{{ url('object-delete', args=[table.id, object.id]) }}" class="delete-btn small">
+                            <i data-feather="trash-2"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {{ add_paginator(page_obj) }}
+</div>
+
+<script type="text/javascript">
+    $(".open-filter-btn").click(function () {
+        let filter_box = $(".filters-box");
+        console.log(filter_box);
+        if (filter_box.is(":visible")) filter_box.hide(500);
+        else filter_box.show(500);
+    });
+</script>
+{% endblock %}

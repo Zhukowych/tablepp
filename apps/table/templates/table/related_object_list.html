@@ -1,0 +1,20 @@
+{% extends 'table/base_object_list.html' %}
+
+{% block tabs %}
+    <div class="tabs">
+        <ul>
+            <li class="{{ insert_on_name('object-edi6', 'selected') }}">
+                <a href="{{ url('object-edit', args=[parent_table.id, object.id]) }}">Edit</a>
+            </li>
+            {% for related_table in parent_table.get_dependent_tables() %}
+                <li class="{% if related_table == table %}selected{% endif %}">
+                    <a href="{{ url('related-list', args=[parent_table.id, object.id, related_table.id]) }}">Related {{ related_table.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block h1 %}
+Objects of {{ table.name }} related to {{ parent_table.name }}
+{% endblock %}

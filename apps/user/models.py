@@ -98,6 +98,9 @@ class TablePermission(models.Model):
         ACCEPT = 0, _("Accept")
         REJECT = 1, _("Reject")
 
+    TABLE_CONTENT_TYPE = ContentType.objects.get(model="table")
+    COLUMN_CONTENT_TYPE = ContentType.objects.get(model="column")
+
     class Operation(models.IntegerChoices):
         """Type of permission"""
 

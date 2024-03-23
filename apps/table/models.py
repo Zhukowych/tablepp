@@ -7,9 +7,12 @@ from __future__ import annotations
 import time
 import random
 import hashlib
-from typing import Type
+import traceback
+from typing import Type, Self
 
 import django_filters
+from ajax_select import registry
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import QuerySet
 from django.urls import reverse
@@ -30,6 +33,7 @@ from core.forms import BaseModelForm
 from user.models import TablePermission, User
 
 from apps.table.utils.column_handlers import RelationColumnHandler
+from apps.table.utils.dynamic_model import DynamicModelLookup
 
 
 def column_settings_default():
@@ -60,6 +64,10 @@ class Table(models.Model):
     def __repr__(self) -> str:
         """Return a string representation of Table"""
         return f"Table(name={self.name})"
+
+    @property
+    def searchable_column(self):
+        return self.columns.filter(dtype=Column.DType.TEXT).first() or self.columns.first()
 
     def get_absolute_url(self) -> str:
         """Return url to Table edit page"""
@@ -113,10 +121,13 @@ class Table(models.Model):
 
         # Add in any fields that were provided
         for column in self.columns.all():
-            attrs[column.slug] = column.get_django_model_field()
+            try:
+                attrs[column.slug] = column.get_django_model_field()
+            except Exception as ex:
+                traceback.print_exc()
 
         # Create the class, which automatically triggers ModelBase processing
-        model = type(self.slug, (models.Model, DynamicModelMixin), attrs)
+        model = type(self.slug, (DynamicModelMixin, models.Model), attrs)
         setattr(model, "table", self)
         # Create an Admin class if admin options were provided
         return model
@@ -154,6 +165,13 @@ class Table(models.Model):
     def register_ajax_lookup(self):
         """Add ajax lookup to table"""
 
+        attrs = {
+            'model': self.get_model(),
+            'searchable_column': self.searchable_column
+        }
+
+        lookup_channel = type(f"{self.slug}LookupChannel", (DynamicModelLookup, ), attrs)
+        registry.register({self.slug: lookup_channel})
 
     def get_filterset(self) -> django_filters.FilterSet:
         """
@@ -178,6 +196,27 @@ class Table(models.Model):
 
         return filterset
 
+    def get_dependent_tables(self) -> list[Self]:
+        """
+        Return list of tables that are dependent on this table
+        through relation
+        """
+        content_type = ContentType.objects.get(model=self.slug)
+        relation_columns = Column.objects.filter(dtype=Column.DType.RELATION)
+        dependent_tables = []
+        for relation_columns in relation_columns:
+            related_content_type_id = relation_columns.settings.get('content_type_id')
+            if int(related_content_type_id) == content_type.id:
+                dependent_tables.append(relation_columns.table)
+        return dependent_tables
+
+    def get_related_objects_of_table(self, table: Self, object) -> QuerySet:
+        model = self.get_model()
+        fields = model._meta.get_fields()
+        for field in fields:
+            if isinstance(field, models.ManyToOneRel) and field.related_model.__name__ == table.slug:
+                return field.related_model.objects.filter(**{field.related_name: object.id})
+
 
 class Column(models.Model):
     """Field entity"""
@@ -194,12 +233,12 @@ class Column(models.Model):
         INTEGER = 1, _("Integer")
         FLOAT = 3, _("Float")
         BIG_TEXT = 4, _("Big text")
-        #RELATION = 5, _("Relationship")
+        RELATION = 5, _("Relationship")
 
     HANDLERS = {
         DType.TEXT: TextColumnHandler,
         DType.INTEGER: IntegerColumnHandler,
-        #DType.RELATION: RelationColumnHandler,
+        DType.RELATION: RelationColumnHandler,
         DType.FLOAT: FloatColumnHandler,
         DType.BIG_TEXT: BigTextColumnHandler,
     }

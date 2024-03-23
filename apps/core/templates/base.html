@@ -38,24 +38,13 @@
                 <div class="bar"></div>
             </div>
             <div class="header-icons">
-                <button class="notification-icon-btn">
-                    <i class="fas fa-bell"></i>
-                </button>
-                <a href=" {{ url('user_list') }} "
-                    ><button
-                        class="icon-btn account-icon"
-                        onclick="openAccount()"></button
-                ></a>
-
                 <form method="post" action="{{ url('logout') }}">
                     <input
                         type="hidden"
                         name="csrfmiddlewaretoken"
                         value="{{ csrf_token }}" />
                     <button type="submit" class="cancel-btn">
-                        <i
-                            data-feather="log-out"
-                            style="width: 12px; height: 12px"></i>
+                        <i data-feather="log-out" style="width: 12px; height: 12px"></i>
                     </button>
                 </form>
             </div>
@@ -97,7 +86,7 @@
             <div class="content" id="content">
                 {% if messages %}
                 <div class="messages">
-                    {% for message in messages %} {{ message }} {% endfor %}
+                    {% for message in messages %} {{ message|safe }} {% endfor %}
                 </div>
                 {% endif %} {% block main %} {% endblock %}
             </div>

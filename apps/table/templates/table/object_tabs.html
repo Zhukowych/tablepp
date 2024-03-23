@@ -1,0 +1,15 @@
+
+{% if view_name in ['object-edit', 'object-delete'] %}
+    <div class="tabs">
+        <ul>
+            <li class="{{ insert_on_name('object-edit', 'selected') }}">
+                <a href="{{ url('object-edit', args=[table.id, object.id]) }}">Edit</a>
+            </li>
+            {% for related_table in table.get_dependent_tables() %}
+                <li>
+                    <a href="{{ url('related-list', args=[table.id, object.id, related_table.id]) }}">Related {{ related_table.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}

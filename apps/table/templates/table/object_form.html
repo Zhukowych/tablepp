@@ -11,6 +11,8 @@
 
 {% block main %}
 
+{% include "table/object_tabs.html" %}
+
 {% if view_name == 'object-add' %}
     <h1>Create object</h1>
 {% else %}
@@ -41,9 +43,9 @@
                 <button class="cancel-btn" type="button">Back to the list</button>
             </a>
             {% if view_name == 'object-edit' %}
-                <a href="{{ url('object-delete', args=[table.id, object.id]) }}">
-                    <button class="delete-btn" type="button">Delete object</button>
-                </a>
+                <button class="delete-btn" type="button">
+                    <a href="{{ url('object-delete', args=[table.id, object.id]) }}">Delete Object</a>
+                </button>
                 <a href="{{ url('object-add', args=[table.id]) }}">
                     <button class="save-btn" type="button">Add one more</button>
                 </a>

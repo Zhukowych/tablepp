@@ -14,7 +14,7 @@ from django.db.models import Field, IntegerField, CharField, FloatField, TextFie
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from annotated_types import Any
+from markupsafe import Markup
 
 
 class ColumnHandler(ABC):
@@ -163,13 +163,7 @@ class BigTextSettingForm(ColumnSettingsForm):
 
     class Meta:
         """Meta class"""
-
         field_order = ["filters"]
-
-
-RELATABLE_MODELS = ContentType.objects.filter(
-    model__startswith="table_"
-) | ContentType.objects.filter(model="user")
 
 
 class RelationColumnSettingForm(ColumnSettingsForm):
@@ -180,7 +174,24 @@ class RelationColumnSettingForm(ColumnSettingsForm):
 
     template_name = "settings_form/relation_column_form.html"
 
-    content_type = forms.ModelChoiceField(queryset=RELATABLE_MODELS)
+    content_type = forms.ModelChoiceField(queryset=ContentType.objects.all())
+
+    def __init__(self, *args, **kwargs):
+        """Initialize normal price distributions"""
+        super().__init__(*args, **kwargs)
+        from table.models import Table
+
+        relatable_content_types = ContentType.objects.filter(model__startswith="table_")
+        user_content_type = ContentType.objects.get(model='user')
+
+        self.fields["content_type"].choices = [
+            (content_type.id, Table.objects.get(slug=content_type.model).name)
+            for content_type in relatable_content_types
+        ]
+
+        self.fields["content_type"].choices += [
+            (user_content_type.id, "User")
+        ]
 
 
 class IntegerColumnHandler(ColumnHandler):
@@ -197,10 +208,10 @@ class IntegerColumnHandler(ColumnHandler):
 
     def validate_value(self, value) -> bool:
         min_value = (
-            self.settings.get("min_value") or IntegerSettingsForm.DEFAULT_MIN_VALUE
+                self.settings.get("min_value") or IntegerSettingsForm.DEFAULT_MIN_VALUE
         )
         max_value = (
-            self.settings.get("max_value") or IntegerSettingsForm.DEFAULT_MAX_VALUE
+                self.settings.get("max_value") or IntegerSettingsForm.DEFAULT_MAX_VALUE
         )
         if not min_value <= value <= max_value:
             raise forms.ValidationError(
@@ -227,10 +238,10 @@ class FloatColumnHandler(ColumnHandler):
 
     def validate_value(self, value) -> bool:
         min_value = (
-            self.settings.get("min_value") or FloatSettingsForm.DEFAULT_MIN_VALUE
+                self.settings.get("min_value") or FloatSettingsForm.DEFAULT_MIN_VALUE
         )
         max_value = (
-            self.settings.get("max_value") or FloatSettingsForm.DEFAULT_MAX_VALUE
+                self.settings.get("max_value") or FloatSettingsForm.DEFAULT_MAX_VALUE
         )
         if not min_value <= value <= max_value:
             raise forms.ValidationError(
@@ -258,7 +269,7 @@ class TextColumnHandler(ColumnHandler):
     def validate_value(self, value: str) -> bool:
         """Validate text field"""
         max_length = (
-            self.settings.get("max_length") or TextSettingForm.DEFAULT_MAX_LENGTH
+                self.settings.get("max_length") or TextSettingForm.DEFAULT_MAX_LENGTH
         )
         if len(value) > max_length:
             raise forms.ValidationError(
@@ -304,18 +315,30 @@ class RelationColumnHandler(ColumnHandler):
         pass
 
     def get_model_field(self) -> Field:
+        from table.models import Table
         content_type_id = self.settings.get("content_type_id")
-        content_type = ContentType.objects.get(id=content_type_id)
         if not content_type_id:
             raise ValueError("Model name must be specified in RelationColumn setting")
+        content_type = ContentType.objects.get(id=content_type_id)
 
-        try:
-            return models.ForeignKey(f"{content_type.model}",
+        if not Table.objects.filter(slug=content_type.model).exists():
+            return models.ForeignKey(f'self',
+                                     on_delete=models.SET_NULL,
+                                     null=True,
+                                     blank=True,
+                                     related_name=self.name,
+                                     verbose_name=_(self.name))
+        return models.ForeignKey(f"{content_type.app_label}.{content_type.model}",
                                  on_delete=models.SET_NULL,
                                  null=True,
+                                 blank=True,
+                                 related_name=self.slug,
                                  verbose_name=_(self.name))
-        except:
-            pass
 
-    def format_value(self, value) -> str:
-        return value
+    def format_value(self, value) -> Markup | None:
+        if not value:
+            return None
+
+        html = f"<a href={value.get_absolute_url()}>{value}</a>"
+
+        return Markup(html)

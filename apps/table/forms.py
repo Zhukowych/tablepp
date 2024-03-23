@@ -36,8 +36,17 @@ class ColumnEditForm(BaseModelForm):
         exclude = ('slug', 'table')
 
     name = forms.CharField(label=_("Column name"))
-    dtype = forms.ChoiceField(label=_("DType"), choices=Column.DType)
-    settings = forms.CharField(label=_("Settings"), widget=forms.HiddenInput(), initial="{}")
+    dtype = forms.ChoiceField(label=_("DType"), choices=Column.DType, required=False)
+    settings = forms.JSONField(label=_("Settings"), widget=forms.HiddenInput(), initial=dict, required=False)
+
+    def clean_dtype(self):
+        """Return value of dtype if column is saved"""
+        if self.instance.pk:
+            return self.instance.dtype
+        dtype = self.cleaned_data['dtype']
+        if not dtype:
+            raise forms.ValidationError("This field is required")
+        return dtype
 
     def is_valid(self) -> bool:
         if not self.cleaned_data:

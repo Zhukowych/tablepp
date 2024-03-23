@@ -9,7 +9,9 @@
 <p>Are you sure you want to delete table?</p>
 <form method="post" action="#">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    <button class="delete-btn" type="submit">Delete table</button>
+    {% if safe %}
+        <button class="delete-btn" type="submit">Delete table</button>
+    {% endif %}
 </form>
 
 {% endblock %}

@@ -16,6 +16,14 @@
             let settings_input = get_settings_input(column_row);
             let settings = JSON.parse(settings_input.val());
             content_type_input(settings_row).val(settings.content_type_id || min_value_input(settings_row).val());
+
+            content_type_input(settings_row).mousedown(function(event){
+                if (column_row.find("input[id*=-id]").val()){
+                    event.preventDefault();
+                    alert("You cannot change relation model once you saved table!");
+                }
+            });
+
         }
 
         function export_relation_field_settings_form(column_row, settings_row){

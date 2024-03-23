@@ -5,11 +5,16 @@
 
 
 {% block main %}
+
+{% include "table/object_tabs.html" %}
+
 <h1>Delete object</h1>
 <p>Are you sure you want to delete object?</p>
 <form method="post" action="#">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    <button class="delete-btn" type="submit">Delete object</button>
+    {% if safe %}
+        <button class="delete-btn" type="submit">Delete object</button>
+    {% endif %}
 </form>
 
 {% endblock %}

@@ -134,6 +134,7 @@
         {% endif %}
 
         <form action="" method="post">
+            {{ form.errors }}
             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
             {{ form.name.label_tag() }}<br>
             {{ form.name }}
@@ -183,7 +184,9 @@
                                 <i data-feather="edit"></i>
                             </a>
                         </td>
-                        <td class="delete-col"></td>
+                        <td class="delete-col">
+                            {{ form.DELETE }}
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="5"></td>
@@ -268,6 +271,15 @@
             toggle_edit_button(event);
         }
 
+
+        function added_new_form(row) {
+            row.find("td input[id*=-settings]").val("{}");
+            row.find("td select").removeAttr("disabled");
+            row.after("<tr><td colspan='5'></td></tr>")
+            feather.replace();
+        }
+
+
         $(document).on('click', '.edit', function (event) {
             if (is_editing(event))
                 edit_column_settings(event);
@@ -275,12 +287,17 @@
                 save_column_settings(event);
         });
 
-        function added_new_form(row) {
-            row.find("td input[id*=-settings]").val("{}");
-            row.after("<tr><td colspan='5'></td></tr>")
-            feather.replace();
-        }
+         $(document).on('click', '.delete-btn', function (event) {
+             console.log(123);
+        });
 
+         $("select[id*=-dtype]").click(function (event) {
+             let column_id_input = $(event.target).closest('tr').find("input[id*=-id]");
+             if (column_id_input.val()) {
+                 event.preventDefault();
+                 alert("You cannot change datatype of column one you created it!");
+             }
+         });
 
         $('.formset_row').formset({
             addText: '+ Add column',
