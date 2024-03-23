@@ -23,7 +23,6 @@ from markupsafe import Markup
 from table.models import Table, Column
 from user.models import TablePermission
 from table.forms import TableForm, ColumnFormSet, TableFilter
-from logs.models import Logs
 from logs.utils import log
 from apps.core.utils import IsUserAdminMixin
 

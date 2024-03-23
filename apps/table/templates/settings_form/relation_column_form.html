@@ -35,8 +35,24 @@
             settings_input.val(JSON.stringify(settings));
         }
 
+        function validate_relation_on_submit(column_row) {
+            let settings_input = get_settings_input(column_row);
+            let settings = JSON.parse(settings_input.val());
+            if (!settings.content_type_id) {
+                edit_column_settings($(column_row).find('.edit').find('path,polyline'));
+                content_type_input(column_row.next()).addClass('invalid_field');
+                return "You must chose content type!"
+            }
+        }
+
+        function validate_relation_on_save() {
+
+        }
+
         register_dtype("{{ dtype }}", {create_function: create_relation_field_settings_form,
-                                       export_function:  export_relation_field_settings_form})
+                                       export_function:  export_relation_field_settings_form,
+                                       save_validator: validate_relation_on_save,
+                                       submit_validator: validate_relation_on_submit})
 
     </script>
 

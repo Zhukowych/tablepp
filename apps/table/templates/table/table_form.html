@@ -24,7 +24,7 @@
         border: 2px solid #512FD9;
     }
 
-    table, tr {
+    table, tr.formset_row {
         border: 1px solid #512FD9;
         border-left: none;
         border-right: none;
@@ -234,19 +234,19 @@
 
     <script type="text/javascript">
 
-        function is_editing(event) {
-            let svg_tag = $(event.target).closest("svg.feather-edit")
+        function is_editing(target) {
+            let svg_tag = $(target).closest("svg.feather-edit")
             if (svg_tag.length != 0)
                 return true;
             else
                 return false;
         }
 
-        function toggle_edit_button(event) {
-            let button_container = $(event.target).closest('.edit');
-            let a = $(event.target).closest('a');
-            $(event.target).closest("a").empty();
-            if (is_editing(event)) {
+        function toggle_edit_button(target) {
+            let button_container = $(target).closest('.edit');
+            let a = $(target).closest('a');
+            $(target).closest("a").empty();
+            if (is_editing(target)) {
                 a.append('<i data-feather="check"></i>');
             } else {
                 a.append('<i data-feather="edit"></i>');
@@ -254,8 +254,8 @@
             feather.replace();
         }
 
-        function edit_column_settings(event) {
-            let formset_row = $(event.target.closest("tr"));
+        function edit_column_settings(target) {
+            let formset_row = $(target.closest("tr"));
             let setting_row = formset_row.next("tr").find("td");
             let column_dtype = formset_row.find("select").val();
             let settings_input = get_settings_input(formset_row);
@@ -264,34 +264,30 @@
 
             check_selected_filters(setting_row, settings.filters || []);
             dtypes_form_handlers[column_dtype].create_function(formset_row, setting_row);
-            toggle_edit_button(event);
+            toggle_edit_button(target);
         }
 
-        function save_column_settings(event) {
-            let formset_row = $(event.target.closest("tr"));
+        function save_column_settings(target) {
+            let formset_row = $(target.closest("tr"));
             let setting_row = formset_row.next("tr").find("td");
             let column_dtype = formset_row.find("select").val();
 
             dtypes_form_handlers[column_dtype].export_function(formset_row, setting_row);
 
             setting_row.html("");
-            toggle_edit_button(event);
+            toggle_edit_button(target);
         }
 
-
-        function added_new_form(row) {
-            row.find("td input[id*=-settings]").val("{}");
-            row.find("td select").removeAttr("disabled");
-            row.after("<tr><td colspan='5'></td></tr>")
-            feather.replace();
+        function toggle_settings_box(target){
+            if (is_editing(target)) {
+                edit_column_settings(target);
+            } else {
+                save_column_settings(target);
+            }
         }
-
 
         $(document).on('click', '.edit', function (event) {
-            if (is_editing(event))
-                edit_column_settings(event);
-            else
-                save_column_settings(event);
+            toggle_settings_box(event.target);
         });
 
          $(document).on('click', '.delete-btn', function (event) {
@@ -306,6 +302,18 @@
              }
          });
 
+         function added_new_form(row) {
+            row.find("td input[id*=-settings]").val("{}");
+            row.find("td select").removeAttr("disabled");
+            row.after("<tr><td colspan='5'></td></tr>")
+            feather.replace();
+        }
+
+        function removed_form(row) {
+            console.log(row);
+            $(row).remove();
+        }
+
         $('.formset_row').formset({
             addText: '+ Add column',
             addCssClass: "formset-add-btn",
@@ -313,11 +321,27 @@
             deleteCssClass: "delete-btn",
             editText: "edit",
             prefix: 'columns',
-            added: added_new_form
+            added: added_new_form,
+            removed: removed_form
         });
 
-        $(document).ready(function () {
+
+        $("form").submit(function(e){
+            let columns_forms = $('tr.formset_row');
+            for (let i=0; i < columns_forms.length; i++) {
+                let column_dtype = $(columns_forms[i]).find("select").val();
+                if (!dtypes_form_handlers[column_dtype].submit_validator)
+                    continue;
+                let message = dtypes_form_handlers[column_dtype].submit_validator($(columns_forms[i]));
+
+                if (message) {
+                    alert(message);
+                    e.preventDefault();
+                }
+
+            }
         });
+
 
     </script>
 
