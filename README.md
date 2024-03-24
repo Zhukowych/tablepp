@@ -91,3 +91,17 @@ We can edit information about each table or its objects.
 ### Logs
 Implemented logging of actions, as you can see, the creation of our new object has been added to the log table
 <center><img src="./assets/logs.png" width=85%></center>
+
+## ⭐ Credits
+Sincere appreciation to the following people who helped with development of this web application.
+
+[Veronika Sazonova](https://github.com/veronasaz)
+
+[Sofia Sydorchuk](https://github.com/Sydorchuksofiaa)
+
+[Valihurskyi Anton](https://github.com/BlueSkyAndSomeCurses)
+
+[Maksym Bug](https://github.com/Zhukowych)
+
+[Mentor: Victor Muryn](https://github.com/hellcastter)
+
