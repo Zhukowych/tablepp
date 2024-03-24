@@ -1,70 +1,93 @@
 # TABLE++
 
-Цей застосунок створений для спрощення та пришвидшення ведення обліків в невеликих компаніях. 
+- [TABLE++](#table)
+- [1. Login page](#login-page)
+- [2. User model](#user-model)
+    - [2.1 User credentials](#update-user-info-page)
+        - [2.1.1 Update user info page](#update-user-info-page)
+        - [2.1.2 Update user's groups](#update-users-groups)
+        - [2.1.3 Update user's permissions](#update-users-permissions)
+    - [2.2 User groups](#user-groups)
+        - [2.2.1 User group info](#user-groups) 
+        - [2.2.2 User group permissions](#user-groups-permissions) 
+    - [2.3 Roles](#roles)
+        - [2.3.1 Role list](#role-list)
+        - [2.3.2 Role settings](#role-settings)
+- [3. Tables](#tables)
+    - [3.1 Table list](#table-list)
+    - [3.2 Table creation](#table-creation)
+- [4. Logs](#logs)
 
-Головні моделі: таблиці та їх колонки, користувачі, групи, дозволи та посади. Кожен користувач містить інформацію про відповідного робітника(його ім'я, посада, пошта, пароль, чи є він супер користувачем). 
+This application was created to simplify and speed up accounting in small companies. 
 
-Також реалізована система дозволів, за допомогою яких користувачу надається можливість або забороняється виконувати такі дії: читання, запис або видалення інформації про талбцию або колонки в цій таблиці. Є дозволи груп, які налаштовуються у відповідній групі, такі дозволи гарантуються всім користувачам групи.
+The main models are tables and their columns, users, groups, permissions and roles. Each user contains information about the corresponding employee (their name, role, email, password, whether they are a super user). 
 
-Окрім цього кожному користувачу можна надавати дозволи окремо, вони будуть у вищому пріорітеті за дозволи групи.
+A system of permissions is also implemented, with the help of which the user is given the opportunity or is prohibited from performing certain actions actions.
 
-Також є посада, в якій просто визначається її назва.
-
-При створенні таблиці визначається її назва, опис, та які поля в ній будуть. Реалізовано 5 типів даних: обмежений текст, необмежений текст, цілі числа, числа з плаваючою комою та поле відношень.
-
-Головна особливість нашого застосунку це простота додавання нових входжень. Для цього в спеціальноуму вікні ми вводимо необхідні дані, та вони автоматично додаються. 
-
-Супер користувачі мають доступ змінювати будь-які дані.В цей час звичайні користувачі не можуть змінювати інформацію про групи, дозволи чи посади. Також вони не можуть змінити нічого в своєму профілі окрім пароля.
-
-Звичайні юзери не можуть змінювати інформацію про групи чи ролі.
+The main feature of our application is the ease of adding new entries. To do this, we enter the necessary data in a special window, and they are automatically added. 
 
 ### Login page
-На сторінці логіну ви маєте вказати ім'я користувача та пароль, надані вам адміном
-![plot](./assets/login.png)
+On the login page, you must enter the username and password provided to you by the administrator
+<center><img src="./assets/login.png" width=85%></center>
 
-### Update user info page
-Далі вас автоматично відправить на сторінку налаштувань свого користувача.
-![plot](./assets/update.png)
-Якщо у вас є права супер адміна, ви зможете змінити будь-який пункт в даних будь-якого користувача, а також видалити будь-якого користувача.
-![plot](./assets/not_super_update_form.png)
-Можна помітити, що якщо залогінитись з акаунту не супер користувача, ми не матимемо можливості змінити нічого окрім паролю, та не зможемо зайти в профіль інших користувачів.
-![plot](./assets/no_acces_to_user.png)
+### User model
+#### Update user info page
+After login you will be automatically sent to your user's settings page.
+<center><img src="./assets/update.png" width=85%></center>
 
-### Update user's groups
-На цій сторінці ви зможете додавати користувача до груп, або видаляти звідти.
-![plot](./assets/change_groups.png)
+If you have super admin rights, you can change any item in any user's data, as well as delete any user.
+<center><img src="./assets/not_super_update_form.png" width=85%></center>
 
-### Update user's permissions
-На цій сторінці ви зможете надавати дозволи кожному користувачу окремо
-![plot](./assets/user_perms.png)
+You may notice that if you log in from a non-super user account, you won't be able to change anything but your password and won't be able to access other users' profiles.
+<center><img src="./assets/no_acces_to_user.png" width=85%></center>
+
+#### Update user's groups
+On this page, you can add users to groups or remove them from them. Only super users have an access to this page.
+<center><img src="./assets/change_groups.png" width=85%></center>
+
+#### Update user's permissions
+On this page, you can grant permissions to each user individually. Such permissions are in higher priority than group permissions. Only super users have an access to this page.
+<center><img src="./assets/user_perms.png" width=85%></center>
 
 ### User groups 
-Тут можна переглянути список груп. 
-![plot](./assets/groups_list.png)
-Заходити до налаштувань кожної групи можуть тільки супер користувачі.
-![plot](./assets/update_group.png)
-Кожній групі можна надавати дозволи які будуть гарантовані для кожного користувача в цій групі.
-![plot](./assets/group_perms.png)
+Here you can view the list of groups. 
+<center><img src="./assets/groups_list.png" width=85%></center>
+
+Only super users can access the settings of each group.
+<center><img src="./assets/update_group.png" width=85%></center>
+
+#### User groups permissions
+Each group can be granted permissions that will be guaranteed for each user in this group. Only super-users can access this page.
+<center><img src="./assets/group_perms.png" width=85%></center>
+
 
 ### Roles
-Список ролей
-![plot](./assets/role_list.png)
-Налаштування ролі
-![plot](./assets/role_update.png)
+#### Role list
+Here you can see a list of roles.
+<center><img src="./assets/role_list.png" width=85%></center>
+
+#### Role settings
+You can change a name of the role. Only super users have an access to this page.
+<center><img src="./assets/role_update.png" width=85%></center>
 
 ### Tables
-Коли ми перейдемо до таблиць, побачимо список вже існуючих таблиц.
-![plot](./assets/tables.png)
-Спробуємо створити нову таблицю, окрім перерахованого вище, ми зможемо також вказати обмеження для кожного поля, та способи фільтрації для пошуку відповідних даних.
-![plot](./assets/create_table.png)
-Як ми бачимо, ми не можемо виходити за вказані обмеження.
-![plot](./assets/add_object_err.png)
-Таким чином відображається список входжень. Також є можливість експортувати дані в excel таблицю
-![plot](./assets/objects_list.png)
+#### Table list
+When we go to tables, we will see a list of existing tables.
+<center><img src="./assets/tables.png" width=85%></center>
 
-Ми можемо редагувати інформацію про кожну таблицю чи її об'єкти.
+#### Table creation
+Let's try creating a new table, in addition to the above, we can also specify the limits for each field, and how to filter to find the relevant data.
+<center><img src="./assets/create_table.png" width=85%></center>
+
+As we can see, we cannot go beyond these limits.
+<center><img src="./assets/add_object_err.png" width=85%></center>
+
+#### Object list
+This displays a list of entries. It is also possible to export data to an excel spreadsheet
+<center><img src="./assets/objects_list.png" width=85%></center>
+
+We can edit information about each table or its objects.
 
 ### Logs
-Реалізовано логування дій, як можемо бачити, створення нашого нового об'єкту було додано в таблицю логів
-![plot](./assets/logs.png)
-
+Implemented logging of actions, as you can see, the creation of our new object has been added to the log table
+<center><img src="./assets/logs.png" width=85%></center>
