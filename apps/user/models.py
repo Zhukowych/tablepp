@@ -27,6 +27,7 @@ class User(AbstractUser):
 
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
     permissions = models.ManyToManyField("TablePermission")
+    is_staff = models.BooleanField(default=True)
 
     def __str__(self):
         return self.username
@@ -49,16 +50,19 @@ class User(AbstractUser):
             return True
 
         content_type = ContentType.objects.get_for_model(object)
-        permissions = self.permissions.filter(object_id=object.id,
-                                              operation=operation,
-                                              content_type=content_type)
+        permissions = self.permissions.filter(
+            object_id=object.id, operation=operation, content_type=content_type
+        )
 
         if permissions.exists():
             return permissions.first().accept
 
-        group_permissions = [group.permissions.filter(content_type=content_type,
-                                                      object_id=object.id,
-                                                      operation=operation) for group in self.user_groups.all()]
+        group_permissions = [
+            group.permissions.filter(
+                content_type=content_type, object_id=object.id, operation=operation
+            )
+            for group in self.user_groups.all()
+        ]
 
         for group_permission in group_permissions:
             if group_permission.exists():
