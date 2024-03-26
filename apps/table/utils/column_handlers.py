@@ -213,6 +213,7 @@ class IntegerColumnHandler(ColumnHandler):
         max_value = (
                 self.settings.get("max_value") or IntegerSettingsForm.DEFAULT_MAX_VALUE
         )
+        value = 0 if value is None else value
         if not min_value <= value <= max_value:
             raise forms.ValidationError(
                 f"Value must be between {min_value} and {max_value}"
@@ -243,6 +244,7 @@ class FloatColumnHandler(ColumnHandler):
         max_value = (
                 self.settings.get("max_value") or FloatSettingsForm.DEFAULT_MAX_VALUE
         )
+        value = 0 if value is None else value
         if not min_value <= value <= max_value:
             raise forms.ValidationError(
                 f"Value must be between {min_value} and {max_value}"
@@ -271,6 +273,7 @@ class TextColumnHandler(ColumnHandler):
         max_length = (
                 self.settings.get("max_length") or TextSettingForm.DEFAULT_MAX_LENGTH
         )
+        value = "" if value is None else value
         if len(value) > max_length:
             raise forms.ValidationError(
                 f"Length must be less than or equal to {max_length}"
