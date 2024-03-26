@@ -76,7 +76,7 @@ When we go to tables, we will see a list of existing tables.
 <center><img src="./assets/tables.png" width=85%></center>
 
 #### Table creation
-Let's try creating a new table, in addition to the above, we can also specify the limits for each field, and how to filter to find the relevant data.
+Let's try creating a new table, in addition to the above, we can also specify the limits for each field, and how to filter it in order to find the relevant data.
 <center><img src="./assets/create_table.png" width=85%></center>
 
 As we can see, we cannot go beyond these limits.
