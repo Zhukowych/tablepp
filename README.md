@@ -1,22 +1,22 @@
 # TABLE++
 
 - [TABLE++](#table)
-- [1. Login page](#login-page)
-- [2. User model](#user-model)
-    - [2.1 User credentials](#update-user-info-page)
-        - [2.1.1 Update user info page](#update-user-info-page)
-        - [2.1.2 Update user's groups](#update-users-groups)
-        - [2.1.3 Update user's permissions](#update-users-permissions)
-    - [2.2 User groups](#user-groups)
-        - [2.2.1 User group info](#user-groups) 
-        - [2.2.2 User group permissions](#user-groups-permissions) 
-    - [2.3 Roles](#roles)
-        - [2.3.1 Role list](#role-list)
-        - [2.3.2 Role settings](#role-settings)
-- [3. Tables](#tables)
-    - [3.1 Table list](#table-list)
-    - [3.2 Table creation](#table-creation)
-- [4. Logs](#logs)
+    - [Login page](#login-page)
+    - [User model](#user-model)
+      - [Update user info page](#update-user-info-page)
+      - [Update user's groups](#update-users-groups)
+      - [Update user's permissions](#update-users-permissions)
+    - [User groups](#user-groups)
+      - [User groups permissions](#user-groups-permissions)
+    - [Roles](#roles)
+      - [Role list](#role-list)
+      - [Role settings](#role-settings)
+    - [Tables](#tables)
+      - [Table list](#table-list)
+      - [Table creation](#table-creation)
+      - [Object list](#object-list)
+    - [Logs](#logs)
+  - [⭐ Credits](#-credits)
 
 This application was created to simplify and speed up accounting in small companies. 
 
@@ -76,7 +76,7 @@ When we go to tables, we will see a list of existing tables.
 <center><img src="./assets/tables.png" width=85%></center>
 
 #### Table creation
-Let's try creating a new table, in addition to the above, we can also specify the limits for each field, and how to filter to find the relevant data.
+Let's try creating a new table, in addition to the above, we can also specify the limits for each field, and how to filter it in order to find the relevant data.
 <center><img src="./assets/create_table.png" width=85%></center>
 
 As we can see, we cannot go beyond these limits.
@@ -84,6 +84,7 @@ As we can see, we cannot go beyond these limits.
 
 #### Object list
 This displays a list of entries. It is also possible to export data to an excel spreadsheet
+To edit an object you have to press on its index. To view object from relationship field you have to press on this field text.
 <center><img src="./assets/objects_list.png" width=85%></center>
 
 We can edit information about each table or its objects.
