@@ -1,13 +1,28 @@
 {% extends "base.html" %} {%block title%} {%if view_name == 'update_user'%}
-Update {{ object.username }}'s info {%else %} Add user {%endif%}{%endblock%} {%
-block head %}
+Update {{ object.username }}'s info {%else %} Add user {%endif%}{%endblock%}
+{%block head %}
 <style>
     .input-field {
         width: 100%;
     }
 
-    table {
+    @media (max-width: 1024px){
+      table {
         width: 40%;
+      }
+    }
+
+
+    @media (max-width: 768px){
+      table {
+        width: 60%;
+      }
+    }
+
+    @media (max-width: 600px) {
+      table {
+        width: 80%;
+      }
     }
 
     span.helptext {
@@ -16,6 +31,7 @@ block head %}
 </style>
 
 <link href="{{ static('css/tabs.css') }}" rel="stylesheet" />
+<link href="{{ static('css/edit_responsive.css') }}" rel="stylesheet" />
 
 {% endblock %} {% block main %} {% if view_name == 'update_user' %} {% if
 user.is_superuser %} {% include "user/user_tabs.html" %} {% endif %}

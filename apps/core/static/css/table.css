@@ -117,6 +117,10 @@ div.filters-box {
     margin-bottom: 10px;
 }
 
+.filters-box input {
+  margin-right: 2px;
+}
+
 .filters-box td {
     vertical-align: middle;
 }
