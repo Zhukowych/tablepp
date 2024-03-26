@@ -1,21 +1,10 @@
 {% extends "base.html" %} {% block head %}
 <script src="{{ static('js/jquery.formset.js') }}"></script>
 <style>
-    .object-list-container {
-        width: 60%;
-    }
-
-    .filter-button-container {
-        display: flex;
-        justify-content: right;
-    }
-
-    .action-buttons {
-        margin-bottom: 10px;
-    }
 
 </style>
 
+{{ filter.form.media }}
 {% endblock %}
 
 {% block main %}

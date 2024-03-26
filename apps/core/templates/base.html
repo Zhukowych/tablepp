@@ -21,6 +21,7 @@
         <link href="{{ static('css/formset.css') }}" rel="stylesheet" />
         <link href="{{ static('css/tabs.css') }}" rel="stylesheet" />
         <link href="{{ static('css/table.css') }}" rel="stylesheet" />
+        <link href="{{ static('css/sidebar_responsive.css') }}" rel="stylesheet" />
 
         <style>
             svg {
@@ -93,7 +94,10 @@
         </div>
 
         <script type="text/javascript">
-            toggleMenu();
+            let window_width = $(window).width();
+            if (window_width >= 720){
+                toggleMenu();
+            }
             feather.replace();
         </script>
     </body>

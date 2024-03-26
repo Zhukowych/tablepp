@@ -28,9 +28,9 @@
             let settings_input = get_settings_input(column_row);
             let settings = {
                 min_value: parseInt(min_value_input(settings_row).val()),
-                max_value: parseInt(max_value_input(settings_row).val())
+                max_value: parseInt(max_value_input(settings_row).val()),
+                filters: get_selected_filters(settings_row)
             };
-            get_selected_filters(settings_row);
 
             settings_input.val(JSON.stringify(settings));
         }

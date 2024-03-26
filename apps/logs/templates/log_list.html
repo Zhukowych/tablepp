@@ -5,8 +5,10 @@
 {% block head %}
 <style>
 
-.object-list-container {
-    width: 60%;
+@media (min-width: 1024px) {
+    .object-list-container {
+        width: 60%;
+    }
 }
 
 .filter-button-container {
@@ -94,8 +96,7 @@
     <script type="text/javascript">
         $('.open-filter-btn').click(function(){
             let filter_box = $(".filters-box");
-            console.log(filter_box);
-            if (filter_box.is(":visible")) 
+            if (filter_box.is(":visible"))
                 filter_box.hide(500);
             else
                 filter_box.show(500);

@@ -92,6 +92,10 @@
         color: #424588;
     }
 
+    .invalid_settings {
+        border: 2px solid red;
+    }
+
 </style>
 
 {% endblock %}
@@ -243,7 +247,6 @@
         }
 
         function toggle_edit_button(target) {
-            let button_container = $(target).closest('.edit');
             let a = $(target).closest('a');
             $(target).closest("a").empty();
             if (is_editing(target)) {
@@ -271,7 +274,7 @@
             let formset_row = $(target.closest("tr"));
             let setting_row = formset_row.next("tr").find("td");
             let column_dtype = formset_row.find("select").val();
-
+            formset_row.next().removeClass("invalid_settings");
             dtypes_form_handlers[column_dtype].export_function(formset_row, setting_row);
 
             setting_row.html("");
@@ -290,9 +293,6 @@
             toggle_settings_box(event.target);
         });
 
-         $(document).on('click', '.delete-btn', function (event) {
-             console.log(123);
-        });
 
          $("select[id*=-dtype]").click(function (event) {
              let column_id_input = $(event.target).closest('tr').find("input[id*=-id]");
@@ -326,18 +326,34 @@
         });
 
 
+        function check_columns_validators(column_form, e){
+            let column_dtype = $(column_form).find("select").val();
+            if (!dtypes_form_handlers[column_dtype].submit_validator)
+                return;
+            let message = dtypes_form_handlers[column_dtype].submit_validator(column_form);
+
+            if (message) {
+                alert(message);
+                e.preventDefault();
+            }
+        }
+
+        function check_if_form_was_saved(column_form, e){
+            let toggle_button = column_form.find('.edit').find('path,polyline');
+            if (!is_editing(toggle_button)) {
+                alert("You must save close setting box before saving table")
+                column_form.next().addClass("invalid_settings");
+                e.preventDefault();
+            }
+        }
+
         $("form").submit(function(e){
+
             let columns_forms = $('tr.formset_row');
             for (let i=0; i < columns_forms.length; i++) {
-                let column_dtype = $(columns_forms[i]).find("select").val();
-                if (!dtypes_form_handlers[column_dtype].submit_validator)
-                    continue;
-                let message = dtypes_form_handlers[column_dtype].submit_validator($(columns_forms[i]));
-
-                if (message) {
-                    alert(message);
-                    e.preventDefault();
-                }
+                let column_form = $(columns_forms[i]);
+                check_columns_validators(column_form, e);
+                check_if_form_was_saved(column_form, e);
 
             }
         });

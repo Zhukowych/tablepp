@@ -183,7 +183,7 @@ class TableObjectListView(HasPermissionMixin, ListView):
         self.queryset = self.formset.qs
 
     def get_queryset(self):
-        return self.table.get_model().objects.all()
+        return self.queryset
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Modify rendering context"""

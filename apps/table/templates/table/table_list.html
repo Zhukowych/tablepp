@@ -1,14 +1,10 @@
 {% extends "base.html" %} {% block title%} Tables list {%endblock%} {% block
 head %}
 
-<link href="{{ static('css/table_list_adaptive.css') }}" rel="stylesheet" />
 
 <style>
-    .search-field {
-        width: 20%;
-    }
 
-    .filter-btn {
+     .filter-btn {
         background-color: #d5daff;
         color: #1e0b69;
         height: 44px;
@@ -52,13 +48,32 @@ head %}
     }
 
     .input-field {
-        width: 20%;
+        width: 40%;
         margin: 0 !important;
     }
 
     .save-btn {
         height: 44px;
     }
+
+
+    @media (max-width: 700px) {
+        .input-field {
+            width: 50%;
+        }
+
+        .table-preview {
+            width: 100%;
+        }
+    }
+     
+     @media (max-width: 480px) {
+         .input-field {
+             width: 90%;
+         }
+     }
+
+
 </style>
 
 {% endblock %} {% block main %}

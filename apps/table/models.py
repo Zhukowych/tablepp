@@ -12,6 +12,7 @@ from typing import Type
 
 import django_filters
 from ajax_select import registry
+from ajax_select.fields import AutoCompleteSelectWidget
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import QuerySet
@@ -84,7 +85,7 @@ class Table(models.Model):
 
     def get_filterable_columns(self) -> QuerySet[Column]:
         """Return list of columns that can be present in filters"""
-        return self.columns.filter(is_filterable=True)
+        return self.columns.all()
 
     def add_column(self, column_name: str, dtype: int) -> None:
         """Add new column to table"""
@@ -185,13 +186,32 @@ class Table(models.Model):
         fields_filters = {
             column.slug: column.get_filters_names() for column in filterable_columns
         }
+        attrs = {"Meta": Meta}
 
         setattr(Meta, "model", self.get_model())
         setattr(Meta, "fields", fields_filters)
+
+        for column in filterable_columns:
+            if column.dtype == Column.DType.RELATION:
+                content_type = ContentType.objects.get(id=column.settings.get('content_type_id'))
+                table = Table.objects.get(slug=content_type.model)
+
+                def filter_function(cls, queryset, _, value):
+                    return queryset.filter(**{f"{column.slug}_id": value.id})
+
+                filter_method_name = f"{column.slug}_filter"
+                attrs[column.slug] = django_filters.ModelChoiceFilter(
+                    queryset=table.get_model().objects.all(),
+                    widget=AutoCompleteSelectWidget(table.slug),
+                    label=column.name,
+                    method=filter_method_name)
+
+                attrs[filter_method_name] = filter_function
+
         filterset = type(
             f"table_{self.slug}FilterSet",
             (DynamicModelFilterSetMixin, django_filters.FilterSet),
-            {"Meta": Meta},
+            attrs
         )
 
         return filterset

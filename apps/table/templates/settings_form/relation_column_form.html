@@ -30,6 +30,7 @@
             let settings_input = get_settings_input(column_row);
             let settings = {
                 content_type_id: content_type_input(settings_row).find(":selected").val(),
+                filters: get_selected_filters(settings_row)
             };
             get_selected_filters(settings_row);
             settings_input.val(JSON.stringify(settings));
