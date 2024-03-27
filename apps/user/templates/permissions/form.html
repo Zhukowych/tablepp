@@ -73,7 +73,7 @@
     function toggle_object_selection(tr) {
         let content_type_select = tr.find("td.content_type select");
         console.log(content_type_select.val());
-        if (content_type_select.val() == "10") {
+        if (content_type_select.val() == "{{ column_content_type.id }}") {
             tr.find("div.column-search").show();     
             tr.find("div.table-search").hide();
         } else {
@@ -86,7 +86,7 @@
         $("tr.formset_row").each(function(){
             let content_type_select = $("select[id$=content_type]");
             if (content_type_select.val() == undefined)
-                content_type_select.val("9");
+                content_type_select.val("{{ table_content_type.id }}");
             toggle_object_selection($(this));
         });
     })

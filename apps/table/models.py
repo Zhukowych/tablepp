@@ -286,6 +286,9 @@ class Column(models.Model):
         """Return a string representation of Column"""
         return f"Column(table={self.table.name}, name={self.name})"
 
+    def __str__(self) -> str:
+        return repr(self)
+
     def get_django_model_field(self) -> Type[models.Field]:
         """
         Return django field column depending on column type

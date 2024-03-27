@@ -1,6 +1,8 @@
 """User app views"""
 
 from typing import Any
+
+from django.contrib.contenttypes.models import ContentType
 from django.forms import BaseModelForm
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.hashers import make_password
@@ -26,6 +28,8 @@ from .forms.form import (
 )
 from .filters import UserListFilter, RoleListFilter, GroupListFilter
 from django.contrib import messages
+
+from table.models import Table, Column
 
 
 class UserLoginView(LoginView):
@@ -340,6 +344,8 @@ class PermissionSaveMixin:
         context["permissions_form"] = TablePermissionFormSet(
             self.request.POST or None, queryset=self.object.permissions.all()
         )
+        context["table_content_type"] = ContentType.objects.get_for_model(Table)
+        context["column_content_type"] = ContentType.objects.get_for_model(Column)
         return context
 
 
