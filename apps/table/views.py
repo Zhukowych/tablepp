@@ -164,7 +164,7 @@ class TableObjectListView(HasPermissionMixin, ListView):
     """List objects added to table"""
 
     template_name = "table/object_list.html"
-    paginate_by = 2
+    paginate_by = 10
     table = None
     formset = None
     operation = TablePermission.Operation.READ
