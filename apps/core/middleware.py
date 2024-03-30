@@ -10,7 +10,7 @@ class PlainTextExceptionMiddleware(object):
 
     def __call__(self, request, *args, **kwds):
         response = self.get_response(request)
-        if response.status_code != 200:
+        if response.status_code in [500, 404]:
             traceback.print_exc()
             return HttpResponse(status=500, content=f"{response.status_code} Error")
         return response
