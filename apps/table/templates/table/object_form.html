@@ -19,13 +19,14 @@
 
 {% include "table/object_tabs.html" %}
 
-{% if view_name == 'object-add' %}
-    <h1>Create object</h1>
-{% else %}
-<h1>Edit object</h1>
-{% endif %}
+<div class="empty"></div>
 
 <div class="col-md-4">
+    {% if view_name == 'object-add' %}
+        <h1>Create object</h1>
+    {% else %}
+        <h1>Edit object</h1>
+    {% endif %}
     <form action="" method="post">
         <input
             type="hidden"

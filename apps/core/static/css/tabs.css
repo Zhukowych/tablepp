@@ -99,3 +99,16 @@
     text-decoration: underline;
 }
 
+
+@media (max-width: 700px) {
+
+    .tabs  {
+        overflow-x: scroll;
+    }
+
+    .tabs ul {
+        width: 100vw;
+    }
+
+}
+

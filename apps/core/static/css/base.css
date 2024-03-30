@@ -421,3 +421,10 @@ span.error {
     width: 95%;
   }
 }
+
+
+@media ( max-width: 26.25em ) {
+h1 {
+    font-size: 1.875em;
+  }
+}

@@ -45,9 +45,7 @@
     margin-bottom: 10px;
   }
 
-  .table-temp {
-    overflow-x: scroll;
-  }
+
 
   .table-temp table {
     border-collapse: collapse;
@@ -145,6 +143,10 @@ div.filters-box {
 
 
 @media (max-width: 700px) {
+  .table-temp {
+    overflow-x: scroll;
+  }
+
   .table-temp table {
     table-layout: auto !important;
   }
@@ -152,5 +154,4 @@ div.filters-box {
   .object-list-container {
     width: 100%;
   }
-
 }
