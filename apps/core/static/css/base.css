@@ -435,12 +435,14 @@ h1 {
         display:block;float:left;width:100%;
     }
 
-    .action-buttons button, a, input[type=submit] {
-        width: 100%;
-        margin-right: 0;
-        margin-left: 0;
-        margin-top: 5px;
-        margin-bottom: 0;
+    form {
+        .action-buttons button, .action-buttons a, .action-buttons input[type=submit] {
+            width: 100%;
+            margin-right: 0;
+            margin-left: 0;
+            margin-top: 5px;
+            margin-bottom: 0;
+        }
     }
 
 }
