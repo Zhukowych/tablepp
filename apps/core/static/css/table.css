@@ -165,7 +165,7 @@ div.filters-box {
     display: inline-block;
   }
 
-  .filters-box input, select {
+  .filters-box input, .filters-box select {
     width: 97%;
   }
 
