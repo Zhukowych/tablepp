@@ -154,4 +154,13 @@ div.filters-box {
   .object-list-container {
     width: 100%;
   }
+
+  .filters-box td {
+    display:block;float:left;width:100%;
+  }
+
+  .filters-box input, select {
+    width: 97%;
+  }
+
 }

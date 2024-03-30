@@ -428,3 +428,19 @@ h1 {
     font-size: 1.875em;
   }
 }
+
+@media (max-width: 700px) {
+
+    .form-table td {
+        display:block;float:left;width:100%;
+    }
+
+    .action-buttons button, a, input[type=submit] {
+        width: 100%;
+        margin-right: 0;
+        margin-left: 0;
+        margin-top: 5px;
+        margin-bottom: 0;
+    }
+
+}

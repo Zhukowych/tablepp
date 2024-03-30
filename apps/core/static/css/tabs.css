@@ -107,7 +107,7 @@
     }
 
     .tabs ul {
-        width: 100vw;
+        min-width: 700px;
     }
 
 }
