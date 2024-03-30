@@ -147,6 +147,7 @@ div.filters-box {
     overflow-x: scroll;
   }
 
+
   .table-temp table {
     table-layout: auto !important;
   }
@@ -157,6 +158,11 @@ div.filters-box {
 
   .filters-box td {
     display:block;float:left;width:100%;
+  }
+
+  .filters-box td label {
+    width: 300px;
+    display: inline-block;
   }
 
   .filters-box input, select {

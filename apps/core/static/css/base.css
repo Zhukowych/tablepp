@@ -435,6 +435,11 @@ h1 {
         display:block;float:left;width:100%;
     }
 
+    .form-table td label {
+        width: 300px;
+        display: inline-block;
+    }
+
     form {
         .action-buttons button, .action-buttons a, .action-buttons input[type=submit] {
             width: 100%;
