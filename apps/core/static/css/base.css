@@ -431,14 +431,6 @@ h1 {
 
 @media (max-width: 700px) {
 
-    .form-table td {
-        display:block;float:left;width:100%;
-    }
-
-    .form-table td label {
-        width: 300px;
-        display: inline-block;
-    }
 
     form {
         .action-buttons button, .action-buttons a, .action-buttons input[type=submit] {

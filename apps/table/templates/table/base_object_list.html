@@ -32,8 +32,8 @@
         <form action="#" method="get">
             <table class="filter-table">
                 {% for field in filter.form.visible_fields() %}
+                <tr><td>{{ field.label_tag() }}</td></tr>
                 <tr>
-                    <td>{{ field.label_tag() }}</td>
                     <td>{{ field }}</td>
                 </tr>
                 {% endfor %}

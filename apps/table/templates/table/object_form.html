@@ -35,8 +35,8 @@
 
         <table class="form-table">
             {% for field in form.visible_fields() %}
+            <tr><td>{{ field.label_tag() }}</td></tr>
             <tr>
-                <td>{{ field.label_tag() }}</td>
                 <td>
                     {{ field }}<br />
                     {{ display_errors(field) }}
