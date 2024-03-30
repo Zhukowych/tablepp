@@ -192,7 +192,7 @@ class Table(models.Model):
         setattr(Meta, "fields", fields_filters)
 
         for column in filterable_columns:
-            if column.dtype == Column.DType.RELATION:
+            if column.dtype == Column.DType.RELATION and fields_filters[column.slug]:
                 content_type = ContentType.objects.get(id=column.settings.get('content_type_id'))
                 table = Table.objects.get(slug=content_type.model)
 
