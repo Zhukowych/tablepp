@@ -44,7 +44,11 @@
   .actiom-btns {
     margin-bottom: 10px;
   }
-  
+
+  .table-temp {
+    overflow-x: scroll;
+  }
+
   .table-temp table {
     border-collapse: collapse;
   }
@@ -139,3 +143,14 @@ div.filters-box {
     vertical-align: middle;
 }
 
+
+@media (max-width: 700px) {
+  .table-temp table {
+    table-layout: auto !important;
+  }
+
+  .object-list-container {
+    width: 100%;
+  }
+
+}
